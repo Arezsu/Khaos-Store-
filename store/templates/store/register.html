@@ -1,0 +1,369 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block body_class %}minimal-header{% endblock %}
+{% block title %}Registro{% endblock %}
+{% block overlay_class %}blur{% endblock %}
+
+{% block extra_css %}
+<style>
+    .register-container {
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(15px);
+        border: 2px solid;
+        border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
+        border-radius: 20px;
+        padding: 40px;
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+        box-shadow: 0 0 50px rgba(255, 0, 255, 0.3);
+    }
+    h1 {
+        text-align: center;
+        font-family: 'Press Start 2P', cursive;
+        font-size: 24px;
+        margin-bottom: 30px;
+        background: linear-gradient(45deg, #ff00ff, #00ffff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    label {
+        display: block;
+        margin-bottom: 5px;
+        color: #ff00ff;
+        font-weight: bold;
+        font-size: 13px;
+        letter-spacing: 1px;
+    }
+    input, select {
+        width: 100%;
+        padding: 12px;
+        background: #0f0c29;
+        border: 2px solid #ff00ff;
+        border-radius: 10px;
+        color: #fff;
+        font-size: 16px;
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+    input:hover, select:hover {
+        border-color: #00ffff;
+        box-shadow: 0 0 5px #ff00ff;
+    }
+    input:focus, select:focus {
+        outline: none;
+        box-shadow: 0 0 20px #ff00ff;
+        border-color: #00ffff;
+    }
+    
+    /* ESTILOS MEJORADOS PARA LOS SELECTS DE FECHA */
+    .birth-date {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    .birth-date select {
+        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        border: 2px solid #ff00ff;
+        border-radius: 12px;
+        color: #fff;
+        font-weight: bold;
+        text-align: center;
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ff00ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 30px;
+    }
+    .birth-date select:hover {
+        border-color: #00ffff;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 0, 255, 0.3);
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2300ffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+    }
+    .birth-date select:focus {
+        border-color: #00ffff;
+        box-shadow: 0 0 15px #ff00ff;
+        outline: none;
+    }
+    
+    /* ESTILOS PARA LAS OPCIONES DENTRO DEL SELECT */
+    .birth-date select option {
+        background: #1a1a2e;
+        color: #fff;
+        padding: 12px;
+        font-weight: normal;
+    }
+    .birth-date select option:hover {
+        background: linear-gradient(45deg, #ff00ff, #00ffff);
+        color: #000;
+    }
+    .birth-date select option:checked {
+        background: linear-gradient(45deg, #ff00ff, #00ffff);
+        color: #000;
+        font-weight: bold;
+    }
+    
+    /* BOTÓN MEJORADO */
+    .btn {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(45deg, #ff00ff, #00ffff);
+        border: none;
+        border-radius: 12px;
+        color: #000;
+        font-weight: bold;
+        font-size: 18px;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+    }
+    .btn:hover {
+        transform: scale(1.02);
+        box-shadow: 0 0 25px #ff00ff, 0 0 10px #00ffff;
+        background: linear-gradient(45deg, #ff44ff, #44ffff);
+    }
+    .btn:active {
+        transform: scale(0.98);
+    }
+    
+    .login-link {
+        text-align: center;
+        margin-top: 20px;
+    }
+    .login-link a {
+        color: #00ffff;
+        text-decoration: none;
+        font-size: 13px;
+        transition: all 0.3s;
+    }
+    .login-link a:hover {
+        text-shadow: 0 0 10px #00ffff;
+        color: #ff00ff;
+    }
+    
+    .loading-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+    .loading-overlay.show {
+        display: flex;
+    }
+    .loading-spinner {
+        width: 60px;
+        height: 60px;
+        border: 5px solid #ff00ff;
+        border-top: 5px solid #00ffff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    .loading-text {
+        color: #fff;
+        font-size: 20px;
+        text-align: center;
+    }
+    .success-message {
+        color: #00ff00;
+        font-size: 28px;
+        text-align: center;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+    .countdown {
+        color: #ff00ff;
+        font-size: 48px;
+        font-weight: bold;
+        margin-top: 20px;
+        animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+    .countdown-text {
+        color: #fff;
+        font-size: 18px;
+        margin-top: 10px;
+    }
+    
+    /* Placeholder color */
+    ::-webkit-input-placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+    :-ms-input-placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="loading-overlay" id="loading-overlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text" id="loading-text">Procesando registro...</div>
+    <div class="success-message" id="success-message" style="display: none;">✅ USUARIO GUARDADO</div>
+    <div class="countdown" id="countdown-number" style="display: none;">10</div>
+    <div class="countdown-text" id="countdown-text" style="display: none;">Redirigiendo...</div>
+</div>
+
+<div class="register-container">
+    <h1>REGISTRO</h1>
+    
+    <form method="post" id="register-form">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label>🎮 USUARIO</label>
+            <input type="text" name="username" required placeholder="Elige tu nombre de usuario">
+        </div>
+        
+        <div class="form-group">
+            <label>📧 EMAIL</label>
+            <input type="email" name="email" required placeholder="tucorreo@ejemplo.com">
+        </div>
+        
+        <div class="form-group">
+            <label>📱 TELÉFONO (10 dígitos)</label>
+            <input type="tel" name="phone" required maxlength="10" placeholder="3001234567">
+        </div>
+        
+        <label>🎂 FECHA DE NACIMIENTO</label>
+        <div class="birth-date">
+            <select name="birth_year" required>
+                <option value="" disabled selected>AÑO</option>
+                {% for year in years %}
+                <option value="{{ year }}">{{ year }}</option>
+                {% endfor %}
+            </select>
+            <select name="birth_month" required>
+                <option value="" disabled selected>MES</option>
+                {% for month in months %}
+                <option value="{{ month }}">{{ month }}</option>
+                {% endfor %}
+            </select>
+            <select name="birth_day" required>
+                <option value="" disabled selected>DÍA</option>
+                {% for day in days %}
+                <option value="{{ day }}">{{ day }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>🔒 CONTRASEÑA (mínimo 4 caracteres)</label>
+            <input type="password" name="password" required minlength="4" placeholder="••••••••">
+        </div>
+        
+        <div class="form-group">
+            <label>✅ CONFIRMAR CONTRASEÑA</label>
+            <input type="password" name="confirm_password" required placeholder="••••••••">
+        </div>
+        
+        <button type="submit" class="btn">⚡ CREAR CUENTA ⚡</button>
+    </form>
+    
+    <div class="login-link">
+        ¿Ya tienes cuenta? <a href="{% url 'login' %}">INICIAR SESIÓN</a>
+    </div>
+</div>
+
+<script>
+    const audio = new Audio("{% static 'audio/registro.mp3' %}");
+    audio.volume = 0.5;
+    
+    const overlay = document.getElementById('loading-overlay');
+    const loadingText = document.getElementById('loading-text');
+    const successMsg = document.getElementById('success-message');
+    const countdownNumber = document.getElementById('countdown-number');
+    const countdownText = document.getElementById('countdown-text');
+    
+    document.querySelector('input[name="phone"]').addEventListener('input', function(e) {
+        this.value = this.value.replace(/\D/g, '').slice(0, 10);
+    });
+    
+    document.getElementById('register-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const phone = document.querySelector('input[name="phone"]').value;
+        const password = document.querySelector('input[name="password"]').value;
+        const confirm = document.querySelector('input[name="confirm_password"]').value;
+        
+        if (phone.length !== 10) {
+            alert('📱 El teléfono debe tener exactamente 10 dígitos');
+            return;
+        }
+        if (password.length < 4) {
+            alert('🔒 La contraseña debe tener al menos 4 caracteres');
+            return;
+        }
+        if (password !== confirm) {
+            alert('❌ Las contraseñas no coinciden');
+            return;
+        }
+        
+        overlay.classList.add('show');
+        loadingText.textContent = 'Procesando registro...';
+        successMsg.style.display = 'none';
+        countdownNumber.style.display = 'none';
+        countdownText.style.display = 'none';
+        
+        fetch(window.location.href, {
+            method: 'POST',
+            body: new FormData(document.getElementById('register-form')),
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                audio.play();
+                loadingText.textContent = '✅ ¡REGISTRO EXITOSO!';
+                successMsg.style.display = 'block';
+                countdownNumber.style.display = 'block';
+                countdownText.style.display = 'block';
+                
+                let seconds = 10;
+                countdownNumber.textContent = seconds;
+                
+                const interval = setInterval(() => {
+                    seconds--;
+                    countdownNumber.textContent = seconds;
+                    if (seconds <= 0) {
+                        clearInterval(interval);
+                        window.location.href = "{% url 'home' %}";
+                    }
+                }, 1000);
+            } else {
+                loadingText.textContent = '❌ Error: ' + (data.error || 'Error desconocido');
+                setTimeout(() => overlay.classList.remove('show'), 3000);
+            }
+        })
+        .catch(error => {
+            loadingText.textContent = '❌ Error en el registro';
+            setTimeout(() => overlay.classList.remove('show'), 3000);
+        });
+    });
+</script>
+{% endblock %}

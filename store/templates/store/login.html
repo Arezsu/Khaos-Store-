@@ -1,0 +1,139 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block body_class %}minimal-header{% endblock %}
+{% block title %}Iniciar Sesión{% endblock %}
+{% block overlay_class %}blur{% endblock %}
+
+{% block extra_css %}
+<style>
+    .login-container {
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(15px);
+        border: 2px solid;
+        border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
+        border-radius: 20px;
+        padding: 40px;
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+        box-shadow: 0 0 50px rgba(255, 0, 255, 0.3);
+    }
+    h1 {
+        text-align: center;
+        font-family: 'Press Start 2P', cursive;
+        font-size: 24px;
+        margin-bottom: 30px;
+        background: linear-gradient(45deg, #ff00ff, #00ffff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    label {
+        display: block;
+        margin-bottom: 5px;
+        color: #ff00ff;
+        font-weight: bold;
+    }
+    input {
+        width: 100%;
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid #ff00ff;
+        border-radius: 10px;
+        color: #fff;
+        font-size: 16px;
+        transition: all 0.3s;
+    }
+    input:focus {
+        outline: none;
+        box-shadow: 0 0 20px #ff00ff;
+        border-color: #00ffff;
+    }
+    .btn {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(45deg, #ff00ff, #00ffff);
+        border: none;
+        border-radius: 10px;
+        color: #000;
+        font-weight: bold;
+        font-size: 18px;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: all 0.3s;
+    }
+    .btn:hover {
+        transform: scale(1.02);
+        box-shadow: 0 0 30px #ff00ff;
+    }
+    .reset-link, .register-link {
+        text-align: center;
+        margin-top: 20px;
+    }
+    .reset-link a, .register-link a {
+        color: #00ffff;
+        text-decoration: none;
+        font-size: 14px;
+    }
+    .reset-link a:hover, .register-link a:hover {
+        text-shadow: 0 0 10px #00ffff;
+    }
+    .messages {
+        margin-bottom: 20px;
+    }
+    .message {
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+    .message.error {
+        background: rgba(255, 0, 0, 0.2);
+        border: 1px solid #ff0000;
+        color: #ff0000;
+    }
+    .message.success {
+        background: rgba(0, 255, 0, 0.2);
+        border: 1px solid #00ff00;
+        color: #00ff00;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <h1>INICIAR SESIÓN</h1>
+    
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>USUARIO</label>
+            <input type="text" name="username" required>
+        </div>
+        <div class="form-group">
+            <label>CONTRASEÑA</label>
+            <input type="password" name="password" required>
+        </div>
+        <button type="submit" class="btn">INGRESAR</button>
+    </form>
+    
+    <div class="reset-link">
+        <a href="{% url 'password_reset' %}">¿Olvidaste tu contraseña?</a>
+    </div>
+    
+    <div class="register-link">
+        ¿No tienes cuenta? <a href="{% url 'register' %}">REGÍSTRATE</a>
+    </div>
+</div>
+{% endblock %}

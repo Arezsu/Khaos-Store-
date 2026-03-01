@@ -1,0 +1,514 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KHAOS STORE - {% block title %}Tienda Gamer{% endblock %}</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+        }
+
+        .overlay.blur {
+            backdrop-filter: blur(8px);
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: transparent;
+            min-height: 100vh;
+            color: #fff;
+            position: relative;
+        }
+
+        /* Ocultar header normal en la pagina de inicio estilo PS5 */
+        body.ps5-home .header {
+            display: none;
+        }
+
+        body.ps5-home .main {
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body.ps5-home .footer {
+            display: none;
+        }
+
+        /* Header normal (para otras paginas) */
+        .header {
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            border-bottom: 2px solid;
+            border-image: linear-gradient(90deg, #ff00ff, #00ffff) 1;
+            padding: 0.6rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .logo {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 20px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 0.4rem 0.8rem;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .nav-links a:hover {
+            text-shadow: 0 0 10px #ff00ff;
+        }
+
+        .user-menu {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.4rem 1rem;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 13px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            color: #000;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #ff00ff;
+            color: #ff00ff;
+        }
+
+        .btn-outline:hover {
+            background: #ff00ff;
+            color: #000;
+        }
+
+        .cart-btn {
+            position: relative;
+        }
+        .cart-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #ff00ff;
+            color: #000;
+            border-radius: 50%;
+            padding: 2px 5px;
+            font-size: 9px;
+            font-weight: bold;
+        }
+
+        .main {
+            max-width: 1400px;
+            margin: 1.5rem auto;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 10;
+            min-height: calc(100vh - 120px);
+        }
+
+        .messages {
+            max-width: 1400px;
+            margin: 0.5rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .message {
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+            text-align: center;
+            backdrop-filter: blur(5px);
+            font-size: 14px;
+        }
+
+        .message.success {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+        }
+
+        .message.error {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid #ff0000;
+            color: #ff0000;
+        }
+
+        .footer {
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            border-top: 2px solid;
+            border-image: linear-gradient(90deg, #ff00ff, #00ffff) 1;
+            padding: 1.5rem 2rem 0.8rem;
+            margin-top: 2rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .footer-section h3 {
+            color: #ff00ff;
+            margin-bottom: 0.8rem;
+            font-size: 14px;
+        }
+
+        .footer-section p, .footer-section ul li {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.3rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            font-size: 1.4rem;
+        }
+
+        .social-links a {
+            color: #fff;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            color: #ff00ff;
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 0, 255, 0.3);
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .minimal-header .header {
+            padding: 0.4rem 2rem;
+        }
+        .minimal-header .logo {
+            font-size: 18px;
+        }
+        .minimal-header .btn {
+            padding: 0.3rem 0.8rem;
+            font-size: 12px;
+        }
+
+        /* Modal del tutorial */
+        .tutorial-modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            justify-content: center;
+            align-items: center;
+        }
+        .tutorial-modal.show {
+            display: flex;
+        }
+        .tutorial-modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 900px;
+            background: #000;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 3px solid #ff00ff;
+            box-shadow: 0 0 50px rgba(255, 0, 255, 0.5);
+        }
+        .tutorial-modal-header {
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .tutorial-modal-header h3 {
+            color: #000;
+            margin: 0;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+        }
+        .tutorial-close {
+            color: #000;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            line-height: 1;
+        }
+        .tutorial-close:hover {
+            transform: scale(1.2);
+        }
+        .tutorial-video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+        }
+        .tutorial-video-container iframe,
+        .tutorial-video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .user-menu {
+                justify-content: center;
+            }
+            .main {
+                padding: 0 1rem;
+                margin: 1rem auto;
+            }
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .social-links {
+                justify-content: center;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+    <video autoplay muted loop playsinline class="video-background">
+        <source src="{% static 'videos/gow.mp4' %}" type="video/mp4">
+        Tu navegador no soporta videos.
+    </video>
+    <div class="overlay {% block overlay_class %}{% endblock %}"></div>
+
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">KHAOS_STORE</div>
+            <div class="nav-links">
+                <a href="{% url 'home' %}">INICIO</a>
+            </div>
+            <div class="user-menu">
+                <a href="{% url 'cart_view' %}" class="btn btn-outline cart-btn">
+                    CARRITO
+                    {% if cart_total_items > 0 %}
+                        <span class="cart-badge">{{ cart_total_items }}</span>
+                    {% endif %}
+                </a>
+                
+                {% if user.is_authenticated %}
+                    <span style="font-size: 13px;">{{ user.username }}</span>
+                    <a href="{% url 'profile' %}" class="btn btn-outline">PERFIL</a>
+                    <a href="{% url 'logout' %}" class="btn btn-outline">SALIR</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-outline">INGRESAR</a>
+                    <a href="{% url 'register' %}" class="btn btn-primary">REGISTRO</a>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <main class="main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>KHAOS STORE</h3>
+                <p>La tienda gamer mas epica</p>
+            </div>
+            <div class="footer-section">
+                <h3>CONTACTO</h3>
+                <ul>
+                    <li>soportekhaosstore@gmail.com</li>
+                    <li>333 7452514</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>SIGUENOS</h3>
+                <div class="social-links">
+                    <a href="https://www.instagram.com/khaos_storecol/" target="_blank">Instagram</a>
+                    <a href="https://wa.me/qr/YLR2HUTBBIQLO1" target="_blank">WhatsApp</a>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            2026 KHAOS STORE
+        </div>
+    </footer>
+
+    <!-- Modal del tutorial -->
+    <div id="tutorialModal" class="tutorial-modal">
+        <div class="tutorial-modal-content">
+            <div class="tutorial-modal-header">
+                <h3>COMO ACTIVAR TU JUEGO EN PLAYSTATION</h3>
+                <button class="tutorial-close" onclick="closeTutorialModal()">X</button>
+            </div>
+            <div id="videoContainer" class="tutorial-video-container">
+                <!-- El video se carga dinamicamente -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var currentVideo = null;
+
+        function openTutorialModal() {
+            var modal = document.getElementById('tutorialModal');
+            var container = document.getElementById('videoContainer');
+            
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            var video = document.createElement('video');
+            video.id = 'tutorialVideo';
+            video.controls = true;
+            video.autoplay = true;
+            video.style.width = '100%';
+            video.style.height = '100%';
+            
+            var source = document.createElement('source');
+            source.src = 'https://res.cloudinary.com/dxbsu1sud/video/upload/v1775327843/Video_Project_i3a4dj.mp4';
+            source.type = 'video/mp4';
+            
+            video.appendChild(source);
+            container.appendChild(video);
+            
+            currentVideo = video;
+            
+            modal.classList.add('show');
+            
+            video.play().catch(function(error) {
+                console.log("Error al reproducir: " + error);
+            });
+        }
+
+        function closeTutorialModal() {
+            var modal = document.getElementById('tutorialModal');
+            
+            if (currentVideo) {
+                currentVideo.pause();
+                currentVideo.currentTime = 0;
+                currentVideo = null;
+            }
+            
+            var container = document.getElementById('videoContainer');
+            if (container) {
+                container.innerHTML = '';
+            }
+            
+            modal.classList.remove('show');
+        }
+        
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                var modal = document.getElementById('tutorialModal');
+                if (modal.classList.contains('show')) {
+                    closeTutorialModal();
+                }
+            }
+        });
+        
+        window.onclick = function(event) {
+            var modal = document.getElementById('tutorialModal');
+            if (event.target === modal) {
+                closeTutorialModal();
+            }
+        }
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
