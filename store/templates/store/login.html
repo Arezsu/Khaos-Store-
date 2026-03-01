@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - KHAOS STORE</title>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            color: #fff;
+        }
+        .login-container {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid;
+            border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 0 50px rgba(255, 0, 255, 0.3);
+        }
+        h1 {
+            text-align: center;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 24px;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ff00ff;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #ff00ff;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 16px;
+        }
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 20px #ff00ff;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            font-weight: bold;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px #ff00ff;
+        }
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .register-link a {
+            color: #00ffff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>INICIAR SESIÓN</h1>
+        
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>USUARIO</label>
+                <input type="text" name="username" required>
+            </div>
+            <div class="form-group">
+                <label>CONTRASEÑA</label>
+                <input type="password" name="password" required>
+            </div>
+            <button type="submit" class="btn">INGRESAR</button>
+        </form>
+        
+        <div class="register-link">
+            ¿No tienes cuenta? <a href="{% url 'register' %}">REGISTRATE</a>
+        </div>
+    </div>
+</body>
+</html>

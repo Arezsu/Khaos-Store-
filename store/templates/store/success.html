@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>¡Pago Exitoso! - KHAOS STORE</title>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            color: #fff;
+        }
+        .success-container {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid;
+            border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
+            border-radius: 20px;
+            padding: 50px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(255, 0, 255, 0.3);
+        }
+        .success-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: bounce 1s ease-in-out;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        h1 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 24px;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .order-number {
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+        .order-number-label {
+            font-size: 14px;
+            color: #000;
+            margin-bottom: 5px;
+        }
+        .order-number-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #000;
+            font-family: monospace;
+            letter-spacing: 2px;
+        }
+        .message {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .email-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #ff00ff;
+        }
+        .btn {
+            display: inline-block;
+            padding: 16px 40px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            font-weight: bold;
+            font-size: 18px;
+            text-decoration: none;
+            transition: all 0.3s;
+            margin: 10px;
+        }
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px #ff00ff;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #ff00ff;
+            color: #ff00ff;
+        }
+        .btn-outline:hover {
+            background: #ff00ff;
+            color: #000;
+        }
+        .countdown {
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-icon">✅</div>
+        <h1>¡PAGO EXITOSO!</h1>
+        
+        <div class="order-number">
+            <div class="order-number-label">NÚMERO DE ORDEN</div>
+            <div class="order-number-value">#{{ order_id }}</div>
+        </div>
+        
+        <div class="email-icon">📧</div>
+        
+        <div class="message">
+            <p>Hemos enviado la confirmación a tu correo electrónico.</p>
+            <p><strong>En los próximos segundos recibirás un correo con la key de tu juego.</strong></p>
+            <p style="font-size: 12px; margin-top: 10px;">Si no lo ves en tu bandeja de entrada, revisa spam.</p>
+        </div>
+        
+        <div>
+            <a href="{% url 'home' %}" class="btn">VOLVER A LA TIENDA</a>
+            <a href="{% url 'profile' %}" class="btn btn-outline">VER MIS COMPRAS</a>
+        </div>
+        
+        <div class="countdown">
+            ⏳ Redirigiendo en <span id="timer">10</span> segundos...
+        </div>
+    </div>
+    
+    <script>
+        // Contador regresivo
+        let seconds = 10;
+        const timer = document.getElementById('timer');
+        
+        const countdown = setInterval(() => {
+            seconds--;
+            timer.textContent = seconds;
+            
+            if (seconds <= 0) {
+                clearInterval(countdown);
+                window.location.href = "{% url 'home' %}";
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

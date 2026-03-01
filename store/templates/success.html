@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Pago exitoso! - Khaos Store</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .success-container {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .success-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 2em;
+        }
+        .order-details {
+            background: #f9f9f9;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 30px 0;
+        }
+        .order-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        .order-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .message {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: opacity 0.3s ease;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        .continue-shopping {
+            margin-top: 20px;
+        }
+        .continue-shopping a {
+            color: #999;
+            text-decoration: none;
+            font-size: 0.9em;
+        }
+        .continue-shopping a:hover {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-icon">✅</div>
+        <h1>¡Pago exitoso!</h1>
+        <p class="message">Tu compra se ha realizado correctamente. Recibirás un correo con los detalles de tu pedido.</p>
+        
+        <div class="order-details">
+            <div class="order-label">Número de orden</div>
+            <div class="order-number">#{{ order_id }}</div>
+        </div>
+
+        <a href="{% url 'home' %}" class="btn">Volver a la tienda</a>
+        
+        <div class="continue-shopping">
+            <a href="{% url 'home' %}">← Seguir comprando</a>
+        </div>
+    </div>
+</body>
+</html>

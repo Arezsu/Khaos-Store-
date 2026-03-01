@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Checkout - KHAOS STORE</title>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            color: #fff;
+        }
+        .checkout-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid;
+            border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 0 50px rgba(255, 0, 255, 0.3);
+        }
+        h1 {
+            text-align: center;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 24px;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .product-summary {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 20px;
+        }
+        .product-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid #ff00ff;
+        }
+        .product-details {
+            flex: 1;
+        }
+        .product-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ff00ff;
+            margin-bottom: 5px;
+        }
+        .product-price {
+            font-size: 24px;
+            color: #00ffff;
+            font-weight: bold;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ff00ff;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #ff00ff;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            box-shadow: 0 0 20px #ff00ff;
+            border-color: #00ffff;
+        }
+        select option {
+            background: #000;
+        }
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .payment-method {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #ff00ff;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .payment-method:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 30px #ff00ff;
+        }
+        .payment-method.selected {
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            border-color: #fff;
+        }
+        .payment-method.selected span {
+            color: #000;
+        }
+        .payment-method span {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .payment-icon {
+            font-size: 32px;
+        }
+        .total {
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: right;
+            margin: 30px 0;
+        }
+        .total-label {
+            font-size: 18px;
+            color: #000;
+        }
+        .total-amount {
+            font-size: 36px;
+            font-weight: bold;
+            color: #000;
+            margin-left: 15px;
+        }
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            font-weight: bold;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px #ff00ff;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #00ffff;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-shadow: 0 0 10px #00ffff;
+        }
+        .card-details {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+        }
+        .card-details.show {
+            display: block;
+        }
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="checkout-container">
+        <h1>CHECKOUT</h1>
+        
+        <div class="product-summary">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+            <div class="product-details">
+                <div class="product-name">{{ product.name }}</div>
+                <div class="product-price">${{ product.price }}</div>
+                <p>{{ product.description|truncatewords:20 }}</p>
+            </div>
+        </div>
+        
+        <form method="post" action="{% url 'process_payment' product.id %}">
+            {% csrf_token %}
+            
+            <h2>INFORMACIÓN DE CONTACTO</h2>
+            <div class="form-group">
+                <label>NOMBRE COMPLETO</label>
+                <input type="text" name="name" required value="{{ user.get_full_name }}">
+            </div>
+            
+            <div class="row">
+                <div class="form-group">
+                    <label>EMAIL</label>
+                    <input type="email" name="email" required value="{{ user.email }}">
+                </div>
+                <div class="form-group">
+                    <label>TELÉFONO</label>
+                    <input type="text" name="phone" required>
+                </div>
+            </div>
+            
+            <h2>DIRECCIÓN DE ENVÍO</h2>
+            <div class="form-group">
+                <label>DIRECCIÓN</label>
+                <textarea name="address" required rows="2"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>CIUDAD</label>
+                <input type="text" name="city" required>
+            </div>
+            
+            <h2>MÉTODO DE PAGO</h2>
+            <input type="hidden" name="payment_method" id="selected_payment" value="CARD">
+            
+            <div class="payment-methods">
+                <div class="payment-method selected" onclick="selectPayment('CARD', this)">
+                    <div class="payment-icon">💳</div>
+                    <span>TARJETA</span>
+                </div>
+                <div class="payment-method" onclick="selectPayment('PAYPAL', this)">
+                    <div class="payment-icon">🅿️</div>
+                    <span>PAYPAL</span>
+                </div>
+                <div class="payment-method" onclick="selectPayment('NEQUI', this)">
+                    <div class="payment-icon">📱</div>
+                    <span>NEQUI</span>
+                </div>
+            </div>
+            
+            <div class="card-details" id="cardDetails">
+                <div class="form-group">
+                    <label>NÚMERO DE TARJETA</label>
+                    <input type="text" placeholder="1234 5678 9012 3456">
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label>FECHA EXP</label>
+                        <input type="text" placeholder="MM/AA">
+                    </div>
+                    <div class="form-group">
+                        <label>CVV</label>
+                        <input type="text" placeholder="123">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>NOMBRE EN TARJETA</label>
+                    <input type="text">
+                </div>
+            </div>
+            
+            <div class="total">
+                <span class="total-label">TOTAL A PAGAR:</span>
+                <span class="total-amount">${{ product.price }}</span>
+            </div>
+            
+            <button type="submit" class="btn">PAGAR AHORA</button>
+        </form>
+        
+        <a href="{% url 'home' %}" class="back-link">← SEGUIR COMPRANDO</a>
+    </div>
+    
+    <script>
+        function selectPayment(method, element) {
+            // Actualizar campo oculto
+            document.getElementById('selected_payment').value = method;
+            
+            // Quitar selected de todos
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // Agregar selected al elegido
+            element.classList.add('selected');
+            
+            // Mostrar/ocultar detalles de tarjeta
+            const cardDetails = document.getElementById('cardDetails');
+            if (method === 'CARD') {
+                cardDetails.classList.add('show');
+            } else {
+                cardDetails.classList.remove('show');
+            }
+        }
+    </script>
+</body>
+</html>
