@@ -4,149 +4,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>¡Compra Exitosa! - KHAOS STORE</title>
+    <title>Iniciar Sesión - KHAOS STORE</title>
     <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0;
-            padding: 20px;
-            color: #fff;
-        }
-        
-        .success-container {
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid;
-            border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
-            border-radius: 20px;
-            padding: 50px;
-            width: 100%;
-            max-width: 500px;
-            text-align: center;
-        }
-        
-        .success-icon {
-            font-size: 80px;
-            margin-bottom: 20px;
-            animation: bounce 1s ease;
-        }
-        
-        @keyframes bounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-        
-        h1 {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 24px;
-            margin-bottom: 20px;
-            background: linear-gradient(45deg, #ff00ff, #00ffff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .order-number {
-            background: rgba(255, 0, 255, 0.2);
-            padding: 20px;
-            border-radius: 15px;
-            margin: 30px 0;
-            border: 1px solid #ff00ff;
-        }
-        
-        .order-number-label {
-            font-size: 14px;
-            color: #ff00ff;
-            margin-bottom: 5px;
-        }
-        
-        .order-number-value {
-            font-size: 20px;
-            font-weight: bold;
-            color: #00ffff;
-            font-family: monospace;
-            letter-spacing: 2px;
-        }
-        
-        .message {
-            color: rgba(255, 255, 255, 0.9);
-            line-height: 1.6;
-            margin-bottom: 30px;
-        }
-        
-        .btn {
-            display: inline-block;
-            padding: 16px 40px;
-            background: linear-gradient(45deg, #ff00ff, #00ffff);
-            border: none;
-            border-radius: 10px;
-            color: #000;
-            font-weight: bold;
-            font-size: 18px;
-            text-decoration: none;
-            transition: all 0.3s;
-            margin: 10px;
-        }
-        
-        .btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px #ff00ff;
-        }
-        
-        .btn-outline {
-            background: transparent;
-            border: 2px solid #ff00ff;
-            color: #ff00ff;
-        }
-        
-        .btn-outline:hover {
-            background: #ff00ff;
-            color: #000;
-        }
-        
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 18px;
-            }
-            
-            .btn {
-                display: block;
-                margin: 10px 0;
-            }
-        }
+        /* (mismos estilos) */
     </style>
 </head>
 <body>
-    <div class="success-container">
-        <div class="success-icon">✅</div>
-        <h1>¡COMPRA EXITOSA!</h1>
+    <div class="login-container">
+        <h1>INICIAR SESIÓN</h1>
         
-        <div class="order-number">
-            <div class="order-number-label">NÚMERO DE ORDEN</div>
-            <div class="order-number-value">#{{ order_id }}</div>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message error">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        
+        {% if request.GET.next %}
+        <div class="info-message">
+            🔒 Necesitas iniciar sesión para continuar
+        </div>
+        {% endif %}
+        
+        <!-- IMPORTANTE: action apunta a 'login' que es el nombre de la URL -->
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
+            
+            <div class="form-group">
+                <label>USUARIO</label>
+                <input type="text" name="username" required autofocus>
+            </div>
+            
+            <div class="form-group">
+                <label>CONTRASEÑA</label>
+                <input type="password" name="password" required>
+            </div>
+            
+            <button type="submit" class="btn">INGRESAR</button>
+        </form>
+        
+        <div class="register-link">
+            ¿No tienes cuenta? <a href="{% url 'register' %}?next={{ request.GET.next }}">REGÍSTRATE</a>
         </div>
         
-        <div class="message">
-            <p>Hemos enviado la confirmación a tu correo electrónico.</p>
-            <p>En los próximos minutos recibirás la key de tu juego.</p>
-            <p style="font-size: 12px; margin-top: 20px;">💡 Revisa tu bandeja de spam</p>
-        </div>
-        
-        <div>
-            <a href="{% url 'home' %}" class="btn">🎮 SEGUIR COMPRANDO</a>
-            <a href="{% url 'profile' %}" class="btn btn-outline">📦 VER MIS COMPRAS</a>
-        </div>
+        <a href="{% url 'home' %}" class="back-link">← VOLVER</a>
     </div>
 </body>
 </html>
