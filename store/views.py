@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Product, Order, UserProfile
@@ -13,16 +13,20 @@ def home(request):
 
 def register(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        email = request.POST['email']
-        password = request.POST['password']
-        confirm_password = request.POST['confirm_password']
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
         phone = request.POST.get('phone', '')
         birth_year = request.POST.get('birth_year')
         birth_month = request.POST.get('birth_month')
         birth_day = request.POST.get('birth_day')
         
-        # Validaciones
+        # Validaciones básicas
+        if not username or not email or not password:
+            messages.error(request, 'Todos los campos son obligatorios')
+            return redirect('register')
+        
         if password != confirm_password:
             messages.error(request, 'Las contraseñas no coinciden')
             return redirect('register')
@@ -47,7 +51,7 @@ def register(request):
             if age < 18:
                 messages.error(request, 'Debes ser mayor de 18 años para registrarte')
                 return redirect('register')
-        except:
+        except (ValueError, TypeError):
             messages.error(request, 'Fecha de nacimiento inválida')
             return redirect('register')
         
@@ -65,9 +69,11 @@ def register(request):
             birth_date=birth_date
         )
         
+        # Iniciar sesión automáticamente
         login(request, user)
         messages.success(request, '¡Registro exitoso! Bienvenido a KHAOS STORE')
         
+        # Redirigir a la página anterior si existe
         next_url = request.POST.get('next') or request.GET.get('next')
         if next_url:
             return redirect(next_url)
@@ -82,41 +88,33 @@ def checkout(request, product_id):
 
 @login_required(login_url='login')
 def process_payment(request, product_id):
-    # SOLO ACEPTAR POST
+    # Solo POST
     if request.method != 'POST':
         return redirect('home')
     
     try:
-        print("=" * 50)
-        print("🔍 INICIANDO PROCESO DE PAGO")
-        
-        # Obtener producto
         product = get_object_or_404(Product, id=product_id)
         
-        # Verificar stock
+        # Validar stock
         if product.stock <= 0:
             messages.error(request, 'Producto agotado')
             return redirect('home')
         
-        # VALIDAR CAMPOS OBLIGATORIOS
+        # Validar campos
         name = request.POST.get('name')
         email = request.POST.get('email')
         phone = request.POST.get('phone')
         payment_method = request.POST.get('payment_method', 'CARD')
         
-        if not name:
-            messages.error(request, 'El nombre es obligatorio')
+        if not name or not email or not phone:
+            messages.error(request, 'Todos los campos son obligatorios')
             return redirect('checkout', product_id=product.id)
         
-        if not email:
-            messages.error(request, 'El email es obligatorio')
+        if len(phone) != 10 or not phone.isdigit():
+            messages.error(request, 'El teléfono debe tener 10 dígitos')
             return redirect('checkout', product_id=product.id)
         
-        if not phone or len(phone) != 10 or not phone.isdigit():
-            messages.error(request, 'El teléfono debe tener exactamente 10 dígitos')
-            return redirect('checkout', product_id=product.id)
-        
-        # Crear la orden
+        # Crear orden
         order = Order.objects.create(
             product=product,
             customer_name=name,
@@ -134,10 +132,12 @@ def process_payment(request, product_id):
         product.stock -= 1
         product.save()
         
-        # ENVIAR EMAILS
-        print("📧 Enviando emails...")
-        order.send_confirmation_email()
-        order.send_game_key()
+        # Enviar emails
+        try:
+            order.send_confirmation_email()
+            order.send_game_key()
+        except Exception as e:
+            print(f"Error en emails: {e}")
         
         # Guardar en sesión
         request.session['last_order'] = order.order_number
@@ -146,7 +146,7 @@ def process_payment(request, product_id):
         return redirect('success', order_id=order.order_number)
         
     except Exception as e:
-        print(f"❌ ERROR: {e}")
+        print(f"Error: {e}")
         messages.error(request, 'Error al procesar el pago')
         return redirect('home')
 
