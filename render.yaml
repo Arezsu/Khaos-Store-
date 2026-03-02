@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: khaos-store
+    runtime: python
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate"
+    startCommand: "gunicorn khaos_store.wsgi:application"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: khaos-store-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com,localhost,127.0.0.1"
+
+databases:
+  - name: khaos-store-db
+    databaseName: khaos_store
+    user: khaos_user
