@@ -1,8 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout - KHAOS STORE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
             font-family: 'Montserrat', sans-serif;
             background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
@@ -11,6 +20,7 @@
             padding: 20px;
             color: #fff;
         }
+        
         .checkout-container {
             max-width: 800px;
             margin: 0 auto;
@@ -22,6 +32,7 @@
             padding: 40px;
             box-shadow: 0 0 50px rgba(255, 0, 255, 0.3);
         }
+        
         h1 {
             text-align: center;
             font-family: 'Press Start 2P', cursive;
@@ -31,6 +42,15 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+        
+        h2 {
+            color: #ff00ff;
+            margin: 30px 0 20px;
+            font-size: 18px;
+            border-bottom: 1px solid #ff00ff;
+            padding-bottom: 10px;
+        }
+        
         .product-summary {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 15px;
@@ -38,39 +58,57 @@
             margin-bottom: 30px;
             display: flex;
             gap: 20px;
+            border: 1px solid #ff00ff;
         }
+        
         .product-image {
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             object-fit: cover;
             border-radius: 10px;
             border: 2px solid #ff00ff;
         }
+        
         .product-details {
             flex: 1;
         }
+        
         .product-name {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: bold;
             color: #ff00ff;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
         }
+        
         .product-price {
-            font-size: 24px;
+            font-size: 28px;
             color: #00ffff;
             font-weight: bold;
+            margin-bottom: 10px;
         }
+        
+        .product-description {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+        }
+        
         .form-group {
             margin-bottom: 20px;
         }
+        
         label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             color: #ff00ff;
+            font-weight: bold;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
+        
         input, select, textarea {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             background: rgba(255, 255, 255, 0.1);
             border: 2px solid #ff00ff;
             border-radius: 10px;
@@ -78,153 +116,251 @@
             font-size: 16px;
             transition: all 0.3s;
         }
+        
         input:focus, select:focus, textarea:focus {
             outline: none;
             box-shadow: 0 0 20px #ff00ff;
             border-color: #00ffff;
+            background: rgba(0, 0, 0, 0.5);
         }
+        
         select option {
-            background: #000;
+            background: #1a1a2e;
+            color: #fff;
         }
+        
         .payment-methods {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 15px;
             margin-bottom: 30px;
         }
+        
         .payment-method {
             background: rgba(255, 255, 255, 0.05);
             border: 2px solid #ff00ff;
             border-radius: 15px;
-            padding: 15px;
+            padding: 20px 10px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
         }
+        
         .payment-method:hover {
             transform: translateY(-5px);
             box-shadow: 0 0 30px #ff00ff;
+            background: rgba(255, 0, 255, 0.1);
         }
+        
         .payment-method.selected {
             background: linear-gradient(45deg, #ff00ff, #00ffff);
             border-color: #fff;
         }
+        
+        .payment-method.selected .payment-icon,
         .payment-method.selected span {
             color: #000;
         }
+        
+        .payment-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+            color: #ff00ff;
+        }
+        
         .payment-method span {
             display: block;
-            margin-top: 10px;
             font-weight: bold;
+            color: #fff;
         }
-        .payment-icon {
-            font-size: 32px;
-        }
+        
         .total {
             background: linear-gradient(45deg, #ff00ff, #00ffff);
-            padding: 20px;
+            padding: 25px;
             border-radius: 15px;
             text-align: right;
             margin: 30px 0;
         }
+        
         .total-label {
-            font-size: 18px;
+            font-size: 20px;
             color: #000;
+            font-weight: bold;
         }
+        
         .total-amount {
-            font-size: 36px;
+            font-size: 42px;
             font-weight: bold;
             color: #000;
-            margin-left: 15px;
+            margin-left: 20px;
         }
+        
         .btn {
             width: 100%;
-            padding: 16px;
+            padding: 18px;
             background: linear-gradient(45deg, #ff00ff, #00ffff);
             border: none;
             border-radius: 10px;
             color: #000;
             font-weight: bold;
-            font-size: 20px;
+            font-size: 22px;
             cursor: pointer;
             transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
+        
         .btn:hover {
             transform: scale(1.02);
-            box-shadow: 0 0 30px #ff00ff;
+            box-shadow: 0 0 40px #ff00ff;
         }
+        
         .back-link {
             display: block;
             text-align: center;
-            margin-top: 20px;
+            margin-top: 25px;
             color: #00ffff;
             text-decoration: none;
+            font-size: 16px;
+            transition: all 0.3s;
         }
+        
         .back-link:hover {
-            text-shadow: 0 0 10px #00ffff;
+            text-shadow: 0 0 15px #00ffff;
+            transform: translateX(-5px);
         }
+        
         .card-details {
             display: none;
-            margin-top: 20px;
-            padding: 20px;
+            margin-top: 25px;
+            padding: 25px;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 15px;
+            border: 1px solid #ff00ff;
         }
+        
         .card-details.show {
             display: block;
         }
+        
         .row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .checkout-container {
+                padding: 20px;
+            }
+            
+            .product-summary {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            
+            .product-image {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .payment-methods {
+                grid-template-columns: 1fr;
+            }
+            
+            .row {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 18px;
+            }
+            
+            .total-amount {
+                font-size: 32px;
+                display: block;
+                margin-left: 0;
+                margin-top: 10px;
+            }
+            
+            .total {
+                text-align: center;
+            }
+        }
+        
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #00ffff, #ff00ff);
         }
     </style>
 </head>
 <body>
     <div class="checkout-container">
-        <h1>CHECKOUT</h1>
+        <h1>🛒 CHECKOUT</h1>
         
         <div class="product-summary">
             <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
             <div class="product-details">
                 <div class="product-name">{{ product.name }}</div>
-                <div class="product-price">${{ product.price }}</div>
-                <p>{{ product.description|truncatewords:20 }}</p>
+                <div class="product-price">${{ product.get_price }}</div>
+                <div class="product-description">{{ product.description|truncatewords:30 }}</div>
             </div>
         </div>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div style="background: rgba(255, 0, 0, 0.2); border: 1px solid #ff00ff; padding: 10px; margin-bottom: 20px; border-radius: 10px; text-align: center;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
         
         <form method="post" action="{% url 'process_payment' product.id %}">
             {% csrf_token %}
             
-            <h2>INFORMACIÓN DE CONTACTO</h2>
+            <h2>📋 INFORMACIÓN DE CONTACTO</h2>
             <div class="form-group">
                 <label>NOMBRE COMPLETO</label>
-                <input type="text" name="name" required value="{{ user.get_full_name }}">
+                <input type="text" name="name" required placeholder="Ej: Juan Pérez" value="{{ user.get_full_name|default:'' }}">
             </div>
             
             <div class="row">
                 <div class="form-group">
                     <label>EMAIL</label>
-                    <input type="email" name="email" required value="{{ user.email }}">
+                    <input type="email" name="email" required placeholder="correo@ejemplo.com" value="{{ user.email|default:'' }}">
                 </div>
                 <div class="form-group">
                     <label>TELÉFONO</label>
-                    <input type="text" name="phone" required>
+                    <input type="tel" name="phone" required placeholder="+57 300 123 4567">
                 </div>
             </div>
             
-            <h2>DIRECCIÓN DE ENVÍO</h2>
+            <h2>📍 DIRECCIÓN DE ENVÍO</h2>
             <div class="form-group">
-                <label>DIRECCIÓN</label>
-                <textarea name="address" required rows="2"></textarea>
+                <label>DIRECCIÓN COMPLETA</label>
+                <textarea name="address" required rows="3" placeholder="Calle, número, colonia, referencia..."></textarea>
             </div>
             
             <div class="form-group">
                 <label>CIUDAD</label>
-                <input type="text" name="city" required>
+                <input type="text" name="city" required placeholder="Ej: Medellín">
             </div>
             
-            <h2>MÉTODO DE PAGO</h2>
+            <h2>💳 MÉTODO DE PAGO</h2>
             <input type="hidden" name="payment_method" id="selected_payment" value="CARD">
             
             <div class="payment-methods">
@@ -245,30 +381,30 @@
             <div class="card-details" id="cardDetails">
                 <div class="form-group">
                     <label>NÚMERO DE TARJETA</label>
-                    <input type="text" placeholder="1234 5678 9012 3456">
+                    <input type="text" name="card_number" placeholder="1234 5678 9012 3456" pattern="[0-9\s]{16,19}" title="Ingrese un número de tarjeta válido">
                 </div>
                 <div class="row">
                     <div class="form-group">
-                        <label>FECHA EXP</label>
-                        <input type="text" placeholder="MM/AA">
+                        <label>FECHA DE EXPIRACIÓN</label>
+                        <input type="text" name="card_expiry" placeholder="MM/AA" pattern="(0[1-9]|1[0-2])\/[0-9]{2}" title="Formato MM/AA">
                     </div>
                     <div class="form-group">
                         <label>CVV</label>
-                        <input type="text" placeholder="123">
+                        <input type="text" name="card_cvv" placeholder="123" pattern="[0-9]{3,4}" maxlength="4">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>NOMBRE EN TARJETA</label>
-                    <input type="text">
+                    <label>NOMBRE EN LA TARJETA</label>
+                    <input type="text" name="card_name" placeholder="Como aparece en la tarjeta">
                 </div>
             </div>
             
             <div class="total">
                 <span class="total-label">TOTAL A PAGAR:</span>
-                <span class="total-amount">${{ product.price }}</span>
+                <span class="total-amount">${{ product.get_price }}</span>
             </div>
             
-            <button type="submit" class="btn">PAGAR AHORA</button>
+            <button type="submit" class="btn">💰 PAGAR AHORA</button>
         </form>
         
         <a href="{% url 'home' %}" class="back-link">← SEGUIR COMPRANDO</a>
@@ -295,6 +431,22 @@
                 cardDetails.classList.remove('show');
             }
         }
+        
+        // Validación simple del formulario
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const paymentMethod = document.getElementById('selected_payment').value;
+            
+            if (paymentMethod === 'CARD') {
+                const cardNumber = document.querySelector('input[name="card_number"]').value;
+                const cardExpiry = document.querySelector('input[name="card_expiry"]').value;
+                const cardCvv = document.querySelector('input[name="card_cvv"]').value;
+                
+                if (!cardNumber || !cardExpiry || !cardCvv) {
+                    e.preventDefault();
+                    alert('Por favor complete todos los datos de la tarjeta');
+                }
+            }
+        });
     </script>
 </body>
 </html>
