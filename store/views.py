@@ -1,11 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import HttpResponse
 from .models import Product, Order, UserProfile
-import traceback
 
 def home(request):
     products = Product.objects.all()
@@ -59,17 +57,17 @@ def checkout(request, product_id):
 
 @login_required(login_url='login')
 def process_payment(request, product_id):
-    # Si no es POST, redirigir
+    # Solo aceptar POST
     if request.method != 'POST':
         return redirect('home')
     
     try:
         print("=" * 50)
-        print(f"🔍 INICIANDO PROCESO DE PAGO para producto ID: {product_id}")
+        print("🔍 INICIANDO PROCESO DE PAGO")
+        print(f"Producto ID: {product_id}")
         print(f"Usuario: {request.user.username}")
-        print(f"Datos POST: {request.POST}")
         
-        # Obtener el producto
+        # Obtener producto
         product = get_object_or_404(Product, id=product_id)
         print(f"✅ Producto encontrado: {product.name} - Stock: {product.stock}")
         
@@ -78,7 +76,7 @@ def process_payment(request, product_id):
             messages.error(request, 'Producto agotado')
             return redirect('home')
         
-        # Validar datos del formulario
+        # Validar campos obligatorios
         required_fields = ['name', 'email', 'phone', 'address', 'city']
         for field in required_fields:
             if not request.POST.get(field):
@@ -106,15 +104,14 @@ def process_payment(request, product_id):
         product.save()
         print(f"✅ Stock actualizado: {product.stock} unidades restantes")
         
-        # Intentar enviar emails (NO CRÍTICO - si falla, la compra igual se registra)
-        try:
-            print("📧 Intentando enviar emails...")
-            order.send_confirmation_email()
-            order.send_game_key()
-            print("✅ Emails enviados correctamente")
-        except Exception as e:
-            print(f"⚠️ Error enviando emails (NO CRÍTICO): {e}")
-            # No mostramos error al usuario porque la compra fue exitosa
+        # --------------------------------------------------
+        # EMAILS DESACTIVADOS TEMPORALMENTE PARA QUE EL PAGO FUNCIONE
+        # --------------------------------------------------
+        print("📧 Envío de emails desactivado - el pago se completa igualmente")
+        # order.send_confirmation_email()  # COMENTADO
+        # order.send_game_key()            # COMENTADO
+        print("✅ Emails omitidos por configuración temporal")
+        # --------------------------------------------------
         
         # Guardar en sesión
         request.session['last_order'] = order.order_number
@@ -123,12 +120,13 @@ def process_payment(request, product_id):
         print(f"✅ PAGO COMPLETADO EXITOSAMENTE - Orden: {order.order_number}")
         print("=" * 50)
         
-        messages.success(request, '¡Pago exitoso! Revisa tu correo para la key del juego')
+        messages.success(request, '¡Pago exitoso! La orden ha sido creada correctamente.')
         return redirect('success', order_id=order.order_number)
         
     except Exception as e:
         print("❌ ERROR CRÍTICO EN PAGO:")
         print(str(e))
+        import traceback
         traceback.print_exc()
         print("=" * 50)
         
