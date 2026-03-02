@@ -1,8 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>¡Pago Exitoso! - KHAOS STORE</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Compra Exitosa! - KHAOS STORE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
             font-family: 'Montserrat', sans-serif;
             background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
@@ -11,8 +20,10 @@
             justify-content: center;
             align-items: center;
             margin: 0;
+            padding: 20px;
             color: #fff;
         }
+        
         .success-container {
             background: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(10px);
@@ -25,15 +36,18 @@
             text-align: center;
             box-shadow: 0 0 50px rgba(255, 0, 255, 0.3);
         }
+        
         .success-icon {
             font-size: 80px;
             margin-bottom: 20px;
             animation: bounce 1s ease-in-out;
         }
+        
         @keyframes bounce {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.2); }
         }
+        
         h1 {
             font-family: 'Press Start 2P', cursive;
             font-size: 24px;
@@ -42,34 +56,35 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+        
         .order-number {
-            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            background: rgba(255, 0, 255, 0.2);
             padding: 20px;
             border-radius: 15px;
             margin: 30px 0;
+            border: 1px solid #ff00ff;
         }
+        
         .order-number-label {
             font-size: 14px;
-            color: #000;
+            color: #ff00ff;
             margin-bottom: 5px;
         }
+        
         .order-number-value {
             font-size: 20px;
             font-weight: bold;
-            color: #000;
+            color: #00ffff;
             font-family: monospace;
             letter-spacing: 2px;
         }
+        
         .message {
             color: rgba(255, 255, 255, 0.9);
             line-height: 1.6;
             margin-bottom: 30px;
         }
-        .email-icon {
-            font-size: 48px;
-            margin-bottom: 20px;
-            color: #ff00ff;
-        }
+        
         .btn {
             display: inline-block;
             padding: 16px 40px;
@@ -83,68 +98,59 @@
             transition: all 0.3s;
             margin: 10px;
         }
+        
         .btn:hover {
             transform: scale(1.05);
             box-shadow: 0 0 30px #ff00ff;
         }
+        
         .btn-outline {
             background: transparent;
             border: 2px solid #ff00ff;
             color: #ff00ff;
         }
+        
         .btn-outline:hover {
             background: #ff00ff;
             color: #000;
         }
-        .countdown {
-            margin-top: 20px;
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 14px;
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 18px;
+            }
+            
+            .success-container {
+                padding: 30px 20px;
+            }
+            
+            .btn {
+                display: block;
+                margin: 10px 0;
+            }
         }
     </style>
 </head>
 <body>
     <div class="success-container">
         <div class="success-icon">✅</div>
-        <h1>¡PAGO EXITOSO!</h1>
+        <h1>¡COMPRA EXITOSA!</h1>
         
         <div class="order-number">
             <div class="order-number-label">NÚMERO DE ORDEN</div>
             <div class="order-number-value">#{{ order_id }}</div>
         </div>
         
-        <div class="email-icon">📧</div>
-        
         <div class="message">
             <p>Hemos enviado la confirmación a tu correo electrónico.</p>
-            <p><strong>En los próximos segundos recibirás un correo con la key de tu juego.</strong></p>
-            <p style="font-size: 12px; margin-top: 10px;">Si no lo ves en tu bandeja de entrada, revisa spam.</p>
+            <p style="margin-top: 15px;">En los próximos minutos recibirás la key de tu juego.</p>
+            <p style="font-size: 12px; margin-top: 25px; color: rgba(255,255,255,0.5);">💡 Revisa tu bandeja de spam si no lo ves en la bandeja principal.</p>
         </div>
         
         <div>
-            <a href="{% url 'home' %}" class="btn">VOLVER A LA TIENDA</a>
-            <a href="{% url 'profile' %}" class="btn btn-outline">VER MIS COMPRAS</a>
-        </div>
-        
-        <div class="countdown">
-            ⏳ Redirigiendo en <span id="timer">10</span> segundos...
+            <a href="{% url 'home' %}" class="btn">🎮 SEGUIR COMPRANDO</a>
+            <a href="{% url 'profile' %}" class="btn btn-outline">📦 VER MIS COMPRAS</a>
         </div>
     </div>
-    
-    <script>
-        // Contador regresivo
-        let seconds = 10;
-        const timer = document.getElementById('timer');
-        
-        const countdown = setInterval(() => {
-            seconds--;
-            timer.textContent = seconds;
-            
-            if (seconds <= 0) {
-                clearInterval(countdown);
-                window.location.href = "{% url 'home' %}";
-            }
-        }, 1000);
-    </script>
 </body>
 </html>

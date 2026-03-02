@@ -1,8 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Perfil - KHAOS STORE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
             font-family: 'Montserrat', sans-serif;
             background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
@@ -11,10 +20,12 @@
             padding: 20px;
             color: #fff;
         }
+        
         .profile-container {
             max-width: 1200px;
             margin: 0 auto;
         }
+        
         h1 {
             font-family: 'Press Start 2P', cursive;
             font-size: 24px;
@@ -23,11 +34,13 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+        
         .profile-grid {
             display: grid;
             grid-template-columns: 300px 1fr;
             gap: 20px;
         }
+        
         .profile-sidebar {
             background: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(10px);
@@ -37,6 +50,7 @@
             padding: 20px;
             text-align: center;
         }
+        
         .avatar {
             width: 150px;
             height: 150px;
@@ -48,15 +62,18 @@
             justify-content: center;
             font-size: 60px;
         }
+        
         .username {
             font-size: 24px;
             font-weight: bold;
             margin-bottom: 10px;
         }
-        .email {
+        
+        .email, .phone, .city {
             color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
+        
         .orders-section {
             background: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(10px);
@@ -65,86 +82,191 @@
             border-radius: 20px;
             padding: 20px;
         }
+        
         .order-card {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 15px;
             padding: 20px;
             margin-bottom: 20px;
+            border-left: 5px solid #ff00ff;
+            transition: all 0.3s;
         }
+        
+        .order-card:hover {
+            transform: translateX(10px);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+        }
+        
         .order-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 0, 255, 0.3);
         }
+        
         .order-number {
             color: #ff00ff;
             font-weight: bold;
+            font-size: 18px;
         }
+        
         .order-status {
-            padding: 5px 10px;
-            border-radius: 5px;
+            padding: 5px 15px;
+            border-radius: 20px;
             font-size: 12px;
+            font-weight: bold;
         }
+        
         .status-paid {
             background: #00ff00;
             color: #000;
         }
+        
+        .status-pending {
+            background: #ffaa00;
+            color: #000;
+        }
+        
+        .status-sent {
+            background: #00ffff;
+            color: #000;
+        }
+        
+        .status-delivered {
+            background: #ff00ff;
+            color: #fff;
+        }
+        
         .order-details {
             display: flex;
-            gap: 20px;
+            justify-content: space-between;
+            align-items: center;
         }
+        
         .order-product {
-            flex: 1;
+            font-size: 18px;
+            font-weight: bold;
         }
+        
         .order-total {
-            font-size: 20px;
+            font-size: 24px;
             color: #00ffff;
             font-weight: bold;
         }
+        
+        .order-date {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
         .back-link {
             display: inline-block;
             margin-bottom: 20px;
             color: #00ffff;
             text-decoration: none;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+        
+        .back-link:hover {
+            text-shadow: 0 0 10px #00ffff;
+            transform: translateX(-5px);
+        }
+        
+        .no-orders {
+            text-align: center;
+            padding: 60px 40px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .no-orders p {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+        
+        .no-orders a {
+            color: #ff00ff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .no-orders a:hover {
+            text-shadow: 0 0 10px #ff00ff;
+        }
+        
+        @media (max-width: 768px) {
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 18px;
+            }
+            
+            .order-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .order-details {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
         }
     </style>
 </head>
 <body>
     <div class="profile-container">
-<a href="{% url 'home' %}" class="back-link">← VOLVER A LA TIENDA</a>
+        <a href="{% url 'home' %}" class="back-link">← VOLVER A LA TIENDA</a>
         
-        <h1>MI PERFIL</h1>
+        <h1>👤 MI PERFIL</h1>
         
         <div class="profile-grid">
             <div class="profile-sidebar">
                 <div class="avatar">🎮</div>
                 <div class="username">{{ user.username }}</div>
-                <div class="email">{{ user.email }}</div>
-                <div class="phone">{{ profile.phone }}</div>
+                <div class="email">📧 {{ user.email|default:"No especificado" }}</div>
+                <div class="phone">📱 {{ profile.phone|default:"No especificado" }}</div>
+                <div class="city">📍 {{ profile.city|default:"No especificado" }}</div>
             </div>
             
             <div class="orders-section">
-                <h2>MIS COMPRAS</h2>
+                <h2 style="margin-bottom: 20px;">📦 MIS COMPRAS</h2>
                 
                 {% for order in orders %}
                 <div class="order-card">
                     <div class="order-header">
-                        <span class="order-number">Orden #{{ order.order_number }}</span>
-                        <span class="order-status {% if order.status == 'PAID' %}status-paid{% endif %}">{{ order.get_status_display }}</span>
+                        <span class="order-number">#{{ order.order_number }}</span>
+                        <span class="order-status 
+                            {% if order.status == 'PAID' %}status-paid
+                            {% elif order.status == 'PENDING' %}status-pending
+                            {% elif order.status == 'SENT' %}status-sent
+                            {% elif order.status == 'DELIVERED' %}status-delivered
+                            {% endif %}">
+                            {% if order.status == 'PAID' %}✅ PAGADO
+                            {% elif order.status == 'PENDING' %}⏳ PENDIENTE
+                            {% elif order.status == 'SENT' %}📤 ENVIADO
+                            {% elif order.status == 'DELIVERED' %}📦 ENTREGADO
+                            {% else %}❌ {{ order.status }}
+                            {% endif %}
+                        </span>
                     </div>
                     <div class="order-details">
-                        <div class="order-product">
-                            <strong>{{ order.product.name }}</strong>
-                            <br>
-                            <small>{{ order.created_at|date:"d/m/Y H:i" }}</small>
-                        </div>
-                        <div class="order-total">
-                            ${{ order.total }}
-                        </div>
+                        <div class="order-product">{{ order.product.name }}</div>
+                        <div class="order-total">${{ order.total }}</div>
                     </div>
+                    <div class="order-date">{{ order.created_at|date:"d/m/Y H:i" }}</div>
                 </div>
                 {% empty %}
-                <p>No has realizado compras aún.</p>
+                <div class="no-orders">
+                    <p style="font-size: 48px; margin-bottom: 20px;">🎮</p>
+                    <p>No has realizado ninguna compra aún</p>
+                    <p style="margin-top: 20px;"><a href="{% url 'home' %}">¡Explora la tienda y consigue tus juegos!</a></p>
+                </div>
                 {% endfor %}
             </div>
         </div>
