@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Product, Order, UserProfile
@@ -148,9 +148,30 @@ def success(request, order_id):
 
 @login_required(login_url='login')
 def profile(request):
-    user_profile = UserProfile.objects.get_or_create(user=request.user)[0]
-    orders = Order.objects.filter(user=request.user).order_by('-created_at')
-    return render(request, 'store/profile.html', {
-        'profile': user_profile,
-        'orders': orders
-    })
+    try:
+        # Intentar obtener el perfil, si no existe crearlo
+        user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+        
+        # Si el perfil fue creado ahora, establecer teléfono por defecto
+        if created:
+            user_profile.phone = '0000000000'
+            user_profile.save()
+            print(f"✅ Perfil creado automáticamente para {request.user.username}")
+        
+        # Obtener órdenes del usuario
+        orders = Order.objects.filter(user=request.user).order_by('-created_at')
+        
+        return render(request, 'store/profile.html', {
+            'profile': user_profile,
+            'orders': orders
+        })
+    
+    except Exception as e:
+        print(f"❌ Error en profile: {e}")
+        messages.error(request, 'Error al cargar el perfil')
+        return redirect('home')
+
+def custom_logout(request):
+    logout(request)
+    messages.success(request, 'Has cerrado sesión correctamente')
+    return redirect('home')
