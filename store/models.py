@@ -171,8 +171,8 @@ class Order(models.Model):
             ═══════════════════════
             
             📝 INSTRUCCIONES:
-            1. Abre la plataforma correspondiente (Steam, Epic, etc.)
-            2. Ve a "Canjear código" o "Activar producto"
+            1. Abre la cuenta en tu Playstation
+            2. Creas cuenta e inicias sesion y ingresas la cuenta recuerda no compartirla si la compartes se te sera eliminada
             3. Ingresa la clave: {game_key}
             4. ¡Descarga y disfruta!
             
