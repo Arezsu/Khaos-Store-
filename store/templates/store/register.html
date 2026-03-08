@@ -206,7 +206,7 @@
             width: 100%;
         }
         
-        /* 🔴 ESTILOS PARA LA CARGA DE 10 SEGUNDOS */
+        /* ESTILOS PARA LA PANTALLA DE ESPERA */
         .loading-overlay {
             display: none;
             position: fixed;
@@ -214,7 +214,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.95);
             z-index: 1000;
             justify-content: center;
             align-items: center;
@@ -232,22 +232,30 @@
             border-top: 8px solid #00ffff;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
         
         .loading-text {
             color: #fff;
-            font-size: 24px;
+            font-size: 32px;
             font-weight: bold;
             text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px #ff00ff;
         }
         
         .loading-timer {
-            color: #ff00ff;
-            font-size: 48px;
+            color: #00ffff;
+            font-size: 72px;
             font-weight: bold;
             margin: 20px 0;
-            text-shadow: 0 0 20px #ff00ff;
+            text-shadow: 0 0 30px #00ffff;
+        }
+        
+        .loading-subtext {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 18px;
+            text-align: center;
         }
         
         @keyframes spin {
@@ -257,12 +265,12 @@
     </style>
 </head>
 <body>
-    <!-- 🔴 OVERLAY DE CARGA DE 10 SEGUNDOS -->
+    <!-- PANTALLA DE ESPERA CON CONTADOR -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner"></div>
-        <div class="loading-text">PROCESANDO REGISTRO</div>
+        <div class="loading-text">REDIRIGIENDO</div>
         <div class="loading-timer" id="loadingTimer">10</div>
-        <div class="loading-text">Reproduciendo audio personalizado...</div>
+        <div class="loading-subtext">segundos</div>
     </div>
     
     <div class="register-container">
@@ -402,7 +410,7 @@
         <a href="{% url 'home' %}" class="back-link">← VOLVER A LA TIENDA</a>
     </div>
     
-    <!-- 🔴 AUDIO PERSONALIZADO (asegúrate de tener el archivo) -->
+    <!-- AUDIO PERSONALIZADO -->
     <audio id="registroAudio" src="{% static 'audio/registro.mp3' %}" preload="auto"></audio>
     
     <script>
@@ -447,11 +455,11 @@
             }
         });
         
-        // 🔴 MANEJAR EL ENVÍO DEL FORMULARIO CON AUDIO DE 10 SEGUNDOS
+        // MANEJAR EL ENVÍO DEL FORMULARIO CON AUDIO Y CONTADOR
         registerForm.addEventListener('submit', function(e) {
-            e.preventDefault(); // Prevenir envío inmediato
+            e.preventDefault();
             
-            // Validar contraseñas
+            // Validaciones finales
             const password = document.getElementById('password').value;
             const confirm = document.getElementById('confirm_password').value;
             const phone = document.querySelector('input[name="phone"]').value;
@@ -469,7 +477,7 @@
             // Mostrar overlay de carga
             loadingOverlay.classList.add('show');
             
-            // Reproducir audio
+            // Reproducir audio personalizado
             registroAudio.currentTime = 0;
             registroAudio.play().catch(error => {
                 console.log("Error reproduciendo audio:", error);
@@ -485,7 +493,7 @@
                 
                 if (seconds <= 0) {
                     clearInterval(countdown);
-                    // Enviar el formulario después de 10 segundos
+                    // Enviar el formulario
                     registerForm.submit();
                 }
             }, 1000);

@@ -6,7 +6,6 @@ from django.contrib import messages
 from .models import Product, Order, UserProfile
 from datetime import date
 import traceback
-import time
 
 def home(request):
     products = Product.objects.all()
@@ -30,7 +29,7 @@ def register(request):
                 messages.error(request, 'Todos los campos son obligatorios')
                 return redirect('register')
             
-            # Validar longitud de contraseña (más de 3 dígitos)
+            # Validar longitud de contraseña
             if len(password) < 4:
                 messages.error(request, 'La contraseña debe tener al menos 4 caracteres')
                 return redirect('register')
@@ -63,9 +62,6 @@ def register(request):
                 messages.error(request, 'Fecha de nacimiento inválida')
                 return redirect('register')
             
-            # SIMULAR PROCESAMIENTO DE 10 SEGUNDOS PARA EL AUDIO
-            time.sleep(10)
-            
             # Crear usuario
             user = User.objects.create_user(
                 username=username,
@@ -80,10 +76,13 @@ def register(request):
                 birth_date=birth_date
             )
             
-            # Iniciar sesión automáticamente
+            # 🔴 INICIAR SESIÓN AUTOMÁTICAMENTE
             login(request, user)
             
+            # ✅ Mensaje de éxito
             messages.success(request, '🎉 ¡Registro exitoso! Bienvenido a KHAOS STORE')
+            
+            # 🔴 REDIRIGIR AL HOME
             return redirect('home')
             
         except Exception as e:
@@ -107,12 +106,10 @@ def process_payment(request, product_id):
     try:
         print("=" * 50)
         print("🔍 INICIANDO PROCESO DE PAGO")
-        print(f"Producto ID: {product_id}")
-        print(f"Usuario: {request.user.username}")
         
         # Obtener producto
         product = get_object_or_404(Product, id=product_id)
-        print(f"✅ Producto encontrado: {product.name} - Stock: {product.stock}")
+        print(f"✅ Producto encontrado: {product.name}")
         
         # Verificar stock
         if product.stock <= 0:
@@ -164,7 +161,13 @@ def process_payment(request, product_id):
             print(f"⚠️ Error en emails: {e}")
         
         request.session['last_order'] = order.order_number
-        messages.success(request, '¡Pago exitoso! Revisa tu correo')
+        
+        # ✅ MENSAJE DE PAGO EXITOSO
+        messages.success(request, '✅ ¡Pago exitoso! Tu orden ha sido procesada correctamente.')
+        
+        print("✅ PAGO COMPLETADO EXITOSAMENTE")
+        print("=" * 50)
+        
         return redirect('success', order_id=order.order_number)
         
     except Exception as e:
