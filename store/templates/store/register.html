@@ -205,9 +205,66 @@
             background: #00ff00;
             width: 100%;
         }
+        
+        /* 🔴 ESTILOS PARA LA CARGA DE 10 SEGUNDOS */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        .loading-overlay.show {
+            display: flex;
+        }
+        
+        .loading-spinner {
+            width: 80px;
+            height: 80px;
+            border: 8px solid #ff00ff;
+            border-top: 8px solid #00ffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        .loading-text {
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .loading-timer {
+            color: #ff00ff;
+            font-size: 48px;
+            font-weight: bold;
+            margin: 20px 0;
+            text-shadow: 0 0 20px #ff00ff;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
+    <!-- 🔴 OVERLAY DE CARGA DE 10 SEGUNDOS -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">PROCESANDO REGISTRO</div>
+        <div class="loading-timer" id="loadingTimer">10</div>
+        <div class="loading-text">Reproduciendo audio personalizado...</div>
+    </div>
+    
     <div class="register-container">
         <h1>REGISTRO</h1>
         
@@ -345,33 +402,15 @@
         <a href="{% url 'home' %}" class="back-link">← VOLVER A LA TIENDA</a>
     </div>
     
+    <!-- 🔴 AUDIO PERSONALIZADO (asegúrate de tener el archivo) -->
+    <audio id="registroAudio" src="{% static 'audio/registro.mp3' %}" preload="auto"></audio>
+    
     <script>
-        // ===========================================
-        // SONIDO CON TU ARCHIVO REGISTRO.MP3
-        // ===========================================
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
-            try {
-                // Crear elemento de audio con tu archivo MP3
-                const audio = new Audio("{% static 'audio/registro.mp3' %}");
-                audio.volume = 0.3; // Volumen al 30%
-                
-                // Reproducir el sonido
-                audio.play().catch(error => {
-                    console.log("Error reproduciendo audio:", error);
-                });
-                
-                console.log("✅ Sonido MP3 reproducido");
-            } catch (error) {
-                console.log("❌ Error al reproducir audio:", error);
-            }
-            
-            // El formulario se envía inmediatamente
-            return true;
-        });
-        
-        // ===========================================
-        // VALIDACIONES DEL FORMULARIO
-        // ===========================================
+        // Elementos del DOM
+        const registerForm = document.getElementById('registerForm');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingTimer = document.getElementById('loadingTimer');
+        const registroAudio = document.getElementById('registroAudio');
         
         // Validar teléfono
         document.querySelector('input[name="phone"]').addEventListener('input', function(e) {
@@ -394,7 +433,7 @@
             }
         });
         
-        // Verificar contraseñas coinciden
+        // Verificar que las contraseñas coincidan
         document.getElementById('confirm_password').addEventListener('input', function() {
             const password = document.getElementById('password').value;
             const confirm = this.value;
@@ -403,31 +442,53 @@
             if (password === confirm && password.length >= 4) {
                 matchMsg.style.display = 'block';
                 matchMsg.style.color = '#00ff00';
-                matchMsg.innerHTML = '✅ Las contraseñas coinciden';
             } else {
                 matchMsg.style.display = 'none';
             }
         });
         
-        // Validación final antes de enviar
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
+        // 🔴 MANEJAR EL ENVÍO DEL FORMULARIO CON AUDIO DE 10 SEGUNDOS
+        registerForm.addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevenir envío inmediato
+            
+            // Validar contraseñas
             const password = document.getElementById('password').value;
             const confirm = document.getElementById('confirm_password').value;
             const phone = document.querySelector('input[name="phone"]').value;
             
             if (password !== confirm) {
-                e.preventDefault();
                 alert('❌ Las contraseñas no coinciden');
                 return false;
             }
             
             if (phone.length !== 10) {
-                e.preventDefault();
                 alert('❌ El teléfono debe tener 10 dígitos');
                 return false;
             }
             
-            return true;
+            // Mostrar overlay de carga
+            loadingOverlay.classList.add('show');
+            
+            // Reproducir audio
+            registroAudio.currentTime = 0;
+            registroAudio.play().catch(error => {
+                console.log("Error reproduciendo audio:", error);
+            });
+            
+            // Contador regresivo de 10 segundos
+            let seconds = 10;
+            loadingTimer.textContent = seconds;
+            
+            const countdown = setInterval(() => {
+                seconds--;
+                loadingTimer.textContent = seconds;
+                
+                if (seconds <= 0) {
+                    clearInterval(countdown);
+                    // Enviar el formulario después de 10 segundos
+                    registerForm.submit();
+                }
+            }, 1000);
         });
     </script>
 </body>

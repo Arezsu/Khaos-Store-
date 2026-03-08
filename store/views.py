@@ -6,6 +6,7 @@ from django.contrib import messages
 from .models import Product, Order, UserProfile
 from datetime import date
 import traceback
+import time
 
 def home(request):
     products = Product.objects.all()
@@ -62,6 +63,9 @@ def register(request):
                 messages.error(request, 'Fecha de nacimiento inválida')
                 return redirect('register')
             
+            # 🔴 SIMULAR PROCESAMIENTO DE 10 SEGUNDOS PARA EL AUDIO
+            time.sleep(10)  # Esto hace que el registro demore 10 segundos
+            
             # Crear usuario
             user = User.objects.create_user(
                 username=username,
@@ -76,16 +80,13 @@ def register(request):
                 birth_date=birth_date
             )
             
-            # INICIAR SESIÓN AUTOMÁTICAMENTE (¡AHORA SÍ!)
+            # Iniciar sesión automáticamente
             login(request, user)
             
             # Mensaje de éxito
-            messages.success(request, '🎉 ¡Usuario creado exitosamente! Bienvenido a KHAOS STORE')
+            messages.success(request, '🎉 ¡Registro exitoso! Bienvenido a KHAOS STORE')
             
-            # Redirigir a home con usuario logueado
-            next_url = request.POST.get('next') or request.GET.get('next')
-            if next_url:
-                return redirect(next_url)
+            # Redirigir al home
             return redirect('home')
             
         except Exception as e:
@@ -136,7 +137,7 @@ def process_payment(request, product_id):
             payment_method=payment_method,
             total=product.get_price(),
             user=request.user,
-            status='PAID'  # Se crea como pagado directamente
+            status='PAID'
         )
         
         product.stock -= 1
@@ -164,10 +165,7 @@ def success(request, order_id):
 @login_required(login_url='login')
 def profile(request):
     try:
-        # Obtener o crear perfil automáticamente
         user_profile, created = UserProfile.objects.get_or_create(user=request.user)
-        
-        # Obtener órdenes del usuario
         orders = Order.objects.filter(user=request.user).order_by('-created_at')
         
         return render(request, 'store/profile.html', {
@@ -178,5 +176,5 @@ def profile(request):
     except Exception as e:
         print(f"❌ ERROR EN PERFIL: {e}")
         traceback.print_exc()
-        messages.error(request, 'Error al cargar el perfil. Intenta de nuevo.')
+        messages.error(request, 'Error al cargar el perfil')
         return redirect('home')
