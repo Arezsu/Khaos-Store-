@@ -63,8 +63,8 @@ def register(request):
                 messages.error(request, 'Fecha de nacimiento inválida')
                 return redirect('register')
             
-            # 🔴 SIMULAR PROCESAMIENTO DE 10 SEGUNDOS PARA EL AUDIO
-            time.sleep(10)  # Esto hace que el registro demore 10 segundos
+            # SIMULAR PROCESAMIENTO DE 10 SEGUNDOS PARA EL AUDIO
+            time.sleep(10)
             
             # Crear usuario
             user = User.objects.create_user(
@@ -83,10 +83,7 @@ def register(request):
             # Iniciar sesión automáticamente
             login(request, user)
             
-            # Mensaje de éxito
             messages.success(request, '🎉 ¡Registro exitoso! Bienvenido a KHAOS STORE')
-            
-            # Redirigir al home
             return redirect('home')
             
         except Exception as e:
@@ -108,12 +105,21 @@ def process_payment(request, product_id):
         return redirect('home')
     
     try:
-        product = get_object_or_404(Product, id=product_id)
+        print("=" * 50)
+        print("🔍 INICIANDO PROCESO DE PAGO")
+        print(f"Producto ID: {product_id}")
+        print(f"Usuario: {request.user.username}")
         
+        # Obtener producto
+        product = get_object_or_404(Product, id=product_id)
+        print(f"✅ Producto encontrado: {product.name} - Stock: {product.stock}")
+        
+        # Verificar stock
         if product.stock <= 0:
             messages.error(request, 'Producto agotado')
             return redirect('home')
         
+        # Validar campos
         name = request.POST.get('name', '').strip()
         email = request.POST.get('email', '').strip()
         phone = request.POST.get('phone', '').strip()
@@ -127,6 +133,8 @@ def process_payment(request, product_id):
             messages.error(request, 'El teléfono debe tener 10 dígitos')
             return redirect('checkout', product_id=product.id)
         
+        # Crear orden
+        print("📝 Creando orden...")
         order = Order.objects.create(
             product=product,
             customer_name=name,
@@ -139,24 +147,30 @@ def process_payment(request, product_id):
             user=request.user,
             status='PAID'
         )
+        print(f"✅ Orden creada: {order.order_number}")
         
+        # Restar stock
         product.stock -= 1
         product.save()
+        print(f"✅ Stock actualizado: {product.stock}")
         
+        # Enviar emails
         try:
+            print("📧 Enviando emails...")
             order.send_confirmation_email()
             order.send_game_key()
+            print("✅ Emails enviados")
         except Exception as e:
-            print(f"Error en emails: {e}")
+            print(f"⚠️ Error en emails: {e}")
         
         request.session['last_order'] = order.order_number
         messages.success(request, '¡Pago exitoso! Revisa tu correo')
         return redirect('success', order_id=order.order_number)
         
     except Exception as e:
-        print(f"Error en pago: {e}")
+        print(f"❌ ERROR EN PAGO: {e}")
         traceback.print_exc()
-        messages.error(request, 'Error al procesar el pago')
+        messages.error(request, 'Error al procesar el pago. Intenta de nuevo.')
         return redirect('home')
 
 def success(request, order_id):

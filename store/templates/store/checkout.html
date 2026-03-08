@@ -27,10 +27,12 @@
             max-width: 600px;
             margin: 0 auto;
             background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
             border: 2px solid;
             border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
             border-radius: 20px;
             padding: 40px;
+            box-shadow: 0 0 50px rgba(255, 0, 255, 0.3);
         }
         
         h1 {
@@ -54,8 +56,8 @@
         }
         
         .product-image {
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             object-fit: cover;
             border-radius: 10px;
             border: 2px solid #ff00ff;
@@ -66,16 +68,17 @@
         }
         
         .product-name {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: bold;
             color: #ff00ff;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
         }
         
         .product-price {
-            font-size: 24px;
+            font-size: 28px;
             color: #00ffff;
             font-weight: bold;
+            margin-bottom: 10px;
         }
         
         .form-group {
@@ -97,11 +100,14 @@
             border-radius: 10px;
             color: #fff;
             font-size: 16px;
+            transition: all 0.3s;
         }
         
         input:focus, select:focus {
             outline: none;
             box-shadow: 0 0 20px #ff00ff;
+            border-color: #00ffff;
+            background: rgba(0, 0, 0, 0.5);
         }
         
         .payment-methods {
@@ -197,27 +203,57 @@
         .back-link:hover {
             text-shadow: 0 0 10px #00ffff;
         }
+        
+        .messages {
+            margin-bottom: 20px;
+        }
+        
+        .message {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .message.error {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid #ff0000;
+            color: #ff0000;
+        }
+        
+        .message.success {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+            color: #00ff00;
+        }
     </style>
 </head>
 <body>
     <div class="checkout-container">
         <h1>CHECKOUT</h1>
         
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
         <div class="product-summary">
-            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+            {% else %}
+                <div class="product-image" style="background: #333; display: flex; align-items: center; justify-content: center;">
+                    <span style="color: #666;">Sin imagen</span>
+                </div>
+            {% endif %}
             <div class="product-details">
                 <div class="product-name">{{ product.name }}</div>
                 <div class="product-price">${{ product.get_price }}</div>
+                <p>{{ product.description|truncatewords:20 }}</p>
             </div>
         </div>
-        
-        {% if messages %}
-            {% for message in messages %}
-                <div style="background: rgba(255, 0, 0, 0.2); border: 1px solid #ff00ff; padding: 10px; margin-bottom: 20px;">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
         
         <form method="post" action="{% url 'process_payment' product.id %}" id="payment-form">
             {% csrf_token %}
@@ -236,8 +272,7 @@
             
             <div class="form-group">
                 <label>TELÉFONO (10 dígitos)</label>
-                <input type="tel" name="phone" required placeholder="3001234567" maxlength="10">
-                <small style="color: #ff00ff;">10 dígitos, solo números</small>
+                <input type="tel" name="phone" required maxlength="10" placeholder="3001234567">
             </div>
             
             <h2 style="margin: 30px 0 20px;">💳 MÉTODO DE PAGO</h2>
@@ -283,14 +318,6 @@
         // Validar teléfono
         document.querySelector('input[name="phone"]').addEventListener('input', function(e) {
             this.value = this.value.replace(/\D/g, '').slice(0, 10);
-        });
-        
-        document.getElementById('payment-form').addEventListener('submit', function(e) {
-            const phone = document.querySelector('input[name="phone"]').value;
-            if (phone.length !== 10) {
-                e.preventDefault();
-                alert('El teléfono debe tener exactamente 10 dígitos');
-            }
         });
     </script>
 </body>

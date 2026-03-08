@@ -341,7 +341,13 @@
         <div class="products-grid">
             {% for product in products %}
             <div class="product-card">
-                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                {% else %}
+                    <div class="product-image" style="background: #333; display: flex; align-items: center; justify-content: center;">
+                        <span style="color: #666;">Sin imagen</span>
+                    </div>
+                {% endif %}
                 <div class="product-info">
                     <h3 class="product-title">{{ product.name }}</h3>
                     <div class="product-price">${{ product.get_price }}</div>
