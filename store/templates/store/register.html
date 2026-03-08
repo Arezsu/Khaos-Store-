@@ -171,71 +171,123 @@
         <h1>REGISTRO</h1>
         
         {% if messages %}
-            <div class="messages">
-                {% for message in messages %}
-                    <div class="message {{ message.tags }}">{{ message }}</div>
-                {% endfor %}
-            </div>
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
         {% endif %}
         
         {% if request.GET.next %}
-            <div class="info-message">
-                🔒 Regístrate para continuar tu compra
-            </div>
+        <div class="info-message">
+            🔒 Regístrate para continuar tu compra
+        </div>
         {% endif %}
         
-        <form method="post" action="{% url 'register' %}">
+        <form method="post" action="">
             {% csrf_token %}
             <input type="hidden" name="next" value="{{ request.GET.next }}">
             
             <div class="form-group">
                 <label>USUARIO</label>
-                <input type="text" name="username" required placeholder="Ej: gamer123">
+                <input type="text" name="username" required>
             </div>
             
             <div class="form-group">
                 <label>EMAIL</label>
-                <input type="email" name="email" required placeholder="correo@ejemplo.com">
+                <input type="email" name="email" required>
             </div>
             
             <div class="form-group">
                 <label>TELÉFONO (10 dígitos)</label>
-                <input type="tel" name="phone" required maxlength="10" placeholder="3001234567" pattern="\d{10}" title="Debe tener 10 dígitos">
-                <small style="color: #ff00ff; display: block; margin-top: 5px;">Ej: 3001234567</small>
+                <input type="tel" name="phone" required maxlength="10" placeholder="3001234567">
             </div>
             
             <label>FECHA DE NACIMIENTO</label>
             <div class="birth-date">
                 <select name="birth_year" required>
                     <option value="">AÑO</option>
-                    {% for year in "1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008"|split:"," %}
-                        <option value="{{ year }}">{{ year }}</option>
-                    {% endfor %}
+                    <option value="1990">1990</option>
+                    <option value="1991">1991</option>
+                    <option value="1992">1992</option>
+                    <option value="1993">1993</option>
+                    <option value="1994">1994</option>
+                    <option value="1995">1995</option>
+                    <option value="1996">1996</option>
+                    <option value="1997">1997</option>
+                    <option value="1998">1998</option>
+                    <option value="1999">1999</option>
+                    <option value="2000">2000</option>
+                    <option value="2001">2001</option>
+                    <option value="2002">2002</option>
+                    <option value="2003">2003</option>
+                    <option value="2004">2004</option>
+                    <option value="2005">2005</option>
+                    <option value="2006">2006</option>
+                    <option value="2007">2007</option>
+                    <option value="2008">2008</option>
                 </select>
                 
                 <select name="birth_month" required>
                     <option value="">MES</option>
-                    {% for month in "1,2,3,4,5,6,7,8,9,10,11,12"|split:"," %}
-                        <option value="{{ month }}">{{ month }}</option>
-                    {% endfor %}
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
                 </select>
                 
                 <select name="birth_day" required>
                     <option value="">DÍA</option>
-                    {% for day in "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31"|split:"," %}
-                        <option value="{{ day }}">{{ day }}</option>
-                    {% endfor %}
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                    <option value="16">16</option>
+                    <option value="17">17</option>
+                    <option value="18">18</option>
+                    <option value="19">19</option>
+                    <option value="20">20</option>
+                    <option value="21">21</option>
+                    <option value="22">22</option>
+                    <option value="23">23</option>
+                    <option value="24">24</option>
+                    <option value="25">25</option>
+                    <option value="26">26</option>
+                    <option value="27">27</option>
+                    <option value="28">28</option>
+                    <option value="29">29</option>
+                    <option value="30">30</option>
+                    <option value="31">31</option>
                 </select>
             </div>
             
             <div class="form-group">
-                <label>CONTRASEÑA (mínimo 6 caracteres)</label>
-                <input type="password" name="password" required minlength="6">
+                <label>CONTRASEÑA</label>
+                <input type="password" name="password" required>
             </div>
             
             <div class="form-group">
                 <label>CONFIRMAR CONTRASEÑA</label>
-                <input type="password" name="confirm_password" required minlength="6">
+                <input type="password" name="confirm_password" required>
             </div>
             
             <button type="submit" class="btn">CREAR CUENTA</button>
@@ -249,31 +301,8 @@
     </div>
     
     <script>
-        // Validar teléfono en tiempo real
         document.querySelector('input[name="phone"]').addEventListener('input', function(e) {
             this.value = this.value.replace(/\D/g, '').slice(0, 10);
-        });
-        
-        // Validar formulario antes de enviar
-        document.querySelector('form').addEventListener('submit', function(e) {
-            const phone = document.querySelector('input[name="phone"]').value;
-            const password = document.querySelector('input[name="password"]').value;
-            const confirm = document.querySelector('input[name="confirm_password"]').value;
-            
-            if (phone.length !== 10) {
-                e.preventDefault();
-                alert('El teléfono debe tener exactamente 10 dígitos');
-            }
-            
-            if (password.length < 6) {
-                e.preventDefault();
-                alert('La contraseña debe tener al menos 6 caracteres');
-            }
-            
-            if (password !== confirm) {
-                e.preventDefault();
-                alert('Las contraseñas no coinciden');
-            }
         });
     </script>
 </body>
