@@ -222,6 +222,13 @@
             50% { opacity: 0.5; }
             100% { opacity: 1; }
         }
+        
+        .countdown {
+            color: #ff00ff;
+            font-size: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -229,6 +236,9 @@
         <div class="loading-spinner"></div>
         <div class="loading-text" id="loading-text">Procesando registro...</div>
         <div class="success-message" id="success-message">✅ ¡REGISTRO EXITOSO!</div>
+        <div class="countdown" id="countdown-container" style="display: none;">
+            Redirigiendo en <span id="timer">10</span> segundos...
+        </div>
     </div>
 
     <div class="register-container">
@@ -343,9 +353,12 @@
         const daySelect = document.getElementById('birth-day');
         const loadingText = document.getElementById('loading-text');
         const successMessage = document.getElementById('success-message');
+        const countdownContainer = document.getElementById('countdown-container');
+        const timerElement = document.getElementById('timer');
         
-        // Ocultar mensaje de éxito inicialmente
+        // Ocultar mensaje de éxito y contador inicialmente
         successMessage.style.display = 'none';
+        countdownContainer.style.display = 'none';
         
         // Configurar volumen
         registroSound.volume = 0.5;
@@ -410,6 +423,23 @@
             this.value = this.value.replace(/\D/g, '').slice(0, 10);
         });
         
+        // Función para iniciar contador de 10 segundos
+        function startCountdown() {
+            let seconds = 10;
+            timerElement.textContent = seconds;
+            countdownContainer.style.display = 'block';
+            
+            const interval = setInterval(() => {
+                seconds--;
+                timerElement.textContent = seconds;
+                
+                if (seconds <= 0) {
+                    clearInterval(interval);
+                    window.location.href = "{% url 'home' %}";
+                }
+            }, 1000);
+        }
+        
         // Manejo del envío del formulario
         registerForm.addEventListener('submit', function(e) {
             const username = document.querySelector('input[name="username"]').value.trim();
@@ -460,6 +490,7 @@
             loadingOverlay.classList.add('show');
             loadingText.textContent = 'Procesando registro...';
             successMessage.style.display = 'none';
+            countdownContainer.style.display = 'none';
             
             // Enviar formulario con fetch para capturar respuesta
             fetch(registerForm.action || window.location.href, {
@@ -476,10 +507,8 @@
                     loadingText.textContent = '✅ ¡REGISTRO EXITOSO!';
                     successMessage.style.display = 'block';
                     
-                    // Redirigir a home después de 1 segundo
-                    setTimeout(() => {
-                        window.location.href = "{% url 'home' %}";
-                    }, 1000);
+                    // Iniciar contador de 10 segundos
+                    startCountdown();
                 } else {
                     loadingText.textContent = '❌ Error: ' + (data.error || 'Error desconocido');
                     setTimeout(() => {

@@ -117,12 +117,6 @@
             color: #000;
         }
         
-        .countdown {
-            margin-top: 20px;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 16px;
-        }
-        
         .hidden-audio {
             display: none;
         }
@@ -163,10 +157,6 @@
             <a href="{% url 'home' %}" class="btn">🎮 SEGUIR COMPRANDO</a>
             <a href="{% url 'profile' %}" class="btn btn-outline">📦 VER MIS COMPRAS</a>
         </div>
-        
-        <div class="countdown" id="countdown">
-            ⏳ Redirigiendo a la tienda en <span id="timer">10</span> segundos...
-        </div>
     </div>
     
     <script>
@@ -177,20 +167,6 @@
                 console.log("Auto-play bloqueado:", error);
             });
         });
-        
-        // Contador regresivo de 10 segundos
-        var seconds = 10;
-        var timerElement = document.getElementById('timer');
-        
-        var countdown = setInterval(function() {
-            seconds--;
-            timerElement.textContent = seconds;
-            
-            if (seconds <= 0) {
-                clearInterval(countdown);
-                window.location.href = "{% url 'home' %}";
-            }
-        }, 1000);
     </script>
 </body>
 </html>
