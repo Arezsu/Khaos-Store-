@@ -28,32 +28,21 @@ def register(request):
             birth_month = request.POST.get('birth_month')
             birth_day = request.POST.get('birth_day')
             
-            # Validaciones
+            # Validaciones básicas
             if not username or not email or not password:
-                return JsonResponse({'success': False, 'error': 'Campos obligatorios faltantes'}, status=400)
+                return JsonResponse({'success': False, 'error': 'Todos los campos son obligatorios'}, status=400)
             
             if password != confirm_password:
                 return JsonResponse({'success': False, 'error': 'Las contraseñas no coinciden'}, status=400)
             
             if User.objects.filter(username=username).exists():
-                return JsonResponse({'success': False, 'error': 'El usuario ya existe'}, status=400)
+                return JsonResponse({'success': False, 'error': 'El nombre de usuario ya existe'}, status=400)
             
             if User.objects.filter(email=email).exists():
                 return JsonResponse({'success': False, 'error': 'El email ya está registrado'}, status=400)
             
             if len(phone) != 10 or not phone.isdigit():
-                return JsonResponse({'success': False, 'error': 'El teléfono debe tener 10 dígitos'}, status=400)
-            
-            # Validar fecha de nacimiento
-            try:
-                birth_date = date(int(birth_year), int(birth_month), int(birth_day))
-                # Calcular edad
-                today = date.today()
-                age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
-                if age < 18:
-                    return JsonResponse({'success': False, 'error': 'Debes ser mayor de 18 años'}, status=400)
-            except:
-                return JsonResponse({'success': False, 'error': 'Fecha de nacimiento inválida'}, status=400)
+                return JsonResponse({'success': False, 'error': 'El teléfono debe tener exactamente 10 dígitos'}, status=400)
             
             # Crear usuario
             user = User.objects.create_user(
@@ -62,38 +51,37 @@ def register(request):
                 password=password
             )
             
-            # Crear perfil CON birth_date
-            UserProfile.objects.create(
-                user=user,
-                phone=phone,
-                birth_date=birth_date
-            )
+            # Intentar crear perfil con fecha de nacimiento
+            try:
+                if birth_year and birth_month and birth_day:
+                    birth_date = date(int(birth_year), int(birth_month), int(birth_day))
+                    UserProfile.objects.create(
+                        user=user,
+                        phone=phone,
+                        birth_date=birth_date
+                    )
+                else:
+                    UserProfile.objects.create(
+                        user=user,
+                        phone=phone
+                    )
+            except Exception as profile_error:
+                print(f"Error creando perfil: {profile_error}")
+                # Si falla, al menos intentamos crear perfil sin fecha
+                UserProfile.objects.create(
+                    user=user,
+                    phone=phone
+                )
             
             # Iniciar sesión
             login(request, user)
             request.session.save()
-            request.session.modified = True
             
-            print(f"Sesión iniciada para: {request.user.username}")
-            
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                return JsonResponse({
-                    'success': True, 
-                    'redirect': '/',
-                    'message': 'Registro exitoso'
-                })
-            
-            next_url = request.POST.get('next') or request.GET.get('next')
-            if next_url:
-                return redirect(next_url)
-            return redirect('home')
+            return JsonResponse({'success': True, 'redirect': '/'})
             
         except Exception as e:
             print(f"ERROR EN REGISTRO: {e}")
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                return JsonResponse({'success': False, 'error': str(e)}, status=500)
-            messages.error(request, 'Error en el registro')
-            return redirect('register')
+            return JsonResponse({'success': False, 'error': str(e)}, status=500)
     
     return render(request, 'store/register.html')
 
@@ -146,13 +134,13 @@ def process_payment(request, product_id):
         try:
             order.send_confirmation_email()
             order.send_game_key()
-        except:
-            pass
+        except Exception as e:
+            print(f"Error enviando emails: {e}")
         
         request.session['last_order'] = order.order_number
         request.session.save()
         
-        messages.success(request, '¡Pago exitoso!')
+        messages.success(request, '¡Pago exitoso! Revisa tu correo')
         return redirect('success', order_id=order.order_number)
         
     except Exception as e:
@@ -165,9 +153,14 @@ def success(request, order_id):
 
 @login_required(login_url='login')
 def profile(request):
-    user_profile = UserProfile.objects.get_or_create(user=request.user)[0]
-    orders = Order.objects.filter(user=request.user).order_by('-created_at')
-    return render(request, 'store/profile.html', {
-        'profile': user_profile,
-        'orders': orders
-    })
+    try:
+        user_profile = UserProfile.objects.get_or_create(user=request.user)[0]
+        orders = Order.objects.filter(user=request.user).order_by('-created_at')
+        return render(request, 'store/profile.html', {
+            'profile': user_profile,
+            'orders': orders
+        })
+    except Exception as e:
+        print(f"Error en profile: {e}")
+        messages.error(request, 'Error al cargar el perfil')
+        return redirect('home')
