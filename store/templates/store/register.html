@@ -208,12 +208,36 @@
             font-size: 18px;
             text-align: center;
         }
+        
+        .success-message {
+            color: #00ff00;
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .countdown {
+            color: #ff00ff;
+            font-size: 48px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
     </style>
 </head>
 <body>
     <div class="loading-overlay" id="loading-overlay">
         <div class="loading-spinner"></div>
-        <div class="loading-text">Guardando datos...</div>
+        <div class="loading-text" id="loading-text">Procesando registro...</div>
+        <div class="success-message" id="success-message">✅ ¡REGISTRO EXITOSO!</div>
+        <div class="countdown" id="countdown">10</div>
+        <div class="loading-text">Redirigiendo en <span id="timer">10</span> segundos...</div>
     </div>
 
     <div class="register-container">
@@ -308,7 +332,7 @@
                 <input type="password" name="confirm_password" required>
             </div>
             
-            <button type="submit" class="btn">CREAR CUENTA</button>
+            <button type="submit" class="btn" id="register-btn">CREAR CUENTA</button>
         </form>
         
         <div class="login-link">
@@ -319,15 +343,25 @@
     </div>
     
     <script>
+        // Elementos
         const registroSound = document.getElementById('registro-sound');
         const loadingOverlay = document.getElementById('loading-overlay');
         const registerForm = document.getElementById('register-form');
         const yearSelect = document.getElementById('birth-year');
         const monthSelect = document.getElementById('birth-month');
         const daySelect = document.getElementById('birth-day');
+        const timerElement = document.getElementById('timer');
+        const countdownElement = document.getElementById('countdown');
+        const loadingText = document.getElementById('loading-text');
+        const successMessage = document.getElementById('success-message');
         
+        // Ocultar mensaje de éxito inicialmente
+        successMessage.style.display = 'none';
+        
+        // Configurar volumen
         registroSound.volume = 0.5;
         
+        // Función para reproducir sonido
         function playRegistroSound() {
             try {
                 registroSound.currentTime = 0;
@@ -337,6 +371,7 @@
             }
         }
         
+        // Función para actualizar días según mes
         function updateDays() {
             const year = parseInt(yearSelect.value);
             const month = parseInt(monthSelect.value);
@@ -381,10 +416,30 @@
         monthSelect.addEventListener('change', updateDays);
         updateDays();
         
+        // Validación de teléfono
         document.querySelector('input[name="phone"]').addEventListener('input', function(e) {
             this.value = this.value.replace(/\D/g, '').slice(0, 10);
         });
         
+        // Función para iniciar contador regresivo
+        function startCountdown(seconds) {
+            let counter = seconds;
+            timerElement.textContent = counter;
+            countdownElement.textContent = counter;
+            
+            const interval = setInterval(() => {
+                counter--;
+                timerElement.textContent = counter;
+                countdownElement.textContent = counter;
+                
+                if (counter <= 0) {
+                    clearInterval(interval);
+                    window.location.href = "{% url 'home' %}";
+                }
+            }, 1000);
+        }
+        
+        // Manejo del envío del formulario
         registerForm.addEventListener('submit', function(e) {
             const username = document.querySelector('input[name="username"]').value.trim();
             const email = document.querySelector('input[name="email"]').value.trim();
@@ -424,13 +479,39 @@
                 return;
             }
             
+            // Prevenir envío inmediato
             e.preventDefault();
-            playRegistroSound();
-            loadingOverlay.classList.add('show');
             
-            setTimeout(() => {
-                registerForm.submit();
-            }, 100);
+            // Reproducir sonido
+            playRegistroSound();
+            
+            // Mostrar overlay
+            loadingOverlay.classList.add('show');
+            loadingText.textContent = 'Procesando registro...';
+            successMessage.style.display = 'none';
+            
+            // Enviar formulario con fetch para capturar respuesta
+            fetch(registerForm.action || window.location.href, {
+                method: 'POST',
+                body: new FormData(registerForm),
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.text())
+            .then(() => {
+                // Registro exitoso
+                loadingText.textContent = '✅ ¡REGISTRO EXITOSO!';
+                successMessage.style.display = 'block';
+                startCountdown(10); // 10 segundos de espera
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                loadingText.textContent = '❌ Error en el registro';
+                setTimeout(() => {
+                    loadingOverlay.classList.remove('show');
+                }, 3000);
+            });
         });
     </script>
 </body>
