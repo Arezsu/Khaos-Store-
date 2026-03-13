@@ -237,7 +237,7 @@
         <div class="loading-text" id="loading-text">Procesando registro...</div>
         <div class="success-message" id="success-message">✅ ¡REGISTRO EXITOSO!</div>
         <div class="countdown" id="countdown-container" style="display: none;">
-            Redirigiendo en <span id="timer">10</span> segundos...
+            Redirigiendo a la tienda en <span id="timer">10</span> segundos...
         </div>
     </div>
 
@@ -508,6 +508,7 @@
                         if (seconds <= 0) {
                             clearInterval(interval);
                             console.log("Redirigiendo a home...");
+                            // Redirigir a home usando la URL de Django
                             window.location.href = "{% url 'home' %}";
                         }
                     }, 1000);
