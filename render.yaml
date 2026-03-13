@@ -2,12 +2,12 @@ services:
   - type: web
     name: khaos-store
     runtime: python
+    plan: free
     buildCommand: |
       pip install -r requirements.txt
       python manage.py collectstatic --noinput
-      python manage.py makemigrations store --noinput
-      python manage.py migrate --noinput
-      python manage.py migrate store --noinput
+      python manage.py makemigrations store
+      python manage.py migrate
     startCommand: gunicorn khaos_store.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
       - key: DATABASE_URL
@@ -35,3 +35,4 @@ databases:
   - name: khaos-store-db
     databaseName: khaos_store
     user: khaos_user
+    plan: free
