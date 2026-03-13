@@ -8,7 +8,6 @@
     <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     
-    <!-- Audio corto para registro -->
     <audio id="registro-sound" preload="auto" style="display: none;">
         <source src="{% static 'audio/registro.mp3' %}" type="audio/mpeg">
     </audio>
@@ -212,7 +211,6 @@
     </style>
 </head>
 <body>
-    <!-- Overlay de carga -->
     <div class="loading-overlay" id="loading-overlay">
         <div class="loading-spinner"></div>
         <div class="loading-text">Guardando datos...</div>
@@ -241,22 +239,22 @@
             
             <div class="form-group">
                 <label>USUARIO</label>
-                <input type="text" name="username" required class="hover-input">
+                <input type="text" name="username" required>
             </div>
             
             <div class="form-group">
                 <label>EMAIL</label>
-                <input type="email" name="email" required class="hover-input">
+                <input type="email" name="email" required>
             </div>
             
             <div class="form-group">
                 <label>TELÉFONO (10 dígitos)</label>
-                <input type="tel" name="phone" required maxlength="10" placeholder="3001234567" class="hover-input">
+                <input type="tel" name="phone" required maxlength="10" placeholder="3001234567">
             </div>
             
             <label>FECHA DE NACIMIENTO</label>
             <div class="birth-date">
-                <select name="birth_year" required class="hover-select" id="birth-year">
+                <select name="birth_year" required id="birth-year">
                     <option value="">AÑO</option>
                     <option value="1990">1990</option>
                     <option value="1991">1991</option>
@@ -279,7 +277,7 @@
                     <option value="2008">2008</option>
                 </select>
                 
-                <select name="birth_month" required class="hover-select" id="birth-month">
+                <select name="birth_month" required id="birth-month">
                     <option value="">MES</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
@@ -295,62 +293,50 @@
                     <option value="12">12</option>
                 </select>
                 
-                <select name="birth_day" required class="hover-select" id="birth-day">
+                <select name="birth_day" required id="birth-day">
                     <option value="">DÍA</option>
                 </select>
             </div>
             
             <div class="form-group">
                 <label>CONTRASEÑA</label>
-                <input type="password" name="password" required class="hover-input" minlength="6">
+                <input type="password" name="password" required minlength="6">
             </div>
             
             <div class="form-group">
                 <label>CONFIRMAR CONTRASEÑA</label>
-                <input type="password" name="confirm_password" required class="hover-input">
+                <input type="password" name="confirm_password" required>
             </div>
             
-            <button type="submit" class="btn" id="register-btn">CREAR CUENTA</button>
+            <button type="submit" class="btn">CREAR CUENTA</button>
         </form>
         
         <div class="login-link">
-            ¿Ya tienes cuenta? <a href="{% url 'login' %}?next={{ request.GET.next }}" id="login-link">INICIAR SESIÓN</a>
+            ¿Ya tienes cuenta? <a href="{% url 'login' %}?next={{ request.GET.next }}">INICIAR SESIÓN</a>
         </div>
         
-        <a href="{% url 'home' %}" class="back-link" id="back-link">← VOLVER A LA TIENDA</a>
+        <a href="{% url 'home' %}" class="back-link">← VOLVER A LA TIENDA</a>
     </div>
     
     <script>
-        // Elementos
         const registroSound = document.getElementById('registro-sound');
         const loadingOverlay = document.getElementById('loading-overlay');
         const registerForm = document.getElementById('register-form');
-        
-        // Configurar volumen del sonido
-        registroSound.volume = 0.5;
-        
-        // Función para reproducir sonido de registro (no bloqueante)
-        function playRegistroSound() {
-            try {
-                registroSound.currentTime = 0;
-                let playPromise = registroSound.play();
-                
-                if (playPromise !== undefined) {
-                    playPromise.catch(error => {
-                        console.log("Error reproduciendo audio:", error);
-                    });
-                }
-            } catch (e) {
-                console.log("Error con audio:", e);
-            }
-        }
-        
-        // Elementos para fecha
         const yearSelect = document.getElementById('birth-year');
         const monthSelect = document.getElementById('birth-month');
         const daySelect = document.getElementById('birth-day');
         
-        // Función para actualizar días según mes y año
+        registroSound.volume = 0.5;
+        
+        function playRegistroSound() {
+            try {
+                registroSound.currentTime = 0;
+                registroSound.play().catch(e => console.log("Error audio:", e));
+            } catch (e) {
+                console.log("Error:", e);
+            }
+        }
+        
         function updateDays() {
             const year = parseInt(yearSelect.value);
             const month = parseInt(monthSelect.value);
@@ -362,9 +348,8 @@
             
             let maxDays = 31;
             
-            if (month === 2) { // Febrero
+            if (month === 2) {
                 if (year) {
-                    // Año bisiesto
                     if ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0) {
                         maxDays = 29;
                     } else {
@@ -378,7 +363,6 @@
             }
             
             const currentDay = daySelect.value;
-            
             daySelect.innerHTML = '<option value="">DÍA</option>';
             
             for (let i = 1; i <= maxDays; i++) {
@@ -395,16 +379,12 @@
         
         yearSelect.addEventListener('change', updateDays);
         monthSelect.addEventListener('change', updateDays);
-        
-        // Inicializar días
         updateDays();
         
-        // Validación de teléfono
         document.querySelector('input[name="phone"]').addEventListener('input', function(e) {
             this.value = this.value.replace(/\D/g, '').slice(0, 10);
         });
         
-        // Manejo del envío del formulario
         registerForm.addEventListener('submit', function(e) {
             const username = document.querySelector('input[name="username"]').value.trim();
             const email = document.querySelector('input[name="email"]').value.trim();
@@ -444,20 +424,13 @@
                 return;
             }
             
-            // Si todo es válido
-            e.preventDefault(); // Prevenimos el envío inmediato
-            
-            // Reproducir sonido (NO bloqueante)
+            e.preventDefault();
             playRegistroSound();
-            
-            // Mostrar overlay de carga
             loadingOverlay.classList.add('show');
             
-            // Enviar el formulario después de una pausa MUY corta
-            // El sonido se reproduce en paralelo, no bloquea
             setTimeout(() => {
                 registerForm.submit();
-            }, 100); // Solo 100ms de pausa
+            }, 100);
         });
     </script>
 </body>

@@ -2,8 +2,12 @@ services:
   - type: web
     name: khaos-store
     runtime: python
-    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate"
-    startCommand: "gunicorn khaos_store.wsgi:application"
+    buildCommand: |
+      pip install -r requirements.txt
+      python manage.py collectstatic --noinput
+      python manage.py makemigrations store
+      python manage.py migrate
+    startCommand: gunicorn khaos_store.wsgi:application
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -12,19 +16,21 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: CLOUDINARY_CLOUD_NAME
-        sync: false
+        value: dxbsu1sud
       - key: CLOUDINARY_API_KEY
-        sync: false
+        value: 673698288254848
       - key: CLOUDINARY_API_SECRET
-        sync: false
+        value: wC0DfLplnYAIBEqrpe9maNE3i2Q
       - key: EMAIL_HOST_USER
-        sync: false
+        value: soportekhaosstore@gmail.com
       - key: EMAIL_HOST_PASSWORD
-        sync: false
+        value: zhdi hsev bqtt lnyg
       - key: DEBUG
         value: "False"
       - key: ALLOWED_HOSTS
         value: ".onrender.com,localhost,127.0.0.1"
+      - key: CREATE_SUPERUSER
+        value: "False"  # Evita que intente crear superuser automáticamente
 
 databases:
   - name: khaos-store-db
