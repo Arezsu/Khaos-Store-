@@ -2,56 +2,39 @@ from django.contrib import admin
 from django.utils.html import format_html
 from .models import Product, Order, UserProfile
 
+# ==================== PRODUCTOS ====================
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    # Listado de campos visibles
+    # Listado
     list_display = ['id', 'name', 'price_display', 'stock', 'is_on_sale', 'image_preview', 'created_at']
     list_display_links = ['id', 'name']
-    
-    # Filtros laterales
     list_filter = ['is_on_sale', 'category', 'created_at', 'stock']
-    
-    # Campos de búsqueda
     search_fields = ['name', 'description', 'category']
-    
-    # Campos editables directamente en la lista
     list_editable = ['stock', 'is_on_sale']
-    
-    # Campos de solo lectura
-    readonly_fields = ['created_at', 'updated_at']
-    
-    # Número de elementos por página
+    readonly_fields = ['created_at']
     list_per_page = 25
-    
-    # Ordenamiento por defecto
     ordering = ['-created_at']
-    
-    # Campos para ordenar en la lista
     sortable_by = ['name', 'price', 'stock', 'created_at']
     
-    # Agrupación de campos en el formulario de edición
+    # Campos agrupados
     fieldsets = (
         ('Información Básica', {
             'fields': ('name', 'price', 'image', 'description'),
-            'description': 'Datos principales del producto'
         }),
         ('Inventario y Precios', {
             'fields': ('stock', 'is_on_sale', 'sale_price'),
-            'description': 'Control de stock y ofertas'
         }),
         ('Clasificación', {
             'fields': ('category', 'rating', 'reviews_count'),
-            'description': 'Categoría y valoraciones'
         }),
         ('Fechas', {
             'fields': ('created_at',),
             'classes': ('collapse',),
-            'description': 'Fecha de creación'
         }),
     )
     
+    # Métodos personalizados
     def price_display(self, obj):
-        """Muestra el precio con formato y si está en oferta"""
         if obj.is_on_sale and obj.sale_price:
             return format_html(
                 '<span style="text-decoration: line-through; color: #999;">${}</span> '
@@ -62,7 +45,6 @@ class ProductAdmin(admin.ModelAdmin):
     price_display.short_description = 'Precio'
     
     def image_preview(self, obj):
-        """Muestra una miniatura de la imagen en el listado"""
         if obj.image:
             return format_html(
                 '<img src="{}" width="50" height="50" style="object-fit: cover; border-radius: 5px;" />',
@@ -71,23 +53,20 @@ class ProductAdmin(admin.ModelAdmin):
         return format_html('<span style="color: #999;">Sin imagen</span>')
     image_preview.short_description = 'Imagen'
     
-    # Acciones personalizadas
+    # Acciones masivas
     actions = ['mark_as_on_sale', 'remove_from_sale', 'increase_stock']
     
     def mark_as_on_sale(self, request, queryset):
-        """Marca los productos seleccionados como en oferta"""
         updated = queryset.update(is_on_sale=True)
         self.message_user(request, f'{updated} producto(s) marcado(s) como en oferta.')
     mark_as_on_sale.short_description = 'Marcar como en oferta'
     
     def remove_from_sale(self, request, queryset):
-        """Quita la oferta de los productos seleccionados"""
         updated = queryset.update(is_on_sale=False)
         self.message_user(request, f'{updated} producto(s) ya no están en oferta.')
     remove_from_sale.short_description = 'Quitar oferta'
     
     def increase_stock(self, request, queryset):
-        """Aumenta el stock de los productos seleccionados en 10 unidades"""
         for product in queryset:
             product.stock += 10
             product.save()
@@ -95,47 +74,32 @@ class ProductAdmin(admin.ModelAdmin):
     increase_stock.short_description = 'Aumentar stock +10'
 
 
+# ==================== ÓRDENES ====================
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    # Listado de campos visibles
+    # Listado
     list_display = ['order_number', 'customer_name', 'product', 'total_display', 'status_badge', 'payment_method', 'created_at']
     list_display_links = ['order_number', 'customer_name']
-    
-    # Filtros laterales
     list_filter = ['status', 'payment_method', 'created_at']
-    
-    # Campos de búsqueda
     search_fields = ['order_number', 'customer_name', 'customer_email', 'customer_phone']
-    
-    # Campos editables directamente en la lista
     list_editable = ['status']
-    
-    # Campos de solo lectura
     readonly_fields = ['order_number', 'created_at']
-    
-    # Número de elementos por página
     list_per_page = 25
-    
-    # Ordenamiento por defecto
     ordering = ['-created_at']
     
-    # Agrupación de campos en el formulario de edición
+    # Campos agrupados
     fieldsets = (
         ('Información de la Orden', {
             'fields': ('order_number', 'product', 'status', 'total'),
-            'description': 'Datos principales de la orden'
         }),
         ('Datos del Cliente', {
             'fields': ('customer_name', 'customer_email', 'customer_phone'),
-            'description': 'Información de contacto'
         }),
         ('Envío', {
             'fields': ('address', 'city'),
-            'description': 'Dirección de entrega'
         }),
         ('Pago', {
             'fields': ('payment_method', 'user'),
-            'description': 'Información de pago'
         }),
         ('Fechas', {
             'fields': ('created_at',),
@@ -143,13 +107,12 @@ class OrderAdmin(admin.ModelAdmin):
         }),
     )
     
+    # Métodos personalizados
     def total_display(self, obj):
-        """Muestra el total con formato"""
         return format_html('<span style="color: #00ff00; font-weight: bold;">${}</span>', obj.total)
     total_display.short_description = 'Total'
     
     def status_badge(self, obj):
-        """Muestra el estado con colores"""
         colors = {
             'PENDING': '#ffaa00',
             'PAID': '#00ff00',
@@ -164,91 +127,75 @@ class OrderAdmin(admin.ModelAdmin):
         )
     status_badge.short_description = 'Estado'
     
-    # Acciones personalizadas
+    # Acciones masivas
     actions = ['mark_as_paid', 'mark_as_sent', 'mark_as_delivered']
     
     def mark_as_paid(self, request, queryset):
-        """Marca las órdenes seleccionadas como pagadas"""
         updated = queryset.update(status='PAID')
         self.message_user(request, f'{updated} orden(es) marcada(s) como pagadas.')
     mark_as_paid.short_description = 'Marcar como pagado'
     
     def mark_as_sent(self, request, queryset):
-        """Marca las órdenes seleccionadas como enviadas"""
         updated = queryset.update(status='SENT')
         self.message_user(request, f'{updated} orden(es) marcada(s) como enviadas.')
     mark_as_sent.short_description = 'Marcar como enviado'
     
     def mark_as_delivered(self, request, queryset):
-        """Marca las órdenes seleccionadas como entregadas"""
         updated = queryset.update(status='DELIVERED')
         self.message_user(request, f'{updated} orden(es) marcada(s) como entregadas.')
     mark_as_delivered.short_description = 'Marcar como entregado'
 
 
+# ==================== PERFILES ====================
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    # Listado de campos visibles
+    # Listado
     list_display = ['user', 'phone', 'city', 'favorite_games_count', 'birth_date', 'is_adult_badge']
     list_display_links = ['user']
-    
-    # Filtros laterales
     list_filter = ['city', 'birth_date']
-    
-    # Campos de búsqueda
     search_fields = ['user__username', 'user__email', 'phone', 'city']
-    
-    # Número de elementos por página
     list_per_page = 25
-    
-    # Ordenamiento por defecto
     ordering = ['user__username']
     
-    # Agrupación de campos en el formulario de edición
+    # Campos agrupados
     fieldsets = (
         ('Usuario', {
             'fields': ('user',),
-            'description': 'Usuario asociado'
         }),
         ('Información de Contacto', {
             'fields': ('phone', 'address', 'city'),
-            'description': 'Datos de contacto'
         }),
         ('Datos Personales', {
             'fields': ('birth_date',),
-            'description': 'Información personal'
         }),
         ('Preferencias', {
             'fields': ('favorite_games',),
-            'description': 'Juegos favoritos'
         }),
     )
     
+    # Métodos personalizados
     def favorite_games_count(self, obj):
-        """Muestra la cantidad de juegos favoritos"""
         count = obj.favorite_games.count()
         return format_html('<span style="color: #ff00ff;">{}</span>', count)
     favorite_games_count.short_description = 'Favoritos'
     
     def is_adult_badge(self, obj):
-        """Muestra si es mayor de edad con badge de color"""
         if obj.is_adult():
             return format_html('<span style="background-color: #00ff00; color: #000; padding: 3px 10px; border-radius: 15px;">Mayor de edad</span>')
         return format_html('<span style="background-color: #ffaa00; color: #000; padding: 3px 10px; border-radius: 15px;">Menor de edad</span>')
     is_adult_badge.short_description = 'Edad'
     
-    # Acciones personalizadas
+    # Acciones masivas
     actions = ['send_welcome_message']
     
     def send_welcome_message(self, request, queryset):
-        """Envía un mensaje de bienvenida a los usuarios seleccionados"""
         for profile in queryset:
             print(f"Enviando mensaje de bienvenida a {profile.user.email}")
         self.message_user(request, f'Mensaje enviado a {queryset.count()} usuario(s).')
     send_welcome_message.short_description = 'Enviar mensaje de bienvenida'
 
 
-# Información personalizada en el panel de admin
+# ==================== PERSONALIZACIÓN DEL PANEL ====================
 admin.site.site_header = 'Khaos Store - Panel de Administración'
 admin.site.site_title = 'Khaos Store Admin'
 admin.site.index_title = 'Bienvenido al Panel de Administración de Khaos Store'
