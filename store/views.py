@@ -7,7 +7,6 @@ from django.http import JsonResponse
 from .models import Product, Order, UserProfile
 from datetime import date
 import re
-import json
 
 def home(request):
     query = request.GET.get('q', '')
@@ -68,14 +67,14 @@ def register(request):
                 password=password
             )
             
-            # Crear perfil con fecha
+            # Crear perfil
             UserProfile.objects.create(
                 user=user,
                 phone=phone,
                 birth_date=birth_date
             )
             
-            # Iniciar sesión automáticamente
+            # Iniciar sesión
             login(request, user)
             request.session.save()
             

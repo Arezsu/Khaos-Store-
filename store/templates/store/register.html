@@ -463,14 +463,38 @@
                 return;
             }
             
-            // Mostrar overlay
+            e.preventDefault();
+            
             loadingOverlay.classList.add('show');
             playRegistroSound();
             
-            // Enviar el formulario normalmente
-            setTimeout(() => {
-                registerForm.submit();
-            }, 500);
+            fetch(window.location.href, {
+                method: 'POST',
+                body: new FormData(registerForm),
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    loadingText.textContent = '✅ ¡REGISTRO EXITOSO!';
+                    successMessage.style.display = 'block';
+                    startCountdown();
+                } else {
+                    loadingText.textContent = '❌ Error: ' + (data.error || 'Error desconocido');
+                    setTimeout(() => {
+                        loadingOverlay.classList.remove('show');
+                    }, 3000);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                loadingText.textContent = '❌ Error en el registro';
+                setTimeout(() => {
+                    loadingOverlay.classList.remove('show');
+                }, 3000);
+            });
         });
     </script>
 </body>
