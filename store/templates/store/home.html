@@ -410,7 +410,6 @@
                 <button type="submit" class="search-btn">BUSCAR</button>
             </form>
         </div>
-
         <div class="products-grid">
             {% for product in products %}
             <div class="product-card">
@@ -430,9 +429,8 @@
             </div>
             {% empty %}
             <div class="no-results">
-                <p style="font-size: 48px; margin-bottom: 20px;">🔍</p>
+                <p style="font-size: 48px;">🔍</p>
                 <p style="font-size: 24px;">No se encontraron juegos</p>
-                <p style="margin-top: 20px;">Intenta con otra búsqueda</p>
             </div>
             {% endfor %}
         </div>
