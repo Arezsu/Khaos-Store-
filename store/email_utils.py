@@ -1,3 +1,4 @@
+# store/email_utils.py
 from django.core.mail import send_mail
 from django.conf import settings
 import random
@@ -29,13 +30,11 @@ def send_welcome_email(user):
                     border-radius: 20px;
                     padding: 30px;
                     border: 2px solid #ff00ff;
-                    box-shadow: 0 0 30px rgba(255, 0, 255, 0.3);
                 }}
                 .header {{
                     text-align: center;
                     border-bottom: 2px solid #ff00ff;
                     padding-bottom: 20px;
-                    margin-bottom: 20px;
                 }}
                 .logo {{
                     font-family: 'Press Start 2P', monospace;
@@ -44,14 +43,7 @@ def send_welcome_email(user):
                     -webkit-background-clip: text;
                     -webkit-text-fill-color: transparent;
                 }}
-                h2 {{
-                    color: #ff00ff;
-                    margin: 20px 0;
-                }}
-                .content {{
-                    color: #ffffff;
-                    line-height: 1.6;
-                }}
+                .content {{ color: #fff; line-height: 1.6; }}
                 .button {{
                     display: inline-block;
                     background: linear-gradient(45deg, #ff00ff, #00ffff);
@@ -65,8 +57,6 @@ def send_welcome_email(user):
                 .footer {{
                     text-align: center;
                     margin-top: 30px;
-                    padding-top: 20px;
-                    border-top: 1px solid #ff00ff;
                     font-size: 12px;
                     color: #888;
                 }}
@@ -78,9 +68,8 @@ def send_welcome_email(user):
                     <div class="logo">KHAOS_STORE</div>
                 </div>
                 <div class="content">
-                    <h2>¡Bienvenido a Khaos Store, {user.username}! 🎮</h2>
+                    <h2 style="color: #ff00ff;">¡Bienvenido a Khaos Store, {user.username}! 🎮</h2>
                     <p>Nos alegra tenerte en nuestra comunidad gamer.</p>
-                    <p>En Khaos Store encontrarás los mejores videojuegos al mejor precio.</p>
                     <p>Tu cuenta ha sido creada exitosamente. Ahora puedes:</p>
                     <ul>
                         <li>Explorar nuestro catálogo de juegos</li>
@@ -91,13 +80,12 @@ def send_welcome_email(user):
                     <div style="text-align: center;">
                         <a href="https://khaos-store.onrender.com" class="button">COMENZAR A COMPRAR</a>
                     </div>
-                    <p>Si tienes alguna duda, no dudes en contactarnos.</p>
+                    <p>Si tienes alguna duda, contáctanos a soporte@khaosstore.com</p>
                     <p>¡Prepárate para vivir la experiencia gamer definitiva!</p>
                 </div>
                 <div class="footer">
                     <p>© 2026 Khaos Store - Todos los derechos reservados</p>
                     <p>soporte@khaosstore.com | 333 7452514</p>
-                    <p>Medellín, Colombia</p>
                 </div>
             </div>
         </body>
@@ -141,20 +129,11 @@ def send_payment_confirmation(order):
                     border-radius: 20px;
                     padding: 30px;
                     border: 2px solid #00ff00;
-                    box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
                 }}
                 .header {{
                     text-align: center;
                     border-bottom: 2px solid #00ff00;
                     padding-bottom: 20px;
-                    margin-bottom: 20px;
-                }}
-                .logo {{
-                    font-family: 'Press Start 2P', monospace;
-                    font-size: 24px;
-                    background: linear-gradient(45deg, #ff00ff, #00ffff);
-                    -webkit-background-clip: text;
-                    -webkit-text-fill-color: transparent;
                 }}
                 .order-number {{
                     background: rgba(0, 255, 0, 0.2);
@@ -162,7 +141,6 @@ def send_payment_confirmation(order):
                     border-radius: 10px;
                     text-align: center;
                     margin: 20px 0;
-                    border: 1px solid #00ff00;
                 }}
                 .amount {{
                     font-size: 32px;
@@ -182,8 +160,6 @@ def send_payment_confirmation(order):
                 .footer {{
                     text-align: center;
                     margin-top: 30px;
-                    padding-top: 20px;
-                    border-top: 1px solid #00ff00;
                     font-size: 12px;
                     color: #888;
                 }}
@@ -192,7 +168,7 @@ def send_payment_confirmation(order):
         <body>
             <div class="container">
                 <div class="header">
-                    <div class="logo">KHAOS_STORE</div>
+                    <h2 style="color: #00ff00;">KHAOS STORE</h2>
                 </div>
                 <div class="content">
                     <h2>¡Pago Confirmado, {order.customer_name}! 🎉</h2>
@@ -221,12 +197,10 @@ def send_payment_confirmation(order):
                         <li>¡Disfruta tu juego!</li>
                     </ol>
                     
-                    <p>¿Problemas con tu clave? Contáctanos a soporte@khaosstore.com</p>
+                    <p>¿Problemas? Contáctanos a soporte@khaosstore.com</p>
                 </div>
                 <div class="footer">
-                    <p>© 2026 Khaos Store - Todos los derechos reservados</p>
-                    <p>soporte@khaosstore.com | 333 7452514</p>
-                    <p>Medellín, Colombia</p>
+                    <p>© 2026 Khaos Store | soporte@khaosstore.com | 333 7452514</p>
                 </div>
             </div>
         </body>
@@ -241,8 +215,8 @@ def send_payment_confirmation(order):
             html_message=html_body,
             fail_silently=False,
         )
-        print(f"✅ Email de confirmación de pago enviado a {order.customer_email}")
+        print(f"✅ Email de confirmación enviado a {order.customer_email}")
         return True
     except Exception as e:
-        print(f"❌ Error enviando email de confirmación: {e}")
+        print(f"❌ Error enviando email: {e}")
         return False
