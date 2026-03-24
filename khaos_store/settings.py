@@ -103,12 +103,12 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 MEDIA_URL = '/media/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
-EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
-EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
-EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='soportekhaosstore@gmail.com')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='Khaos Store <soportekhaosstore@gmail.com>')
+EMAIL_HOST = 'smtp-relay.brevo.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'a5e3fc001@smtp-brevo.com'
+EMAIL_HOST_PASSWORD = config('BREVO_SMTP_PASSWORD')
+DEFAULT_FROM_EMAIL = 'Khaos Store <soportekhaosstore@gmail.com>'
 
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
