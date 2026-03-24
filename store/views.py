@@ -25,9 +25,6 @@ def register(request):
             password = request.POST.get('password')
             confirm_password = request.POST.get('confirm_password')
             phone = request.POST.get('phone', '')
-            birth_year = request.POST.get('birth_year')
-            birth_month = request.POST.get('birth_month')
-            birth_day = request.POST.get('birth_day')
             
             # Validaciones
             if not username or not email or not password:
@@ -51,18 +48,6 @@ def register(request):
             if len(phone) != 10 or not phone.isdigit():
                 return JsonResponse({'success': False, 'error': 'El teléfono debe tener 10 dígitos'}, status=400)
             
-            # Validar fecha de nacimiento
-            birth_date = None
-            try:
-                if birth_year and birth_month and birth_day:
-                    birth_date = date(int(birth_year), int(birth_month), int(birth_day))
-                    today = date.today()
-                    age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
-                    if age < 18:
-                        return JsonResponse({'success': False, 'error': 'Debes ser mayor de 18 años'}, status=400)
-            except:
-                pass
-            
             # Crear usuario
             user = User.objects.create_user(
                 username=username,
@@ -70,27 +55,20 @@ def register(request):
                 password=password
             )
             
-            # Crear perfil con fecha si existe
-            if birth_date:
-                UserProfile.objects.create(
-                    user=user,
-                    phone=phone,
-                    birth_date=birth_date
-                )
-            else:
-                UserProfile.objects.create(
-                    user=user,
-                    phone=phone
-                )
+            # Crear perfil
+            UserProfile.objects.create(
+                user=user,
+                phone=phone
+            )
             
             # Iniciar sesión
             login(request, user)
             request.session.save()
             
-            # Enviar email de bienvenida
-            send_welcome_email(user)
+            messages.success(request, f'¡Bienvenido {username}!')
             
-            messages.success(request, f'¡Bienvenido {username}! Tu cuenta ha sido creada exitosamente.')
+            # EMAIL DESACTIVADO TEMPORALMENTE PARA EVITAR ERRORES
+            # send_welcome_email(user)
             
             return JsonResponse({'success': True, 'redirect': '/'})
             
