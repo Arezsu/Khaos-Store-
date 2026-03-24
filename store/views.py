@@ -5,7 +5,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
 from .models import Product, Order, UserProfile
-from .email_utils import send_welcome_email, send_payment_confirmation
 from datetime import date
 import re
 
@@ -67,7 +66,7 @@ def register(request):
             
             messages.success(request, f'¡Bienvenido {username}!')
             
-            # EMAIL DESACTIVADO TEMPORALMENTE PARA EVITAR ERRORES
+            # EMAIL DESACTIVADO
             # send_welcome_email(user)
             
             return JsonResponse({'success': True, 'redirect': '/'})
@@ -129,13 +128,10 @@ def process_payment(request, product_id):
         product.stock -= 1
         product.save()
         
-        # Enviar email de confirmación de pago
-        send_payment_confirmation(order)
-        
         request.session['last_order'] = order.order_number
         request.session.save()
         
-        messages.success(request, '¡Pago exitoso! Revisa tu correo para la key del juego.')
+        messages.success(request, '¡Pago exitoso!')
         return redirect('success', order_id=order.order_number)
         
     except Exception as e:
