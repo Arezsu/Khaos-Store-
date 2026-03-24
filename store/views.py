@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
 from .models import Product, Order, UserProfile
+from .email_utils import send_welcome_email, send_payment_confirmation
 from datetime import date
 import re
 
@@ -86,7 +87,10 @@ def register(request):
             login(request, user)
             request.session.save()
             
-            messages.success(request, f'Bienvenido {username}! Tu cuenta ha sido creada exitosamente.')
+            # Enviar email de bienvenida
+            send_welcome_email(user)
+            
+            messages.success(request, f'¡Bienvenido {username}! Tu cuenta ha sido creada exitosamente.')
             
             return JsonResponse({'success': True, 'redirect': '/'})
             
@@ -98,7 +102,7 @@ def register(request):
 
 def custom_logout(request):
     logout(request)
-    messages.success(request, 'Has cerrado sesion correctamente!')
+    messages.success(request, '¡Has cerrado sesión correctamente!')
     return redirect('home')
 
 @login_required(login_url='login')
@@ -147,16 +151,13 @@ def process_payment(request, product_id):
         product.stock -= 1
         product.save()
         
-        try:
-            order.send_confirmation_email()
-            order.send_game_key()
-        except:
-            pass
+        # Enviar email de confirmación de pago
+        send_payment_confirmation(order)
         
         request.session['last_order'] = order.order_number
         request.session.save()
         
-        messages.success(request, 'Pago exitoso!')
+        messages.success(request, '¡Pago exitoso! Revisa tu correo para la key del juego.')
         return redirect('success', order_id=order.order_number)
         
     except Exception as e:
