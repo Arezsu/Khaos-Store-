@@ -86,7 +86,7 @@ def register(request):
             login(request, user)
             request.session.save()
             
-            messages.success(request, f'¡Bienvenido {username}! Tu cuenta ha sido creada exitosamente.')
+            messages.success(request, f'Bienvenido {username}! Tu cuenta ha sido creada exitosamente.')
             
             return JsonResponse({'success': True, 'redirect': '/'})
             
@@ -98,7 +98,7 @@ def register(request):
 
 def custom_logout(request):
     logout(request)
-    messages.success(request, '¡Has cerrado sesión correctamente!')
+    messages.success(request, 'Has cerrado sesion correctamente!')
     return redirect('home')
 
 @login_required(login_url='login')
@@ -156,7 +156,7 @@ def process_payment(request, product_id):
         request.session['last_order'] = order.order_number
         request.session.save()
         
-        messages.success(request, '¡Pago exitoso!')
+        messages.success(request, 'Pago exitoso!')
         return redirect('success', order_id=order.order_number)
         
     except Exception as e:
