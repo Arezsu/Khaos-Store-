@@ -36,7 +36,7 @@ class UserProfile(models.Model):
     address = models.TextField(blank=True)
     city = models.CharField(max_length=100, blank=True)
     favorite_games = models.ManyToManyField(Product, blank=True)
-    birth_date = models.DateField(null=True, blank=True)
+    birth_date = models.DateField(null=True, blank=True)  # <--- ESTE CAMPO DEBE EXISTIR
     
     def __str__(self):
         return self.user.username
@@ -110,10 +110,9 @@ KHAOS STORE
                 [self.customer_email],
                 fail_silently=False,
             )
-            print(f"✅ Email de confirmación enviado a {self.customer_email}")
             return True
         except Exception as e:
-            print(f"❌ Error enviando confirmación: {e}")
+            print(f"Error enviando confirmación: {e}")
             return False
     
     def send_game_key(self):
@@ -135,8 +134,6 @@ Instrucciones de activación:
 
 ¿Problemas? Contáctanos al 333 7452514
 
-Tu clave también está disponible en tu perfil.
-
 KHAOS STORE
 """
             send_mail(
@@ -146,10 +143,9 @@ KHAOS STORE
                 [self.customer_email],
                 fail_silently=False,
             )
-            print(f"✅ Email de key enviado a {self.customer_email}")
             return True
         except Exception as e:
-            print(f"❌ Error enviando key: {e}")
+            print(f"Error enviando key: {e}")
             return False
     
     def __str__(self):

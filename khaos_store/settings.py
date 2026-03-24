@@ -110,6 +110,7 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='soportekhaosstore@gmail.com
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='Khaos Store <soportekhaosstore@gmail.com>')
 
+# Configuración de login/logout
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'

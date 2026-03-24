@@ -8,12 +8,7 @@
     <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Montserrat', sans-serif;
             background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
@@ -21,11 +16,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 0;
             padding: 20px;
             color: #fff;
         }
-        
         .login-container {
             background: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(10px);
@@ -35,9 +28,7 @@
             padding: 40px;
             width: 100%;
             max-width: 400px;
-            box-shadow: 0 0 50px rgba(255, 0, 255, 0.3);
         }
-        
         h1 {
             text-align: center;
             font-family: 'Press Start 2P', cursive;
@@ -47,18 +38,8 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #ff00ff;
-            font-weight: bold;
-        }
-        
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 5px; color: #ff00ff; font-weight: bold; }
         input {
             width: 100%;
             padding: 12px;
@@ -67,16 +48,7 @@
             border-radius: 10px;
             color: #fff;
             font-size: 16px;
-            transition: all 0.3s;
         }
-        
-        input:focus {
-            outline: none;
-            box-shadow: 0 0 20px #ff00ff;
-            border-color: #00ffff;
-            background: rgba(0, 0, 0, 0.5);
-        }
-        
         .btn {
             width: 100%;
             padding: 14px;
@@ -87,76 +59,14 @@
             font-weight: bold;
             font-size: 18px;
             cursor: pointer;
-            transition: all 0.3s;
             margin-top: 20px;
         }
-        
-        .btn:hover {
-            transform: scale(1.02);
-            box-shadow: 0 0 30px #ff00ff;
-        }
-        
-        .register-link {
-            text-align: center;
-            margin-top: 20px;
-        }
-        
-        .register-link a {
-            color: #00ffff;
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-        
-        .register-link a:hover {
-            text-shadow: 0 0 10px #00ffff;
-        }
-        
-        .messages {
-            margin-bottom: 20px;
-        }
-        
-        .message {
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-        
-        .message.error {
-            background: rgba(255, 0, 0, 0.2);
-            border: 1px solid #ff0000;
-            color: #ff0000;
-        }
-        
-        .message.success {
-            background: rgba(0, 255, 0, 0.2);
-            border: 1px solid #00ff00;
-            color: #00ff00;
-        }
-        
-        .info-message {
-            background: rgba(255, 0, 255, 0.2);
-            border: 1px solid #ff00ff;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
-            color: #ff00ff;
-        }
-        
-        .back-link {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
-            color: rgba(255, 255, 255, 0.5);
-            text-decoration: none;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-        
-        .back-link:hover {
-            color: #ff00ff;
-        }
+        .register-link { text-align: center; margin-top: 20px; }
+        .register-link a { color: #00ffff; text-decoration: none; }
+        .messages { margin-bottom: 20px; }
+        .message { padding: 10px; border-radius: 5px; margin-bottom: 10px; text-align: center; }
+        .message.error { background: rgba(255,0,0,0.2); border: 1px solid #ff0000; color: #ff0000; }
+        .back-link { display: block; text-align: center; margin-top: 20px; color: rgba(255,255,255,0.5); text-decoration: none; }
     </style>
 </head>
 <body>
@@ -171,18 +81,11 @@
         </div>
         {% endif %}
         
-        {% if request.GET.next %}
-        <div class="info-message">
-            🔒 Necesitas iniciar sesión para continuar tu compra
-        </div>
-        {% endif %}
-        
         <form method="post" action="{% url 'login' %}">
             {% csrf_token %}
-            <input type="hidden" name="next" value="{{ request.GET.next }}">
             <div class="form-group">
                 <label>USUARIO</label>
-                <input type="text" name="username" required autofocus>
+                <input type="text" name="username" required>
             </div>
             <div class="form-group">
                 <label>CONTRASEÑA</label>
@@ -192,7 +95,7 @@
         </form>
         
         <div class="register-link">
-            ¿No tienes cuenta? <a href="{% url 'register' %}?next={{ request.GET.next }}">REGÍSTRATE AQUÍ</a>
+            ¿No tienes cuenta? <a href="{% url 'register' %}">REGÍSTRATE</a>
         </div>
         
         <a href="{% url 'home' %}" class="back-link">← VOLVER A LA TIENDA</a>

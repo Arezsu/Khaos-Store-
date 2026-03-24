@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
@@ -50,15 +50,17 @@ def register(request):
             if len(phone) != 10 or not phone.isdigit():
                 return JsonResponse({'success': False, 'error': 'El teléfono debe tener 10 dígitos'}, status=400)
             
-            # Validar fecha
+            # Validar fecha de nacimiento
+            birth_date = None
             try:
-                birth_date = date(int(birth_year), int(birth_month), int(birth_day))
-                today = date.today()
-                age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
-                if age < 18:
-                    return JsonResponse({'success': False, 'error': 'Debes ser mayor de 18 años'}, status=400)
+                if birth_year and birth_month and birth_day:
+                    birth_date = date(int(birth_year), int(birth_month), int(birth_day))
+                    today = date.today()
+                    age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+                    if age < 18:
+                        return JsonResponse({'success': False, 'error': 'Debes ser mayor de 18 años'}, status=400)
             except:
-                return JsonResponse({'success': False, 'error': 'Fecha de nacimiento inválida'}, status=400)
+                pass
             
             # Crear usuario
             user = User.objects.create_user(
@@ -67,16 +69,24 @@ def register(request):
                 password=password
             )
             
-            # Crear perfil
-            UserProfile.objects.create(
-                user=user,
-                phone=phone,
-                birth_date=birth_date
-            )
+            # Crear perfil con fecha si existe
+            if birth_date:
+                UserProfile.objects.create(
+                    user=user,
+                    phone=phone,
+                    birth_date=birth_date
+                )
+            else:
+                UserProfile.objects.create(
+                    user=user,
+                    phone=phone
+                )
             
             # Iniciar sesión
             login(request, user)
             request.session.save()
+            
+            messages.success(request, f'¡Bienvenido {username}! Tu cuenta ha sido creada exitosamente.')
             
             return JsonResponse({'success': True, 'redirect': '/'})
             
@@ -85,6 +95,11 @@ def register(request):
             return JsonResponse({'success': False, 'error': str(e)}, status=500)
     
     return render(request, 'store/register.html')
+
+def custom_logout(request):
+    logout(request)
+    messages.success(request, '¡Has cerrado sesión correctamente!')
+    return redirect('home')
 
 @login_required(login_url='login')
 def checkout(request, product_id):
@@ -139,6 +154,7 @@ def process_payment(request, product_id):
             pass
         
         request.session['last_order'] = order.order_number
+        request.session.save()
         
         messages.success(request, '¡Pago exitoso!')
         return redirect('success', order_id=order.order_number)
