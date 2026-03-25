@@ -30,6 +30,7 @@
         border-radius: 20px;
         padding: 20px;
         text-align: center;
+        box-shadow: 0 0 30px rgba(255, 0, 255, 0.2);
     }
     .avatar {
         width: 150px;
@@ -46,6 +47,7 @@
         font-size: 24px;
         font-weight: bold;
         margin-bottom: 10px;
+        color: #fff;
     }
     .email, .phone {
         color: rgba(255, 255, 255, 0.7);
@@ -58,6 +60,7 @@
         border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
         border-radius: 20px;
         padding: 20px;
+        box-shadow: 0 0 30px rgba(255, 0, 255, 0.2);
     }
     .order-card {
         background: rgba(255, 255, 255, 0.05);
@@ -65,6 +68,11 @@
         padding: 20px;
         margin-bottom: 20px;
         border-left: 5px solid #ff00ff;
+        transition: all 0.3s;
+    }
+    .order-card:hover {
+        transform: translateX(10px);
+        box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
     }
     .order-header {
         display: flex;
@@ -92,6 +100,14 @@
         background: #ffaa00;
         color: #000;
     }
+    .status-sent {
+        background: #00ffff;
+        color: #000;
+    }
+    .status-delivered {
+        background: #ff00ff;
+        color: #fff;
+    }
     .order-details {
         display: flex;
         justify-content: space-between;
@@ -117,18 +133,31 @@
         color: #00ffff;
         text-decoration: none;
         font-size: 18px;
+        transition: all 0.3s;
     }
     .back-link:hover {
         text-shadow: 0 0 10px #00ffff;
+        transform: translateX(-5px);
     }
     .no-orders {
         text-align: center;
         padding: 60px 40px;
         color: rgba(255, 255, 255, 0.5);
     }
+    .no-orders a {
+        color: #ff00ff;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    .no-orders a:hover {
+        text-shadow: 0 0 10px #ff00ff;
+    }
     @media (max-width: 768px) {
         .profile-grid {
             grid-template-columns: 1fr;
+        }
+        h1 {
+            font-size: 18px;
         }
         .order-header {
             flex-direction: column;
@@ -167,10 +196,13 @@
                     <span class="order-status 
                         {% if order.status == 'PAID' %}status-paid
                         {% elif order.status == 'PENDING' %}status-pending
+                        {% elif order.status == 'SENT' %}status-sent
+                        {% elif order.status == 'DELIVERED' %}status-delivered
                         {% endif %}">
                         {% if order.status == 'PAID' %}✅ PAGADO
                         {% elif order.status == 'PENDING' %}⏳ PENDIENTE
                         {% elif order.status == 'SENT' %}📤 ENVIADO
+                        {% elif order.status == 'DELIVERED' %}📦 ENTREGADO
                         {% else %}❌ {{ order.status }}
                         {% endif %}
                     </span>
@@ -185,7 +217,7 @@
             <div class="no-orders">
                 <p style="font-size: 48px; margin-bottom: 20px;">🎮</p>
                 <p>No has realizado ninguna compra aún</p>
-                <p style="margin-top: 20px;"><a href="{% url 'home' %}" style="color: #ff00ff;">¡Explora la tienda!</a></p>
+                <p style="margin-top: 20px;"><a href="{% url 'home' %}">¡Explora la tienda!</a></p>
             </div>
             {% endfor %}
         </div>
