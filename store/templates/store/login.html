@@ -3,11 +3,11 @@
 
 {% block title %}Iniciar Sesión{% endblock %}
 
-{% block content %}
+{% block extra_css %}
 <style>
     .login-container {
-        background: rgba(0, 0, 0, 0.8);
-        backdrop-filter: blur(10px);
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(15px);
         border: 2px solid;
         border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
         border-radius: 20px;
@@ -15,6 +15,7 @@
         width: 100%;
         max-width: 400px;
         margin: 0 auto;
+        box-shadow: 0 0 50px rgba(255, 0, 255, 0.3);
     }
     h1 {
         text-align: center;
@@ -42,6 +43,12 @@
         border-radius: 10px;
         color: #fff;
         font-size: 16px;
+        transition: all 0.3s;
+    }
+    input:focus {
+        outline: none;
+        box-shadow: 0 0 20px #ff00ff;
+        border-color: #00ffff;
     }
     .btn {
         width: 100%;
@@ -54,6 +61,7 @@
         font-size: 18px;
         cursor: pointer;
         margin-top: 20px;
+        transition: all 0.3s;
     }
     .btn:hover {
         transform: scale(1.02);
@@ -66,6 +74,9 @@
     .register-link a {
         color: #00ffff;
         text-decoration: none;
+    }
+    .register-link a:hover {
+        text-shadow: 0 0 10px #00ffff;
     }
     .messages {
         margin-bottom: 20px;
@@ -87,7 +98,9 @@
         color: #00ff00;
     }
 </style>
+{% endblock %}
 
+{% block content %}
 <div class="login-container">
     <h1>INICIAR SESIÓN</h1>
     

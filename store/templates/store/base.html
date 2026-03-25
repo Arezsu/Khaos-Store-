@@ -31,7 +31,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.6);
             z-index: -1;
         }
 
@@ -228,7 +228,7 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Video de fondo -->
+    <!-- Video de fondo en loop infinito -->
     <video autoplay muted loop playsinline class="video-background">
         <source src="{% static 'videos/gow.mp4' %}" type="video/mp4">
         Tu navegador no soporta videos.

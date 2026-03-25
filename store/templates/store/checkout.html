@@ -3,17 +3,18 @@
 
 {% block title %}Checkout{% endblock %}
 
-{% block content %}
+{% block extra_css %}
 <style>
     .checkout-container {
         max-width: 600px;
         margin: 0 auto;
-        background: rgba(0, 0, 0, 0.8);
-        backdrop-filter: blur(10px);
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(15px);
         border: 2px solid;
         border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
         border-radius: 20px;
         padding: 40px;
+        box-shadow: 0 0 50px rgba(255, 0, 255, 0.3);
     }
     h1 {
         text-align: center;
@@ -150,7 +151,9 @@
         text-align: center;
     }
 </style>
+{% endblock %}
 
+{% block content %}
 <div class="checkout-container">
     <h1>CHECKOUT</h1>
     

@@ -3,13 +3,14 @@
 
 {% block title %}Inicio - KHAOS STORE{% endblock %}
 
-{% block content %}
+{% block extra_css %}
 <style>
     .hero {
         text-align: center;
         padding: 4rem 2rem;
         margin-bottom: 3rem;
         background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
         border-radius: 20px;
         border: 2px solid;
         border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
@@ -41,11 +42,11 @@
         flex: 1;
         padding: 15px 20px;
         background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(5px);
         border: 2px solid #ff00ff;
         border-radius: 50px;
         color: #fff;
         font-size: 18px;
-        backdrop-filter: blur(5px);
     }
     .search-input:focus {
         outline: none;
@@ -139,7 +140,9 @@
         .search-form { flex-direction: column; }
     }
 </style>
+{% endblock %}
 
+{% block content %}
 <section class="hero">
     <h1>⚡ BIENVENIDO A KHAOS ⚡</h1>
     <p>La tienda gamer más épica</p>
