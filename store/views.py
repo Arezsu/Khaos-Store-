@@ -5,9 +5,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
 from .models import Product, Order, UserProfile
-from .email_utils import send_welcome_email, send_payment_confirmation
 from datetime import date
 import re
+import random
+import string
 
 def home(request):
     query = request.GET.get('q', '')
@@ -29,7 +30,7 @@ def register(request):
             birth_month = request.POST.get('birth_month')
             birth_day = request.POST.get('birth_day')
             
-            # Validaciones
+            # Validaciones básicas
             if not username or not email or not password:
                 return JsonResponse({'success': False, 'error': 'Todos los campos son obligatorios'}, status=400)
             
@@ -51,18 +52,6 @@ def register(request):
             if len(phone) != 10 or not phone.isdigit():
                 return JsonResponse({'success': False, 'error': 'El teléfono debe tener 10 dígitos'}, status=400)
             
-            # Validar fecha de nacimiento
-            birth_date = None
-            try:
-                if birth_year and birth_month and birth_day:
-                    birth_date = date(int(birth_year), int(birth_month), int(birth_day))
-                    today = date.today()
-                    age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
-                    if age < 18:
-                        return JsonResponse({'success': False, 'error': 'Debes ser mayor de 18 años'}, status=400)
-            except:
-                pass
-            
             # Crear usuario
             user = User.objects.create_user(
                 username=username,
@@ -71,13 +60,20 @@ def register(request):
             )
             
             # Crear perfil con fecha si existe
-            if birth_date:
-                UserProfile.objects.create(
-                    user=user,
-                    phone=phone,
-                    birth_date=birth_date
-                )
-            else:
+            try:
+                if birth_year and birth_month and birth_day:
+                    birth_date = date(int(birth_year), int(birth_month), int(birth_day))
+                    UserProfile.objects.create(
+                        user=user,
+                        phone=phone,
+                        birth_date=birth_date
+                    )
+                else:
+                    UserProfile.objects.create(
+                        user=user,
+                        phone=phone
+                    )
+            except:
                 UserProfile.objects.create(
                     user=user,
                     phone=phone
@@ -87,10 +83,8 @@ def register(request):
             login(request, user)
             request.session.save()
             
-            # Enviar email de bienvenida
-            send_welcome_email(user)
-            
-            messages.success(request, f'Bienvenido {username}! Tu cuenta ha sido creada exitosamente.')
+            # Enviar email de bienvenida (desactivado temporalmente)
+            # send_welcome_email(user)
             
             return JsonResponse({'success': True, 'redirect': '/'})
             
@@ -102,7 +96,7 @@ def register(request):
 
 def custom_logout(request):
     logout(request)
-    messages.success(request, 'Has cerrado sesion correctamente!')
+    messages.success(request, 'Has cerrado sesión correctamente!')
     return redirect('home')
 
 @login_required(login_url='login')
@@ -148,18 +142,13 @@ def process_payment(request, product_id):
             status='PAID'
         )
         
-        # Enviar email de confirmación de pago (usando email_utils)
-        send_payment_confirmation(order)
-        
-        # Restar stock
         product.stock -= 1
         product.save()
         
-        # Guardar en sesión
         request.session['last_order'] = order.order_number
         request.session.save()
         
-        messages.success(request, 'Pago exitoso! Revisa tu correo para la key del juego.')
+        messages.success(request, '¡Pago exitoso!')
         return redirect('success', order_id=order.order_number)
         
     except Exception as e:

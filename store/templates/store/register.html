@@ -3,7 +3,6 @@
 
 {% block title %}Registro{% endblock %}
 
-{# Esto agrega blur al overlay SOLO en registro #}
 {% block overlay_class %}blur{% endblock %}
 
 {% block extra_css %}
@@ -38,7 +37,7 @@
         color: #ff00ff;
         font-weight: bold;
     }
-    input {
+    input, select {
         width: 100%;
         padding: 12px;
         background: rgba(255, 255, 255, 0.1);
@@ -48,10 +47,16 @@
         font-size: 16px;
         transition: all 0.3s;
     }
-    input:focus {
+    input:focus, select:focus {
         outline: none;
         box-shadow: 0 0 20px #ff00ff;
         border-color: #00ffff;
+    }
+    .birth-date {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 20px;
     }
     .btn {
         width: 100%;
@@ -100,10 +105,72 @@
         border: 1px solid #00ff00;
         color: #00ff00;
     }
+    .loading-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+    .loading-overlay.show {
+        display: flex;
+    }
+    .loading-spinner {
+        width: 60px;
+        height: 60px;
+        border: 5px solid #ff00ff;
+        border-top: 5px solid #00ffff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    .loading-text {
+        color: #fff;
+        font-size: 20px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .success-message {
+        color: #00ff00;
+        font-size: 28px;
+        text-align: center;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+    .countdown {
+        color: #ff00ff;
+        font-size: 48px;
+        font-weight: bold;
+        margin-top: 20px;
+    }
+    .countdown-text {
+        color: #fff;
+        font-size: 18px;
+        margin-top: 10px;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
+<!-- Pantalla de carga -->
+<div class="loading-overlay" id="loading-overlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text" id="loading-text">Procesando registro...</div>
+    <div class="success-message" id="success-message" style="display: none;">✅ USUARIO GUARDADO CORRECTAMENTE</div>
+    <div class="countdown" id="countdown-number" style="display: none;">10</div>
+    <div class="countdown-text" id="countdown-text" style="display: none;">Redirigiendo en <span id="timer">10</span> segundos...</div>
+</div>
+
 <div class="register-container">
     <h1>REGISTRO</h1>
     
@@ -133,6 +200,63 @@
             <input type="tel" name="phone" required maxlength="10" placeholder="3001234567">
         </div>
         
+        <label>FECHA DE NACIMIENTO</label>
+        <div class="birth-date">
+            <select name="birth_year" required>
+                <option value="">AÑO</option>
+                <option value="1990">1990</option>
+                <option value="1991">1991</option>
+                <option value="1992">1992</option>
+                <option value="1993">1993</option>
+                <option value="1994">1994</option>
+                <option value="1995">1995</option>
+                <option value="1996">1996</option>
+                <option value="1997">1997</option>
+                <option value="1998">1998</option>
+                <option value="1999">1999</option>
+                <option value="2000">2000</option>
+                <option value="2001">2001</option>
+                <option value="2002">2002</option>
+                <option value="2003">2003</option>
+                <option value="2004">2004</option>
+                <option value="2005">2005</option>
+                <option value="2006">2006</option>
+                <option value="2007">2007</option>
+                <option value="2008">2008</option>
+            </select>
+            
+            <select name="birth_month" required>
+                <option value="">MES</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+            </select>
+            
+            <select name="birth_day" required>
+                <option value="">DÍA</option>
+                <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+                <option value="7">7</option><option value="8">8</option><option value="9">9</option>
+                <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+                <option value="13">13</option><option value="14">14</option><option value="15">15</option>
+                <option value="16">16</option><option value="17">17</option><option value="18">18</option>
+                <option value="19">19</option><option value="20">20</option><option value="21">21</option>
+                <option value="22">22</option><option value="23">23</option><option value="24">24</option>
+                <option value="25">25</option><option value="26">26</option><option value="27">27</option>
+                <option value="28">28</option><option value="29">29</option><option value="30">30</option>
+                <option value="31">31</option>
+            </select>
+        </div>
+        
         <div class="form-group">
             <label>CONTRASEÑA (mínimo 4 caracteres)</label>
             <input type="password" name="password" required minlength="4">
@@ -152,30 +276,92 @@
 </div>
 
 <script>
+    // Audio
+    const audio = new Audio("{% static 'audio/registro.mp3' %}");
+    audio.volume = 0.5;
+    
+    // Elementos del overlay
+    const overlay = document.getElementById('loading-overlay');
+    const loadingText = document.getElementById('loading-text');
+    const successMsg = document.getElementById('success-message');
+    const countdownNumber = document.getElementById('countdown-number');
+    const countdownText = document.getElementById('countdown-text');
+    const timerSpan = document.getElementById('timer');
+    
+    // Validar teléfono
     document.querySelector('input[name="phone"]').addEventListener('input', function(e) {
         this.value = this.value.replace(/\D/g, '').slice(0, 10);
     });
     
+    // Validar envío
     document.getElementById('register-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
         const phone = document.querySelector('input[name="phone"]').value;
         const password = document.querySelector('input[name="password"]').value;
         const confirm = document.querySelector('input[name="confirm_password"]').value;
+        const year = document.querySelector('select[name="birth_year"]').value;
+        const month = document.querySelector('select[name="birth_month"]').value;
+        const day = document.querySelector('select[name="birth_day"]').value;
         
         if (phone.length !== 10) {
-            e.preventDefault();
             alert('El teléfono debe tener exactamente 10 dígitos');
             return;
         }
         if (password.length < 4) {
-            e.preventDefault();
             alert('La contraseña debe tener al menos 4 caracteres');
             return;
         }
         if (password !== confirm) {
-            e.preventDefault();
             alert('Las contraseñas no coinciden');
             return;
         }
+        if (!year || !month || !day) {
+            alert('Debes seleccionar tu fecha de nacimiento');
+            return;
+        }
+        
+        // Mostrar overlay y reproducir audio
+        overlay.classList.add('show');
+        audio.play();
+        
+        // Enviar datos
+        fetch(window.location.href, {
+            method: 'POST',
+            body: new FormData(document.getElementById('register-form')),
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                loadingText.textContent = '✅ ¡REGISTRO EXITOSO!';
+                successMsg.style.display = 'block';
+                countdownNumber.style.display = 'block';
+                countdownText.style.display = 'block';
+                
+                let seconds = 10;
+                timerSpan.textContent = seconds;
+                countdownNumber.textContent = seconds;
+                
+                const interval = setInterval(() => {
+                    seconds--;
+                    timerSpan.textContent = seconds;
+                    countdownNumber.textContent = seconds;
+                    if (seconds <= 0) {
+                        clearInterval(interval);
+                        window.location.href = "{% url 'home' %}";
+                    }
+                }, 1000);
+            } else {
+                loadingText.textContent = '❌ Error: ' + (data.error || 'Error desconocido');
+                setTimeout(() => overlay.classList.remove('show'), 3000);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            loadingText.textContent = '❌ Error en el registro';
+            setTimeout(() => overlay.classList.remove('show'), 3000);
+        });
     });
 </script>
 {% endblock %}
