@@ -1,307 +1,237 @@
+{% extends 'store/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout - KHAOS STORE</title>
-    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<style>
+    .checkout-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+        border: 2px solid;
+        border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
+        border-radius: 20px;
+        padding: 40px;
+    }
+    h1 {
+        text-align: center;
+        font-family: 'Press Start 2P', cursive;
+        font-size: 24px;
+        margin-bottom: 30px;
+        background: linear-gradient(45deg, #ff00ff, #00ffff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    h2 {
+        color: #ff00ff;
+        margin: 30px 0 20px;
+        font-size: 18px;
+    }
+    .product-summary {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 30px;
+        display: flex;
+        gap: 20px;
+        border: 1px solid #ff00ff;
+    }
+    .product-image {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 10px;
+        border: 2px solid #ff00ff;
+    }
+    .product-details {
+        flex: 1;
+    }
+    .product-name {
+        font-size: 20px;
+        font-weight: bold;
+        color: #ff00ff;
+        margin-bottom: 5px;
+    }
+    .product-price {
+        font-size: 24px;
+        color: #00ffff;
+        font-weight: bold;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    label {
+        display: block;
+        margin-bottom: 5px;
+        color: #ff00ff;
+        font-weight: bold;
+    }
+    input, select {
+        width: 100%;
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid #ff00ff;
+        border-radius: 10px;
+        color: #fff;
+        font-size: 16px;
+    }
+    .payment-methods {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin: 30px 0;
+    }
+    .payment-method {
+        background: rgba(255, 255, 255, 0.05);
+        border: 2px solid #ff00ff;
+        border-radius: 15px;
+        padding: 15px 10px;
+        text-align: center;
+        cursor: pointer;
+    }
+    .payment-method.selected {
+        background: linear-gradient(45deg, #ff00ff, #00ffff);
+    }
+    .payment-method.selected .payment-icon,
+    .payment-method.selected span {
+        color: #000;
+    }
+    .payment-icon {
+        font-size: 30px;
+        margin-bottom: 5px;
+        color: #ff00ff;
+    }
+    .payment-method span {
+        display: block;
+        font-weight: bold;
+        color: #fff;
+    }
+    .total {
+        background: linear-gradient(45deg, #ff00ff, #00ffff);
+        padding: 20px;
+        border-radius: 15px;
+        text-align: right;
+        margin: 30px 0;
+    }
+    .total-label {
+        font-size: 18px;
+        color: #000;
+        font-weight: bold;
+    }
+    .total-amount {
+        font-size: 36px;
+        font-weight: bold;
+        color: #000;
+        margin-left: 15px;
+    }
+    .btn {
+        width: 100%;
+        padding: 16px;
+        background: linear-gradient(45deg, #ff00ff, #00ffff);
+        border: none;
+        border-radius: 10px;
+        color: #000;
+        font-weight: bold;
+        font-size: 20px;
+        cursor: pointer;
+    }
+    .btn:hover {
+        transform: scale(1.02);
+        box-shadow: 0 0 30px #ff00ff;
+    }
+    .message.error {
+        background: rgba(255, 0, 0, 0.2);
+        border: 1px solid #ff0000;
+        padding: 10px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        text-align: center;
+    }
+</style>
+
+<div class="checkout-container">
+    <h1>CHECKOUT</h1>
+    
+    <div class="product-summary">
+        <img src="{{ product.image }}" alt="{{ product.name }}" class="product-image">
+        <div class="product-details">
+            <div class="product-name">{{ product.name }}</div>
+            <div class="product-price">${{ product.get_price }}</div>
+        </div>
+    </div>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message error">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    
+    <form method="post" action="{% url 'process_payment' product.id %}" id="payment-form">
+        {% csrf_token %}
         
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            color: #fff;
-        }
+        <h2>📋 TUS DATOS</h2>
         
-        .checkout-container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            border: 2px solid;
-            border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 0 50px rgba(255, 0, 255, 0.3);
-        }
+        <div class="form-group">
+            <label>NOMBRE COMPLETO</label>
+            <input type="text" name="name" required value="{{ user.get_full_name|default:'' }}">
+        </div>
         
-        h1 {
-            text-align: center;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 24px;
-            margin-bottom: 30px;
-            background: linear-gradient(45deg, #ff00ff, #00ffff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+        <div class="form-group">
+            <label>EMAIL</label>
+            <input type="email" name="email" required value="{{ user.email|default:'' }}">
+        </div>
         
-        .product-summary {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 30px;
-            display: flex;
-            gap: 20px;
-            border: 1px solid #ff00ff;
-        }
+        <div class="form-group">
+            <label>TELÉFONO (10 dígitos)</label>
+            <input type="tel" name="phone" required placeholder="3001234567" maxlength="10">
+        </div>
         
-        .product-image {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 10px;
-            border: 2px solid #ff00ff;
-        }
+        <h2>💳 MÉTODO DE PAGO</h2>
+        <input type="hidden" name="payment_method" id="selected_payment" value="CARD">
         
-        .product-details {
-            flex: 1;
-        }
-        
-        .product-name {
-            font-size: 20px;
-            font-weight: bold;
-            color: #ff00ff;
-            margin-bottom: 5px;
-        }
-        
-        .product-price {
-            font-size: 24px;
-            color: #00ffff;
-            font-weight: bold;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #ff00ff;
-            font-weight: bold;
-        }
-        
-        input, select {
-            width: 100%;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid #ff00ff;
-            border-radius: 10px;
-            color: #fff;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-        
-        input:focus, select:focus {
-            outline: none;
-            box-shadow: 0 0 20px #ff00ff;
-            border-color: #00ffff;
-            background: rgba(0, 0, 0, 0.5);
-        }
-        
-        .payment-methods {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin: 30px 0;
-        }
-        
-        .payment-method {
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid #ff00ff;
-            border-radius: 15px;
-            padding: 15px 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .payment-method:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0 30px #ff00ff;
-        }
-        
-        .payment-method.selected {
-            background: linear-gradient(45deg, #ff00ff, #00ffff);
-        }
-        
-        .payment-method.selected .payment-icon,
-        .payment-method.selected span {
-            color: #000;
-        }
-        
-        .payment-icon {
-            font-size: 30px;
-            margin-bottom: 5px;
-            color: #ff00ff;
-        }
-        
-        .payment-method span {
-            display: block;
-            font-weight: bold;
-            color: #fff;
-        }
-        
-        .total {
-            background: linear-gradient(45deg, #ff00ff, #00ffff);
-            padding: 20px;
-            border-radius: 15px;
-            text-align: right;
-            margin: 30px 0;
-        }
-        
-        .total-label {
-            font-size: 18px;
-            color: #000;
-            font-weight: bold;
-        }
-        
-        .total-amount {
-            font-size: 36px;
-            font-weight: bold;
-            color: #000;
-            margin-left: 15px;
-        }
-        
-        .btn {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(45deg, #ff00ff, #00ffff);
-            border: none;
-            border-radius: 10px;
-            color: #000;
-            font-weight: bold;
-            font-size: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .btn:hover {
-            transform: scale(1.02);
-            box-shadow: 0 0 30px #ff00ff;
-        }
-        
-        .back-link {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
-            color: #00ffff;
-            text-decoration: none;
-        }
-        
-        .back-link:hover {
-            text-shadow: 0 0 10px #00ffff;
-        }
-        
-        input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-    </style>
-</head>
-<body>
-    <div class="checkout-container">
-        <h1>CHECKOUT</h1>
-        
-        <div class="product-summary">
-            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
-            <div class="product-details">
-                <div class="product-name">{{ product.name }}</div>
-                <div class="product-price">${{ product.get_price }}</div>
+        <div class="payment-methods">
+            <div class="payment-method selected" onclick="selectPayment('CARD', this)">
+                <div class="payment-icon">💳</div>
+                <span>TARJETA</span>
+            </div>
+            <div class="payment-method" onclick="selectPayment('PAYPAL', this)">
+                <div class="payment-icon">🅿️</div>
+                <span>PAYPAL</span>
+            </div>
+            <div class="payment-method" onclick="selectPayment('NEQUI', this)">
+                <div class="payment-icon">📱</div>
+                <span>NEQUI</span>
             </div>
         </div>
         
-        {% if messages %}
-            {% for message in messages %}
-                <div style="background: rgba(255, 0, 0, 0.2); border: 1px solid #ff00ff; padding: 10px; margin-bottom: 20px; border-radius: 10px;">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
+        <div class="total">
+            <span class="total-label">TOTAL A PAGAR:</span>
+            <span class="total-amount">${{ product.get_price }}</span>
+        </div>
         
-        <form method="post" action="{% url 'process_payment' product.id %}" id="payment-form">
-            {% csrf_token %}
-            
-            <h2 style="margin-bottom: 20px;">📋 TUS DATOS</h2>
-            
-            <div class="form-group">
-                <label>NOMBRE COMPLETO</label>
-                <input type="text" name="name" required value="{{ user.get_full_name|default:'' }}">
-            </div>
-            
-            <div class="form-group">
-                <label>EMAIL</label>
-                <input type="email" name="email" required value="{{ user.email|default:'' }}">
-            </div>
-            
-            <div class="form-group">
-                <label>TELÉFONO (10 dígitos)</label>
-                <input type="tel" name="phone" required placeholder="3001234567" maxlength="10">
-                <small style="color: #ff00ff;">10 dígitos, solo números</small>
-            </div>
-            
-            <h2 style="margin: 30px 0 20px;">💳 MÉTODO DE PAGO</h2>
-            <input type="hidden" name="payment_method" id="selected_payment" value="CARD">
-            
-            <div class="payment-methods">
-                <div class="payment-method selected" onclick="selectPayment('CARD', this)">
-                    <div class="payment-icon">💳</div>
-                    <span>TARJETA</span>
-                </div>
-                <div class="payment-method" onclick="selectPayment('PAYPAL', this)">
-                    <div class="payment-icon">🅿️</div>
-                    <span>PAYPAL</span>
-                </div>
-                <div class="payment-method" onclick="selectPayment('NEQUI', this)">
-                    <div class="payment-icon">📱</div>
-                    <span>NEQUI</span>
-                </div>
-            </div>
-            
-            <div class="total">
-                <span class="total-label">TOTAL A PAGAR:</span>
-                <span class="total-amount">${{ product.get_price }}</span>
-            </div>
-            
-            <button type="submit" class="btn">💰 PAGAR AHORA</button>
-        </form>
-        
-        <a href="{% url 'home' %}" class="back-link">← SEGUIR COMPRANDO</a>
-    </div>
+        <button type="submit" class="btn">💰 PAGAR AHORA</button>
+    </form>
+</div>
+
+<script>
+    function selectPayment(method, element) {
+        document.getElementById('selected_payment').value = method;
+        document.querySelectorAll('.payment-method').forEach(el => el.classList.remove('selected'));
+        element.classList.add('selected');
+    }
     
-    <script>
-        function selectPayment(method, element) {
-            document.getElementById('selected_payment').value = method;
-            
-            document.querySelectorAll('.payment-method').forEach(el => {
-                el.classList.remove('selected');
-            });
-            
-            element.classList.add('selected');
+    document.querySelector('input[name="phone"]').addEventListener('input', function(e) {
+        this.value = this.value.replace(/\D/g, '').slice(0, 10);
+    });
+    
+    document.getElementById('payment-form').addEventListener('submit', function(e) {
+        const phone = document.querySelector('input[name="phone"]').value;
+        if (phone.length !== 10) {
+            e.preventDefault();
+            alert('El teléfono debe tener exactamente 10 dígitos');
         }
-        
-        document.querySelector('input[name="phone"]').addEventListener('input', function(e) {
-            this.value = this.value.replace(/\D/g, '').slice(0, 10);
-        });
-        
-        document.getElementById('payment-form').addEventListener('submit', function(e) {
-            const phone = document.querySelector('input[name="phone"]').value;
-            if (phone.length !== 10) {
-                e.preventDefault();
-                alert('El teléfono debe tener exactamente 10 dígitos');
-            }
-        });
-    </script>
-</body>
-</html>
+    });
+</script>
+{% endblock %}
