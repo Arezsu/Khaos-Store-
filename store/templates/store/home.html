@@ -13,12 +13,36 @@
             padding: 0;
             box-sizing: border-box;
         }
+
+        /* Video de fondo */
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: -1;
+        }
+
         body {
             font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            background: transparent;
             min-height: 100vh;
             color: #fff;
+            position: relative;
         }
+
         .header {
             background: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(10px);
@@ -29,6 +53,7 @@
             top: 0;
             z-index: 100;
         }
+
         .nav {
             max-width: 1400px;
             margin: 0 auto;
@@ -38,6 +63,7 @@
             flex-wrap: wrap;
             gap: 1rem;
         }
+
         .logo {
             font-family: 'Press Start 2P', cursive;
             font-size: 24px;
@@ -45,11 +71,13 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
         .nav-links {
             display: flex;
             gap: 2rem;
             flex-wrap: wrap;
         }
+
         .nav-links a {
             color: #fff;
             text-decoration: none;
@@ -57,16 +85,19 @@
             padding: 0.5rem 1rem;
             transition: all 0.3s;
         }
+
         .nav-links a:hover {
             border-color: #ff00ff;
             box-shadow: 0 0 20px #ff00ff;
         }
+
         .user-menu {
             display: flex;
             gap: 1rem;
             flex-wrap: wrap;
             align-items: center;
         }
+
         .btn {
             padding: 0.5rem 1.5rem;
             border: none;
@@ -77,24 +108,31 @@
             text-decoration: none;
             display: inline-block;
         }
+
         .btn-primary {
             background: linear-gradient(45deg, #ff00ff, #00ffff);
             color: #000;
         }
+
         .btn-outline {
             background: transparent;
             border: 2px solid #ff00ff;
             color: #ff00ff;
         }
+
         .btn-outline:hover {
             background: #ff00ff;
             color: #000;
         }
+
         .main {
             max-width: 1400px;
             margin: 2rem auto;
             padding: 0 2rem;
+            position: relative;
+            z-index: 10;
         }
+
         .hero {
             text-align: center;
             padding: 4rem 2rem;
@@ -104,6 +142,7 @@
             border: 2px solid;
             border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
         }
+
         .hero h1 {
             font-family: 'Press Start 2P', cursive;
             font-size: 48px;
@@ -112,37 +151,42 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
         .hero p {
             font-size: 1.2rem;
             color: rgba(255, 255, 255, 0.9);
         }
+
         .search-section {
             margin: 2rem 0;
             display: flex;
             justify-content: center;
         }
+
         .search-form {
             display: flex;
             width: 100%;
             max-width: 600px;
             gap: 10px;
         }
+
         .search-input {
             flex: 1;
             padding: 15px 20px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.6);
             border: 2px solid #ff00ff;
             border-radius: 50px;
             color: #fff;
             font-size: 18px;
-            transition: all 0.3s;
+            backdrop-filter: blur(5px);
         }
+
         .search-input:focus {
             outline: none;
             box-shadow: 0 0 20px #ff00ff;
             border-color: #00ffff;
-            background: rgba(0, 0, 0, 0.5);
         }
+
         .search-btn {
             padding: 15px 30px;
             background: linear-gradient(45deg, #ff00ff, #00ffff);
@@ -154,64 +198,78 @@
             cursor: pointer;
             transition: all 0.3s;
         }
+
         .search-btn:hover {
             transform: scale(1.05);
             box-shadow: 0 0 30px #ff00ff;
         }
+
         .messages {
             max-width: 1400px;
             margin: 1rem auto;
             padding: 0 2rem;
         }
+
         .message {
             padding: 1rem;
             border-radius: 10px;
             margin-bottom: 1rem;
             text-align: center;
+            backdrop-filter: blur(5px);
         }
+
         .message.success {
             background: rgba(0, 255, 0, 0.2);
             border: 2px solid #00ff00;
             color: #00ff00;
         }
+
         .message.error {
             background: rgba(255, 0, 0, 0.2);
             border: 2px solid #ff0000;
             color: #ff0000;
         }
+
         .products-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 2rem;
             margin-top: 2rem;
         }
+
         .product-card {
             background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
             border: 2px solid;
             border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
             border-radius: 15px;
             overflow: hidden;
             transition: all 0.3s;
         }
+
         .product-card:hover {
             transform: translateY(-10px);
             box-shadow: 0 0 30px #ff00ff;
         }
+
         .product-image {
             width: 100%;
             height: 250px;
             object-fit: cover;
             border-bottom: 2px solid #ff00ff;
         }
+
         .product-info {
             padding: 1.5rem;
         }
+
         .product-title {
             font-size: 1.5rem;
             font-weight: bold;
             margin-bottom: 0.5rem;
             color: #fff;
         }
+
         .product-price {
             font-size: 2rem;
             font-weight: bold;
@@ -220,6 +278,7 @@
             -webkit-text-fill-color: transparent;
             margin-bottom: 1rem;
         }
+
         .btn-buy {
             display: block;
             width: 100%;
@@ -234,23 +293,28 @@
             text-decoration: none;
             text-align: center;
         }
+
         .btn-buy:hover {
             transform: scale(1.02);
             box-shadow: 0 0 30px #ff00ff;
         }
+
         .no-results {
             text-align: center;
             padding: 4rem;
             grid-column: 1/-1;
             color: rgba(255, 255, 255, 0.7);
         }
+
         .footer {
             background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
             border-top: 3px solid;
             border-image: linear-gradient(90deg, #ff00ff, #00ffff) 1;
             padding: 3rem 2rem 1rem;
             margin-top: 4rem;
         }
+
         .footer-content {
             max-width: 1400px;
             margin: 0 auto;
@@ -258,32 +322,39 @@
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 2rem;
         }
+
         .footer-section h3 {
             color: #ff00ff;
             margin-bottom: 1rem;
         }
+
         .footer-section ul {
             list-style: none;
         }
+
         .footer-section ul li {
             margin-bottom: 0.5rem;
             color: rgba(255, 255, 255, 0.7);
         }
+
         .social-links {
             display: flex;
             gap: 1.5rem;
             font-size: 1.8rem;
         }
+
         .social-links a {
             color: #fff;
             text-decoration: none;
             transition: all 0.3s;
         }
+
         .social-links a:hover {
             color: #ff00ff;
             transform: scale(1.2);
             text-shadow: 0 0 20px #ff00ff;
         }
+
         .copyright {
             text-align: center;
             margin-top: 3rem;
@@ -291,16 +362,34 @@
             border-top: 1px solid rgba(255, 0, 255, 0.3);
             color: rgba(255, 255, 255, 0.5);
         }
+
         @media (max-width: 768px) {
-            .nav { flex-direction: column; }
-            .hero h1 { font-size: 28px; }
-            .products-grid { grid-template-columns: 1fr; }
-            .search-form { flex-direction: column; }
-            .social-links { justify-content: center; }
+            .nav {
+                flex-direction: column;
+            }
+            .hero h1 {
+                font-size: 28px;
+            }
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            .search-form {
+                flex-direction: column;
+            }
+            .social-links {
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Video de fondo -->
+    <video autoplay muted loop playsinline class="video-background">
+        <source src="{% static 'videos/background.mp4' %}" type="video/mp4">
+        Tu navegador no soporta videos.
+    </video>
+    <div class="overlay"></div>
+
     <header class="header">
         <nav class="nav">
             <div class="logo">KHAOS_STORE</div>
@@ -309,7 +398,7 @@
             </div>
             <div class="user-menu">
                 {% if user.is_authenticated %}
-                <span>{{ user.username }}</span>
+                <span>🎮 {{ user.username }}</span>
                 <a href="{% url 'profile' %}" class="btn btn-outline">MI PERFIL</a>
                 <a href="{% url 'logout' %}" class="btn btn-outline">SALIR</a>
                 {% else %}
@@ -330,17 +419,17 @@
 
     <main class="main">
         <section class="hero">
-            <h1>BIENVENIDO A KHAOS</h1>
-            <p>La tienda gamer mas epica</p>
+            <h1>⚡ BIENVENIDO A KHAOS ⚡</h1>
+            <p>La tienda gamer más épica</p>
         </section>
 
         <div class="search-section">
             <form method="get" class="search-form">
-                <input type="text" name="q" class="search-input" placeholder="Buscar juego..." value="{{ query }}">
+                <input type="text" name="q" class="search-input" placeholder="🔍 Buscar juego..." value="{{ query }}">
                 <button type="submit" class="search-btn">BUSCAR</button>
             </form>
         </div>
-        
+
         <div class="products-grid">
             {% for product in products %}
             <div class="product-card">
@@ -359,7 +448,9 @@
             </div>
             {% empty %}
             <div class="no-results">
-                <p>No se encontraron juegos</p>
+                <p style="font-size: 48px;">🔍</p>
+                <p style="font-size: 24px;">No se encontraron juegos</p>
+                <p>Intenta con otra búsqueda</p>
             </div>
             {% endfor %}
         </div>
@@ -369,38 +460,38 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h3>KHAOS STORE</h3>
-                <p>La mejor tienda de videojuegos con los precios mas bajos y la entrega mas rapida.</p>
+                <p>La mejor tienda de videojuegos con los precios más bajos y la entrega más rápida.</p>
             </div>
             <div class="footer-section">
-                <h3>ENLACES RAPIDOS</h3>
+                <h3>ENLACES RÁPIDOS</h3>
                 <ul>
                     <li><a href="#">Sobre Nosotros</a></li>
-                    <li><a href="#">Terminos y Condiciones</a></li>
-                    <li><a href="#">Politica de Privacidad</a></li>
+                    <li><a href="#">Términos y Condiciones</a></li>
+                    <li><a href="#">Política de Privacidad</a></li>
                     <li><a href="#">Preguntas Frecuentes</a></li>
                 </ul>
             </div>
             <div class="footer-section">
-                <h3>SIGUENOS</h3>
+                <h3>SÍGUENOS</h3>
                 <div class="social-links">
-                    <a href="#" target="_blank">FB</a>
-                    <a href="#" target="_blank">TW</a>
-                    <a href="#" target="_blank">IG</a>
-                    <a href="#" target="_blank">DC</a>
-                    <a href="#" target="_blank">WA</a>
+                    <a href="#" target="_blank" title="Facebook">📘</a>
+                    <a href="#" target="_blank" title="Twitter">🐦</a>
+                    <a href="#" target="_blank" title="Instagram">📷</a>
+                    <a href="#" target="_blank" title="Discord">🎮</a>
+                    <a href="#" target="_blank" title="WhatsApp">💬</a>
                 </div>
             </div>
             <div class="footer-section">
                 <h3>CONTACTO</h3>
                 <ul>
-                    <li>soporte@khaosstore.com</li>
-                    <li>333 7452514</li>
-                    <li>Medellin, Colombia</li>
+                    <li>📧 soporte@khaosstore.com</li>
+                    <li>📱 333 7452514</li>
+                    <li>📍 Medellín, Colombia</li>
                 </ul>
             </div>
         </div>
         <div class="copyright">
-            (c) 2026 KHAOS STORE - Todos los derechos reservados. Hecho por gamers para gamers.
+            © 2026 KHAOS STORE - Todos los derechos reservados. Hecho con ⚡ por gamers para gamers.
         </div>
     </footer>
 </body>
