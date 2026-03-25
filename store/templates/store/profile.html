@@ -77,9 +77,12 @@
     .order-header {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         margin-bottom: 15px;
         padding-bottom: 10px;
         border-bottom: 1px solid rgba(255, 0, 255, 0.3);
+        flex-wrap: wrap;
+        gap: 10px;
     }
     .order-number {
         color: #ff00ff;
@@ -92,12 +95,12 @@
         font-size: 12px;
         font-weight: bold;
     }
-    .status-paid {
-        background: #00ff00;
-        color: #000;
-    }
     .status-pending {
         background: #ffaa00;
+        color: #000;
+    }
+    .status-paid {
+        background: #00ff00;
         color: #000;
     }
     .status-sent {
@@ -108,10 +111,16 @@
         background: #ff00ff;
         color: #fff;
     }
+    .status-cancelled {
+        background: #ff0000;
+        color: #fff;
+    }
     .order-details {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
     }
     .order-product {
         font-size: 18px;
@@ -126,6 +135,27 @@
         color: rgba(255, 255, 255, 0.5);
         font-size: 14px;
         margin-top: 10px;
+    }
+    .btn-cancel {
+        background: rgba(255, 0, 0, 0.2);
+        border: 1px solid #ff0000;
+        color: #ff0000;
+        padding: 5px 15px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 12px;
+        transition: all 0.3s;
+        display: inline-block;
+        margin-top: 10px;
+    }
+    .btn-cancel:hover {
+        background: #ff0000;
+        color: #fff;
+        box-shadow: 0 0 10px #ff0000;
+    }
+    .order-actions {
+        margin-top: 10px;
+        text-align: right;
     }
     .back-link {
         display: inline-block;
@@ -161,12 +191,14 @@
         }
         .order-header {
             flex-direction: column;
-            gap: 10px;
+            align-items: flex-start;
         }
         .order-details {
             flex-direction: column;
-            gap: 10px;
-            text-align: center;
+            align-items: flex-start;
+        }
+        .order-actions {
+            text-align: left;
         }
     }
 </style>
@@ -198,13 +230,9 @@
                         {% elif order.status == 'PENDING' %}status-pending
                         {% elif order.status == 'SENT' %}status-sent
                         {% elif order.status == 'DELIVERED' %}status-delivered
+                        {% elif order.status == 'CANCELLED' %}status-cancelled
                         {% endif %}">
-                        {% if order.status == 'PAID' %}✅ PAGADO
-                        {% elif order.status == 'PENDING' %}⏳ PENDIENTE
-                        {% elif order.status == 'SENT' %}📤 ENVIADO
-                        {% elif order.status == 'DELIVERED' %}📦 ENTREGADO
-                        {% else %}❌ {{ order.status }}
-                        {% endif %}
+                        {{ order.get_status_display }}
                     </span>
                 </div>
                 <div class="order-details">
@@ -212,6 +240,12 @@
                     <div class="order-total">${{ order.total }}</div>
                 </div>
                 <div class="order-date">{{ order.created_at|date:"d/m/Y H:i" }}</div>
+                
+                {% if order.status == 'PENDING' %}
+                <div class="order-actions">
+                    <a href="{% url 'cancel_order' order.id %}" class="btn-cancel" onclick="return confirm('¿Estás seguro de cancelar esta orden?')">❌ CANCELAR ORDEN</a>
+                </div>
+                {% endif %}
             </div>
             {% empty %}
             <div class="no-orders">

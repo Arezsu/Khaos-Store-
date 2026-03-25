@@ -5,10 +5,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
 from .models import Product, Order, UserProfile
+from .email_utils import send_welcome_email, send_payment_confirmation
 from datetime import date
 import re
-import random
-import string
 
 def home(request):
     query = request.GET.get('q', '')
@@ -30,7 +29,6 @@ def register(request):
             birth_month = request.POST.get('birth_month')
             birth_day = request.POST.get('birth_day')
             
-            # Validaciones básicas
             if not username or not email or not password:
                 return JsonResponse({'success': False, 'error': 'Todos los campos son obligatorios'}, status=400)
             
@@ -52,14 +50,12 @@ def register(request):
             if len(phone) != 10 or not phone.isdigit():
                 return JsonResponse({'success': False, 'error': 'El teléfono debe tener 10 dígitos'}, status=400)
             
-            # Crear usuario
             user = User.objects.create_user(
                 username=username,
                 email=email,
                 password=password
             )
             
-            # Crear perfil con fecha si existe
             try:
                 if birth_year and birth_month and birth_day:
                     birth_date = date(int(birth_year), int(birth_month), int(birth_day))
@@ -79,12 +75,10 @@ def register(request):
                     phone=phone
                 )
             
-            # Iniciar sesión
             login(request, user)
             request.session.save()
             
-            # Enviar email de bienvenida (desactivado temporalmente)
-            # send_welcome_email(user)
+            send_welcome_email(user)
             
             return JsonResponse({'success': True, 'redirect': '/'})
             
@@ -129,6 +123,7 @@ def process_payment(request, product_id):
             messages.error(request, 'El teléfono debe tener 10 dígitos')
             return redirect('checkout', product_id=product.id)
         
+        # Crear orden en estado PENDIENTE (no pagado aún)
         order = Order.objects.create(
             product=product,
             customer_name=name,
@@ -139,16 +134,18 @@ def process_payment(request, product_id):
             payment_method=payment_method,
             total=product.get_price(),
             user=request.user,
-            status='PAID'
+            status='PENDING'  # Pendiente de pago
         )
         
-        product.stock -= 1
-        product.save()
+        # NO restamos stock todavía (esperamos a que pague)
+        
+        # Enviar email con instrucciones de pago
+        order.send_pending_email()
         
         request.session['last_order'] = order.order_number
         request.session.save()
         
-        messages.success(request, '¡Pago exitoso!')
+        messages.success(request, 'Orden creada. Revisa tu correo para los datos de pago.')
         return redirect('success', order_id=order.order_number)
         
     except Exception as e:
@@ -158,6 +155,20 @@ def process_payment(request, product_id):
 
 def success(request, order_id):
     return render(request, 'store/success.html', {'order_id': order_id})
+
+@login_required(login_url='login')
+def cancel_order(request, order_id):
+    """Cancelar una orden"""
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    
+    if order.status == 'PENDING':
+        order.status = 'CANCELLED'
+        order.save()
+        messages.success(request, f'Orden #{order.order_number} cancelada correctamente.')
+    else:
+        messages.error(request, 'No se puede cancelar esta orden porque ya fue procesada.')
+    
+    return redirect('profile')
 
 @login_required(login_url='login')
 def profile(request):

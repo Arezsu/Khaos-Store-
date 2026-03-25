@@ -10,7 +10,7 @@ from datetime import date
 class Product(models.Model):
     name = models.CharField(max_length=200)
     price = models.FloatField(validators=[MinValueValidator(0)])
-    image = models.URLField(max_length=500, verbose_name='URL de imagen')  # Cambiado a URLField
+    image = models.URLField(max_length=500, verbose_name='URL de imagen')
     description = models.TextField()
     is_on_sale = models.BooleanField(default=False)
     sale_price = models.FloatField(null=True, blank=True, validators=[MinValueValidator(0)])
@@ -26,7 +26,6 @@ class Product(models.Model):
     def get_price(self):
         return self.sale_price if self.is_on_sale else self.price
 
-
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.CharField(
@@ -37,7 +36,7 @@ class UserProfile(models.Model):
     address = models.TextField(blank=True)
     city = models.CharField(max_length=100, blank=True)
     favorite_games = models.ManyToManyField(Product, blank=True)
-    birth_date = models.DateField(null=True, blank=True)  # <--- ESTE CAMPO DEBE EXISTIR
+    birth_date = models.DateField(null=True, blank=True)
     
     def __str__(self):
         return self.user.username
@@ -57,11 +56,11 @@ class Order(models.Model):
     ]
     
     STATUS = [
-        ('PENDING', 'Pendiente'),
-        ('PAID', 'Pagado'),
-        ('SENT', 'Enviado'),
-        ('DELIVERED', 'Entregado'),
-        ('CANCELLED', 'Cancelado'),
+        ('PENDING', '⏳ Pendiente'),
+        ('PAID', '✅ Pagado'),
+        ('SENT', '📧 Enviado'),
+        ('DELIVERED', '🎮 Entregado'),
+        ('CANCELLED', '❌ Cancelado'),
     ]
     
     order_number = models.CharField(max_length=20, unique=True)
@@ -76,6 +75,7 @@ class Order(models.Model):
     total = models.FloatField(validators=[MinValueValidator(0)])
     status = models.CharField(max_length=20, choices=STATUS, default='PENDING')
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def save(self, *args, **kwargs):
         if not self.order_number:
@@ -85,23 +85,34 @@ class Order(models.Model):
     def generate_order_number(self):
         return 'KHAOS-' + ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
     
-    def send_confirmation_email(self):
+    def send_pending_email(self):
+        """Envía email de orden pendiente con instrucciones de pago"""
         try:
-            subject = f'🎮 Confirmación de compra - KHAOS STORE #{self.order_number}'
+            subject = f'🎮 Orden Pendiente #{self.order_number} - KHAOS STORE'
             message = f"""
-¡Gracias por tu compra en KHAOS STORE!
+¡Hola {self.customer_name}!
 
-Datos de la compra:
-• Número de orden: {self.order_number}
+Tu orden #{self.order_number} ha sido creada exitosamente.
+
+📝 DATOS DEL PEDIDO:
 • Producto: {self.product.name}
 • Total: ${self.total}
 • Método de pago: {self.get_payment_method_display()}
 
-En los próximos minutos recibirás la key de tu juego.
+💰 PARA REALIZAR EL PAGO:
+• Nequi: 333 7452514
+• Bancolombia: 333 7452514
+• Referencia: {self.order_number}
 
-Si tienes alguna duda, contáctanos al 333 7452514 o a soporte@khaosstore.com
+⚠️ IMPORTANTE:
+1. Realiza el pago por el valor total
+2. Envía el comprobante a soportekhaosstore@gmail.com
+3. Tu orden será activada dentro de 24 horas
 
-¡A jugar!
+Estado actual: PENDIENTE DE PAGO
+
+¿Preguntas? Contáctanos: soportekhaosstore@gmail.com
+
 KHAOS STORE
 """
             send_mail(
@@ -113,27 +124,45 @@ KHAOS STORE
             )
             return True
         except Exception as e:
-            print(f"Error enviando confirmación: {e}")
+            print(f"Error enviando email pendiente: {e}")
             return False
     
-    def send_game_key(self):
+    def send_account_email(self):
+        """Envía email con datos de la cuenta cuando se confirma el pago"""
         try:
-            game_key = ''.join(random.choices(string.ascii_uppercase + string.digits, k=16))
-            subject = f'🔑 Tu juego {self.product.name} ya está listo - KHAOS STORE'
+            # Aquí puedes poner los datos de la cuenta manualmente o generarlos
+            account_email = "cuenta_psn@ejemplo.com"
+            account_password = "contraseña_temporal"
+            
+            subject = f'🎮 ¡Tu juego está listo! Orden #{self.order_number}'
             message = f"""
+🎮 PlayStation Network - KHAOS STORE
+
 ¡Hola {self.customer_name}!
 
-Tu juego {self.product.name} ya está disponible.
+Tu pago ha sido confirmado. Aquí están los datos para acceder a tu juego:
 
-Tu clave de activación: {game_key}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Instrucciones de activación:
-1. Abre la plataforma correspondiente
-2. Ve a "Canjear código"
-3. Ingresa: {game_key}
-4. ¡Disfruta tu juego!
+🎮 JUEGO: {self.product.name}
+📧 EMAIL: {account_email}
+🔑 CONTRASEÑA: {account_password}
 
-¿Problemas? Contáctanos al 333 7452514
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📌 INSTRUCCIONES:
+
+1. En tu PlayStation, ve a "Configuración" → "Usuarios y cuentas"
+2. Selecciona "Iniciar sesión" y usa los datos de arriba
+3. Una vez dentro, ve a "Biblioteca" → "Tus colecciones"
+4. Descarga el juego
+5. ¡Disfruta!
+
+⚠️ IMPORTANTE:
+• NO cambies la contraseña hasta que hayas descargado el juego
+• Si tienes problemas, contáctanos inmediatamente
+
+¿Problemas? Responde a este correo o escribe a soportekhaosstore@gmail.com
 
 KHAOS STORE
 """
@@ -146,8 +175,8 @@ KHAOS STORE
             )
             return True
         except Exception as e:
-            print(f"Error enviando key: {e}")
+            print(f"Error enviando email de cuenta: {e}")
             return False
     
-    def __str__(self):
+    def __str__(self): 
         return f"Order #{self.order_number}"
