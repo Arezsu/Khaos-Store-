@@ -80,12 +80,12 @@ def send_welcome_email(user):
                     <div style="text-align: center;">
                         <a href="https://khaos-store.onrender.com" class="button">COMENZAR A COMPRAR</a>
                     </div>
-                    <p>Si tienes alguna duda, contáctanos a soporte@khaosstore.com</p>
+                    <p>Si tienes alguna duda, contáctanos a soportekhaosstore@gmail.com </p>
                     <p>¡Prepárate para vivir la experiencia gamer definitiva!</p>
                 </div>
                 <div class="footer">
                     <p>© 2026 Khaos Store - Todos los derechos reservados</p>
-                    <p>soporte@khaosstore.com | 333 7452514</p>
+                    <p>soportekhaosstore@gmail.com | 333 7452514</p>
                 </div>
             </div>
         </body>
@@ -197,10 +197,10 @@ def send_payment_confirmation(order):
                         <li>¡Disfruta tu juego!</li>
                     </ol>
                     
-                    <p>¿Problemas? Contáctanos a soporte@khaosstore.com</p>
+                    <p>¿Problemas? Contáctanos a soportekhaosstore@gmail.com</p>
                 </div>
                 <div class="footer">
-                    <p>© 2026 Khaos Store | soporte@khaosstore.com | 333 7452514</p>
+                    <p>© 2026 Khaos Store | soportekhaosstore@gmail.com | 333 7452514</p>
                 </div>
             </div>
         </body>

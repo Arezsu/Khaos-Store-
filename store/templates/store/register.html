@@ -276,7 +276,7 @@
 </div>
 
 <script>
-    // Audio
+    // Audio - se reproducirá SOLO si el registro es exitoso
     const audio = new Audio("{% static 'audio/registro.mp3' %}");
     audio.volume = 0.5;
     
@@ -304,6 +304,7 @@
         const month = document.querySelector('select[name="birth_month"]').value;
         const day = document.querySelector('select[name="birth_day"]').value;
         
+        // Validaciones frontend
         if (phone.length !== 10) {
             alert('El teléfono debe tener exactamente 10 dígitos');
             return;
@@ -321,9 +322,12 @@
             return;
         }
         
-        // Mostrar overlay y reproducir audio
+        // Mostrar overlay (sin audio aún)
         overlay.classList.add('show');
-        audio.play();
+        loadingText.textContent = 'Procesando registro...';
+        successMsg.style.display = 'none';
+        countdownNumber.style.display = 'none';
+        countdownText.style.display = 'none';
         
         // Enviar datos
         fetch(window.location.href, {
@@ -334,6 +338,9 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
+                // ✅ REGISTRO EXITOSO - SOLO AHORA SUENA EL AUDIO
+                audio.play();
+                
                 loadingText.textContent = '✅ ¡REGISTRO EXITOSO!';
                 successMsg.style.display = 'block';
                 countdownNumber.style.display = 'block';
@@ -353,6 +360,7 @@
                     }
                 }, 1000);
             } else {
+                // ❌ ERROR - NO SUENA AUDIO
                 loadingText.textContent = '❌ Error: ' + (data.error || 'Error desconocido');
                 setTimeout(() => overlay.classList.remove('show'), 3000);
             }
