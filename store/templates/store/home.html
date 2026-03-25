@@ -3,6 +3,9 @@
 
 {% block title %}Inicio - KHAOS STORE{% endblock %}
 
+{# Esto evita que el overlay tenga blur #}
+{% block overlay_class %}{% endblock %}
+
 {% block extra_css %}
 <style>
     .hero {
@@ -10,7 +13,6 @@
         padding: 4rem 2rem;
         margin-bottom: 3rem;
         background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(5px);
         border-radius: 20px;
         border: 2px solid;
         border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;

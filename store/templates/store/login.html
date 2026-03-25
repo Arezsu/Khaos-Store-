@@ -3,6 +3,9 @@
 
 {% block title %}Iniciar Sesión{% endblock %}
 
+{# Esto agrega blur al overlay SOLO en login #}
+{% block overlay_class %}blur{% endblock %}
+
 {% block extra_css %}
 <style>
     .login-container {
