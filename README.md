@@ -1,22 +1,113 @@
-# Khaos-Store
-Khaos-Store es una tienda virtual de videojuegos desarrollada como proyecto de software, diseñada para permitir a los usuarios explorar, buscar y adquirir videojuegos de forma sencilla y organizada.
+<div align="center">
 
-La plataforma simula el funcionamiento de una tienda digital moderna, ofreciendo un catálogo de juegos, información detallada de cada producto y funcionalidades básicas de gestión de compras.
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:ff00ff,100:00ffff&height=200&section=header&text=KHAOS%20STORE&fontSize=50&fontColor=ffffff&animation=fadeIn" />
 
-El objetivo del proyecto es aplicar conceptos de desarrollo de software, estructuras de datos y diseño de sistemas, creando una aplicación funcional que represente un entorno de comercio electrónico enfocado en videojuegos.
+<img src="https://readme-typing-svg.demolab.com?font=Press+Start+2P&size=28&duration=2000&pause=400&color=00FFFF&center=true&vCenter=true&width=800&lines=ENTER+THE+CYBER+MARKET;BUY+PLAY+DOMINATE;THIS+IS+KHAOS" />
 
-Características principales
+<br>
 
- Catálogo de videojuegos organizado por categorías
+<img src="https://img.shields.io/github/stars/Arezsu/Khaos-Store-?style=for-the-badge&color=ff00ff"/>
+<img src="https://img.shields.io/github/forks/Arezsu/Khaos-Store-?style=for-the-badge&color=00ffff"/>
+<img src="https://img.shields.io/github/last-commit/Arezsu/Khaos-Store-?style=for-the-badge&color=ff00ff"/>
 
- Sistema de búsqueda y visualización de juegos
+</div>
 
- Simulación de carrito de compras
+---
 
- Gestión de productos y visualización de información
+<div align="center">
 
- Interfaz pensada para facilitar la navegación del usuario
+```diff
++ SYSTEM INITIALIZED
++ NEURAL LINK ESTABLISHED
++ WELCOME USER...
+```
 
-Objetivo del proyecto
+💀 **KHAOS STORE** no es una tienda.  
+Es una experiencia digital diseñada para dominar el mercado gamer.
 
-Este proyecto fue creado con fines académicos para practicar conceptos de programación, diseño de sistemas y desarrollo de aplicaciones orientadas al comercio electrónico.
+</div>
+
+---
+
+## 🎮 DEMO VISUAL
+
+<div align="center">
+
+<img src="https://media.giphy.com/media/qgQUggAC3Pfv687qPC/giphy.gif" width="600"/>
+
+</div>
+
+---
+
+## ⚡ FEATURES
+
+| Sistema | Descripción |
+|--------|------------|
+| 🛒 Carrito | Compra en tiempo real |
+| ⭐ Reviews | Sistema de reputación |
+| 🎬 Trailers | Videos integrados |
+| 🔐 Auth | Seguridad completa |
+| 📱 Responsive | Multi-dispositivo |
+
+---
+
+## 🧬 STACK
+
+- Django ⚡  
+- PostgreSQL 🧠  
+- Cloudinary ☁️  
+- JavaScript 🎮  
+
+---
+
+## ⚙️ INSTALL
+
+```bash
+git clone https://github.com/Arezsu/Khaos-Store-.git
+cd Khaos-Store-
+
+python -m venv venv
+venv\Scripts\activate
+
+pip install -r requirements.txt
+
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+```
+
+---
+
+## 🚀 DEPLOY
+
+✔ Render  
+✔ PostgreSQL  
+✔ SMTP  
+
+---
+
+## 👾 TEAM
+
+- Arezsu ⚡  
+- Camiflooz 🔥  
+
+---
+
+## 📡 CONTACT
+
+- soportekhaosstore@gmail.com  
+- 3337452514  
+- @khaos_storecol  
+
+---
+
+<div align="center">
+
+```diff
++ YOU ARE NOT A USER...
++ YOU ARE THE SYSTEM.
+```
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:00ffff,100:ff00ff&height=120&section=footer"/>
+
+</div>
