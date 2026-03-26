@@ -62,7 +62,11 @@ class Order(models.Model):
         ('DELIVERED', '🎮 Entregado'),
         ('CANCELLED', '❌ Cancelado'),
     ]
-    
+
+# Dentro de la clase Order, agregar:
+    account_email = models.EmailField(blank=True, null=True, verbose_name='Email de la cuenta')
+    account_password = models.CharField(max_length=200, blank=True, null=True, verbose_name='Contraseña de la cuenta')
+    account_instructions = models.TextField(blank=True, null=True, verbose_name='Instrucciones adicionales')
     order_number = models.CharField(max_length=20, unique=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
