@@ -1,166 +1,136 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
-from django.utils.html import format_html
+from django.template.loader import render_to_string
+from django.conf import settings
+import os
+import random
+import string
+from datetime import datetime
 from .models import Product, Order, UserProfile
-from .email_utils import send_order_status_email
+
+
+# Función para generar clave de juego
+def generate_game_key():
+    """Genera una clave de juego estilo PSN"""
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=16))
+
 
 # ==================== PRODUCTOS ====================
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['name', 'price', 'category', 'stock', 'is_active', 'created_at']
-    list_display_links = ['name']
-    list_filter = ['category', 'is_active', 'created_at']
-    search_fields = ['name', 'description', 'category']
-    list_editable = ['price', 'stock', 'is_active']
-    list_per_page = 25
+    list_display = ['id', 'name', 'price', 'stock', 'is_on_sale', 'created_at']
+    list_display_links = ['id', 'name']
+    list_filter = ['is_on_sale', 'category', 'created_at']
+    search_fields = ['name', 'description']
+    list_editable = ['stock', 'is_on_sale']
+    readonly_fields = ['created_at']
     ordering = ['-created_at']
-    
-    fieldsets = (
-        ('Información Básica', {
-            'fields': ('name', 'slug', 'description', 'category')
-        }),
-        ('Precio y Stock', {
-            'fields': ('price', 'stock', 'is_active')
-        }),
-        ('Imágenes', {
-            'fields': ('image', 'image_url'),
-            'classes': ('collapse',)
-        }),
-        ('Fechas', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
-    )
-    
-    readonly_fields = ['created_at', 'updated_at']
-    
-    def save_model(self, request, obj, form, change):
-        if not obj.slug:
-            from django.utils.text import slugify
-            obj.slug = slugify(obj.name)
-        super().save_model(request, obj, form, change)
 
 
 # ==================== ÓRDENES ====================
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['order_number', 'customer_name', 'product', 'total', 'status', 'status_colored', 'created_at']
+    list_display = ['order_number', 'customer_name', 'product', 'total', 'status', 'created_at', 'email_draft_status']
     list_display_links = ['order_number', 'customer_name']
     list_filter = ['status', 'payment_method', 'created_at']
-    search_fields = ['order_number', 'customer_name', 'customer_email', 'product__name']
+    search_fields = ['order_number', 'customer_name', 'customer_email']
     list_editable = ['status']
     readonly_fields = ['order_number', 'created_at']
     ordering = ['-created_at']
-    list_per_page = 25
     
-    fieldsets = (
-        ('Información de la Orden', {
-            'fields': ('order_number', 'product', 'quantity', 'status', 'total')
-        }),
-        ('Datos del Cliente', {
-            'fields': ('customer_name', 'customer_email', 'customer_phone')
-        }),
-        ('Datos de la Cuenta (solo para SENT)', {
-            'fields': ('account_email', 'account_password', 'account_instructions'),
-            'classes': ('collapse',),
-            'description': 'Completa estos campos cuando la orden esté en estado ENVIADO'
-        }),
-        ('Información de Pago', {
-            'fields': ('payment_method', 'payment_status', 'payment_id'),
-            'classes': ('collapse',)
-        }),
-        ('Fechas', {
-            'fields': ('created_at',),
-            'classes': ('collapse',)
-        }),
-    )
-    
-    def status_colored(self, obj):
-        colors = {
-            'PENDING': '#ffaa00',
-            'PAID': '#28a745',
-            'SENT': '#0070f3',
-            'DELIVERED': '#17a2b8',
-            'CANCELLED': '#dc3545',
-        }
-        color = colors.get(obj.status, '#6c757d')
-        status_display = dict(Order.STATUS_CHOICES).get(obj.status, obj.status)
-        return format_html(
-            '<span style="background-color: {}; color: white; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; display: inline-block;">{}</span>',
-            color, status_display
-        )
-    status_colored.short_description = 'Estado (color)'
-    
-    def get_queryset(self, request):
-        return super().get_queryset(request).select_related('product')
+    def email_draft_status(self, obj):
+        """Muestra si se generó el borrador del email"""
+        draft_path = os.path.join(settings.BASE_DIR, 'borradores_correos', f'orden_{obj.order_number}.html')
+        if os.path.exists(draft_path):
+            return '✅ Borrador listo'
+        return '⏳ No generado'
+    email_draft_status.short_description = 'Borrador Email'
+    email_draft_status.allow_tags = True
     
     def save_model(self, request, obj, form, change):
+        """Sobrescribimos save_model para detectar cambio de estado"""
+        old_status = None
         if change:
+            # Obtener el estado anterior
             try:
-                original = Order.objects.get(pk=obj.pk)
-                old_status = original.status
-                new_status = obj.status
-                
-                super().save_model(request, obj, form, change)
-                
-                if old_status != new_status:
-                    success = send_order_status_email(obj, old_status)
-                    if success:
-                        self.message_user(
-                            request,
-                            f'✓ Email de estado "{new_status}" enviado correctamente a {obj.customer_email}',
-                            level='SUCCESS'
-                        )
-                    else:
-                        self.message_user(
-                            request,
-                            f'⚠️ Orden guardada pero hubo un error al enviar el email a {obj.customer_email}',
-                            level='WARNING'
-                        )
+                old_obj = Order.objects.get(pk=obj.pk)
+                old_status = old_obj.status
             except Order.DoesNotExist:
-                super().save_model(request, obj, form, change)
-        else:
-            super().save_model(request, obj, form, change)
+                pass
+        
+        # Guardar el objeto
+        super().save_model(request, obj, form, change)
+        
+        # Verificar si el estado cambió a 'PAID' (Pagado)
+        if change and old_status != 'PAID' and obj.status == 'PAID':
+            self.generate_email_draft(obj, request)
+    
+    def generate_email_draft(self, order, request):
+        """Genera un archivo HTML del correo con estilo PlayStation"""
+        try:
+            # Generar clave de juego única
+            game_key = generate_game_key()
+            
+            # Renderizar la plantilla HTML
+            html_content = render_to_string('store/email_paid_draft.html', {
+                'order': order,
+                'game_key': game_key,
+            })
+            
+            # Crear directorio si no existe
+            drafts_dir = os.path.join(settings.BASE_DIR, 'borradores_correos')
+            os.makedirs(drafts_dir, exist_ok=True)
+            
+            # Crear nombre de archivo
+            filename = f"orden_{order.order_number}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
+            filepath = os.path.join(drafts_dir, filename)
+            
+            # Guardar el archivo HTML
+            with open(filepath, 'w', encoding='utf-8') as f:
+                f.write(html_content)
+            
+            # Mensaje de éxito con instrucciones
             self.message_user(
                 request,
-                f'✓ Nueva orden #{obj.order_number} creada correctamente',
+                f"""
+✅ ¡BORRADOR DE CORREO GENERADO!
+
+📁 Archivo: {filepath}
+📧 Destinatario: {order.customer_email}
+👤 Cliente: {order.customer_name}
+🎮 Juego: {order.product.name}
+🔑 Clave generada: {game_key}
+
+📌 INSTRUCCIONES:
+1. Abre el archivo HTML en tu navegador
+2. Copia todo el contenido (Ctrl+A, Ctrl+C)
+3. Abre tu Gmail/Outlook
+4. Crea nuevo correo para: {order.customer_email}
+5. Pega el contenido en formato HTML
+6. Revisa y envía manualmente
+                """,
                 level='SUCCESS'
             )
-    
-    def has_delete_permission(self, request, obj=None):
-        if obj and obj.status in ['PAID', 'SENT', 'DELIVERED']:
-            return False
-        return super().has_delete_permission(request, obj)
+            
+            # También guardar la clave en un archivo separado para referencia
+            key_file = os.path.join(drafts_dir, f"clave_{order.order_number}.txt")
+            with open(key_file, 'w', encoding='utf-8') as f:
+                f.write(f"Orden: {order.order_number}\nCliente: {order.customer_name}\nEmail: {order.customer_email}\nJuego: {order.product.name}\nClave: {game_key}\n")
+            
+        except Exception as e:
+            self.message_user(
+                request,
+                f"❌ Error al generar borrador: {str(e)}",
+                level='ERROR'
+            )
 
 
-# ==================== PERFILES DE USUARIO ====================
+# ==================== PERFILES ====================
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ['user', 'phone', 'city', 'get_user_email']
-    list_display_links = ['user']
-    search_fields = ['user__username', 'user__email', 'phone', 'city']
-    list_filter = ['city']
-    raw_id_fields = ['user']
-    list_per_page = 25
-    
-    def get_user_email(self, obj):
-        return obj.user.email
-    get_user_email.short_description = 'Email'
-    get_user_email.admin_order_field = 'user__email'
-    
-    fieldsets = (
-        ('Usuario', {
-            'fields': ('user',)
-        }),
-        ('Información de Contacto', {
-            'fields': ('phone', 'city', 'address')
-        }),
-        ('Información Adicional', {
-            'fields': ('birth_date', 'avatar'),
-            'classes': ('collapse',)
-        }),
-    )
+    list_display = ['user', 'phone', 'city']
+    search_fields = ['user__username', 'user__email', 'phone']
 
 
 # ==================== USUARIOS ====================
@@ -168,36 +138,14 @@ admin.site.unregister(User)
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
-    list_display = ['username', 'email', 'first_name', 'last_name', 'is_staff', 'is_active', 'date_joined']
-    list_display_links = ['username', 'email']
-    list_filter = ['is_staff', 'is_active', 'is_superuser', 'date_joined']
-    search_fields = ['username', 'email', 'first_name', 'last_name']
+    list_display = ['username', 'email', 'is_staff', 'is_active']
+    list_filter = ['is_staff', 'is_active']
+    search_fields = ['username', 'email']
     list_editable = ['is_active']
-    list_per_page = 25
-    ordering = ['-date_joined']
-    
-    actions = ['activate_users', 'deactivate_users', 'make_staff']
-    
-    def activate_users(self, request, queryset):
-        updated = queryset.update(is_active=True)
-        self.message_user(request, f"{updated} usuarios activados.")
-    activate_users.short_description = "Activar usuarios seleccionados"
-    
-    def deactivate_users(self, request, queryset):
-        updated = queryset.update(is_active=False)
-        self.message_user(request, f"{updated} usuarios desactivados.")
-    deactivate_users.short_description = "Desactivar usuarios seleccionados"
-    
-    def make_staff(self, request, queryset):
-        updated = queryset.update(is_staff=True)
-        self.message_user(request, f"{updated} usuarios promovidos a staff.")
-    make_staff.short_description = "Promover a staff"
-    
-    # Usamos los fieldsets originales de UserAdmin para evitar duplicados
-    fieldsets = UserAdmin.fieldsets
+    actions = ['delete_selected']
+
 
 # ==================== PERSONALIZACIÓN ====================
 admin.site.site_header = 'Khaos Store Admin'
 admin.site.site_title = 'Khaos Store'
 admin.site.index_title = 'Panel de Administración'
-admin.site.site_url = '/'
