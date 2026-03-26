@@ -20,9 +20,6 @@ media/
 # Environment variables
 .env
 
-# Borradores de correos (claves de juegos y datos sensibles)
-borradores_correos/
-
 # IDE
 .vscode/
 .idea/

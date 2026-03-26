@@ -1,0 +1,290 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Mi Carrito - Khaos Store{% endblock %}
+
+{% block extra_css %}
+<style>
+    .cart-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    h1 {
+        font-family: 'Press Start 2P', cursive;
+        font-size: 24px;
+        margin-bottom: 30px;
+        background: linear-gradient(45deg, #ff00ff, #00ffff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .cart-table {
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(15px);
+        border: 2px solid;
+        border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+    .cart-header {
+        display: grid;
+        grid-template-columns: 100px 2fr 1fr 1fr 50px;
+        gap: 15px;
+        padding: 15px 20px;
+        background: rgba(255, 0, 255, 0.2);
+        border-bottom: 2px solid #ff00ff;
+        font-weight: bold;
+        color: #ff00ff;
+    }
+    .cart-item {
+        display: grid;
+        grid-template-columns: 100px 2fr 1fr 1fr 50px;
+        gap: 15px;
+        padding: 15px 20px;
+        align-items: center;
+        border-bottom: 1px solid rgba(255, 0, 255, 0.3);
+        transition: all 0.3s;
+    }
+    .cart-item:hover {
+        background: rgba(255, 0, 255, 0.1);
+    }
+    .item-image img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 10px;
+        border: 2px solid #ff00ff;
+    }
+    .item-name {
+        font-weight: bold;
+        color: #fff;
+    }
+    .item-price {
+        color: #00ffff;
+        font-weight: bold;
+    }
+    .item-quantity input {
+        width: 70px;
+        padding: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid #ff00ff;
+        border-radius: 8px;
+        color: #fff;
+        text-align: center;
+    }
+    .item-total {
+        color: #ff00ff;
+        font-weight: bold;
+        font-size: 18px;
+    }
+    .item-remove a {
+        color: #ff0000;
+        font-size: 20px;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+    .item-remove a:hover {
+        text-shadow: 0 0 10px #ff0000;
+        transform: scale(1.2);
+        display: inline-block;
+    }
+    .cart-summary {
+        margin-top: 30px;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(15px);
+        border: 2px solid;
+        border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
+        border-radius: 20px;
+        padding: 20px;
+        text-align: right;
+    }
+    .summary-row {
+        display: flex;
+        justify-content: flex-end;
+        gap: 20px;
+        margin-bottom: 10px;
+        font-size: 18px;
+    }
+    .summary-label {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    .summary-value {
+        font-weight: bold;
+        min-width: 120px;
+    }
+    .total-row {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 2px solid #ff00ff;
+        font-size: 24px;
+    }
+    .total-row .summary-value {
+        color: #00ffff;
+        font-size: 28px;
+    }
+    .cart-actions {
+        display: flex;
+        gap: 20px;
+        justify-content: flex-end;
+        margin-top: 20px;
+    }
+    .btn {
+        padding: 12px 30px;
+        border-radius: 10px;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s;
+    }
+    .btn-primary {
+        background: linear-gradient(45deg, #ff00ff, #00ffff);
+        color: #000;
+        border: none;
+    }
+    .btn-outline {
+        background: transparent;
+        border: 2px solid #ff00ff;
+        color: #ff00ff;
+    }
+    .btn-outline:hover {
+        background: #ff00ff;
+        color: #000;
+    }
+    .btn-primary:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 30px #ff00ff;
+    }
+    .empty-cart {
+        text-align: center;
+        padding: 80px 40px;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(15px);
+        border: 2px solid;
+        border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
+        border-radius: 20px;
+    }
+    .empty-cart-icon {
+        font-size: 80px;
+        margin-bottom: 20px;
+    }
+    .empty-cart h2 {
+        color: #ff00ff;
+        margin-bottom: 20px;
+    }
+    .empty-cart p {
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 30px;
+    }
+    @media (max-width: 768px) {
+        .cart-header {
+            display: none;
+        }
+        .cart-item {
+            grid-template-columns: 1fr;
+            gap: 10px;
+            text-align: center;
+        }
+        .item-image {
+            text-align: center;
+        }
+        .cart-actions {
+            flex-direction: column;
+        }
+        .btn {
+            text-align: center;
+        }
+        .summary-row {
+            justify-content: space-between;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cart-container">
+    <h1>🛒 MI CARRITO</h1>
+    
+    {% if cart and cart.items.all %}
+        <div class="cart-table">
+            <div class="cart-header">
+                <div>PRODUCTO</div>
+                <div>NOMBRE</div>
+                <div>PRECIO</div>
+                <div>CANTIDAD</div>
+                <div></div>
+            </div>
+            
+            {% for item in cart.items.all %}
+            <div class="cart-item" data-item-id="{{ item.id }}">
+                <div class="item-image">
+                    <img src="{{ item.product.image }}" alt="{{ item.product.name }}">
+                </div>
+                <div class="item-name">{{ item.product.name }}</div>
+                <div class="item-price">${{ item.product.get_price|floatformat:0 }}</div>
+                <div class="item-quantity">
+                    <input type="number" class="quantity-input" value="{{ item.quantity }}" min="1" data-item-id="{{ item.id }}">
+                </div>
+                <div class="item-total" id="item-total-{{ item.id }}">${{ item.get_total|floatformat:0 }}</div>
+                <div class="item-remove">
+                    <a href="{% url 'remove_cart_item' item.id %}" onclick="return confirm('¿Eliminar este producto del carrito?')">🗑️</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="cart-summary">
+            <div class="summary-row">
+                <span class="summary-label">Subtotal:</span>
+                <span class="summary-value" id="cart-subtotal">${{ cart.get_total|floatformat:0 }}</span>
+            </div>
+            <div class="summary-row">
+                <span class="summary-label">Envío:</span>
+                <span class="summary-value text-success">GRATIS</span>
+            </div>
+            <div class="summary-row total-row">
+                <span class="summary-label">TOTAL:</span>
+                <span class="summary-value" id="cart-total">${{ cart.get_total|floatformat:0 }}</span>
+            </div>
+            
+            <div class="cart-actions">
+                <a href="{% url 'home' %}" class="btn btn-outline">🎮 SEGUIR COMPRANDO</a>
+                <a href="{% url 'checkout_cart' %}" class="btn btn-primary">💰 PROCEDER AL PAGO</a>
+            </div>
+        </div>
+    {% else %}
+        <div class="empty-cart">
+            <div class="empty-cart-icon">🛒</div>
+            <h2>TU CARRITO ESTÁ VACÍO</h2>
+            <p>¡Explora nuestros juegos y encuentra tu próximo favorito!</p>
+            <a href="{% url 'home' %}" class="btn btn-primary">VER CATÁLOGO</a>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    document.querySelectorAll('.quantity-input').forEach(input => {
+        input.addEventListener('change', function() {
+            const itemId = this.dataset.itemId;
+            const quantity = this.value;
+            
+            fetch(`/cart/update/${itemId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: `quantity=${quantity}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById(`item-total-${itemId}`).innerText = '$' + data.item_total;
+                    document.getElementById('cart-subtotal').innerText = '$' + data.cart_total;
+                    document.getElementById('cart-total').innerText = '$' + data.cart_total;
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

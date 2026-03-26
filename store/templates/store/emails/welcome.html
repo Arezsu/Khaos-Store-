@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido a {{ site_name }}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #6c5ce7, #a363d9);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        .header p {
+            margin: 10px 0 0;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 30px;
+        }
+        .content h2 {
+            color: #6c5ce7;
+            margin-top: 0;
+        }
+        .button {
+            display: inline-block;
+            background: linear-gradient(135deg, #6c5ce7, #a363d9);
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 25px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .button:hover {
+            opacity: 0.9;
+        }
+        .features {
+            margin: 20px 0;
+            padding: 0;
+            list-style: none;
+        }
+        .features li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #777;
+            border-top: 1px solid #eee;
+        }
+        @media (max-width: 600px) {
+            .content {
+                padding: 20px;
+            }
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>{{ site_name }}</h1>
+            <p>Tu tienda de videojuegos favorita</p>
+        </div>
+        
+        <div class="content">
+            <h2>¡Bienvenido, {{ username }}! 🎮</h2>
+            
+            <p>Nos alegra mucho que te hayas unido a <strong>{{ site_name }}</strong>. Estamos emocionados de tenerte con nosotros.</p>
+            
+            <p>En <strong>{{ site_name }}</strong> encontrarás:</p>
+            
+            <ul class="features">
+                <li>🎯 Los mejores videojuegos al mejor precio</li>
+                <li>🚚 Envío rápido y seguro</li>
+                <li>⭐ Opiniones de otros jugadores</li>
+                <li>💳 Múltiples métodos de pago</li>
+            </ul>
+            
+            <p>Ya puedes explorar nuestro catálogo y encontrar tu próximo juego favorito.</p>
+            
+            <div style="text-align: center;">
+                <a href="{{ catalog_url }}" class="button">Explorar catálogo</a>
+            </div>
+            
+            <p>Si tienes alguna pregunta, no dudes en contactarnos. Estamos aquí para ayudarte.</p>
+            
+            <p>¡Que tengas una excelente experiencia de compra!</p>
+            
+            <p>Saludos,<br>
+            <strong>El equipo de {{ site_name }}</strong></p>
+        </div>
+        
+        <div class="footer">
+            <p>© {{ year }} {{ site_name }}. Todos los derechos reservados.</p>
+            <p>Este es un correo automático, por favor no responder.</p>
+        </div>
+    </div>
+</body>
+</html>

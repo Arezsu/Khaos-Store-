@@ -1,7 +1,8 @@
 {% extends 'store/base.html' %}
 {% load static %}
 
-{% block title %}Checkout{% endblock %}
+{% block body_class %}minimal-header{% endblock %}
+{% block title %}Checkout - Khaos Store{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -13,82 +14,100 @@
         border: 2px solid;
         border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
         border-radius: 20px;
-        padding: 40px;
+        padding: 30px;
         box-shadow: 0 0 50px rgba(255, 0, 255, 0.3);
     }
     h1 {
         text-align: center;
         font-family: 'Press Start 2P', cursive;
-        font-size: 24px;
-        margin-bottom: 30px;
+        font-size: 20px;
+        margin-bottom: 20px;
         background: linear-gradient(45deg, #ff00ff, #00ffff);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
     h2 {
         color: #ff00ff;
-        margin: 30px 0 20px;
-        font-size: 18px;
+        margin: 20px 0 15px;
+        font-size: 16px;
     }
-    .product-summary {
+    .product-summary, .cart-summary {
         background: rgba(255, 255, 255, 0.05);
-        border-radius: 15px;
-        padding: 20px;
-        margin-bottom: 30px;
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 20px;
         display: flex;
-        gap: 20px;
+        gap: 15px;
         border: 1px solid #ff00ff;
     }
-    .product-image {
-        width: 100px;
-        height: 100px;
-        object-fit: cover;
-        border-radius: 10px;
-        border: 2px solid #ff00ff;
+    .cart-summary {
+        flex-direction: column;
     }
-    .product-details {
-        flex: 1;
+    .product-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid #ff00ff;
     }
     .product-name {
-        font-size: 20px;
+        font-size: 16px;
         font-weight: bold;
         color: #ff00ff;
-        margin-bottom: 5px;
     }
     .product-price {
-        font-size: 24px;
+        font-size: 20px;
         color: #00ffff;
         font-weight: bold;
     }
+    .cart-items-list {
+        margin-bottom: 10px;
+    }
+    .cart-item-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 6px 0;
+        border-bottom: 1px solid rgba(255, 0, 255, 0.3);
+        font-size: 14px;
+    }
+    .cart-total {
+        font-size: 18px;
+        font-weight: bold;
+        text-align: right;
+        padding-top: 10px;
+        border-top: 2px solid #ff00ff;
+        color: #00ffff;
+    }
     .form-group {
-        margin-bottom: 20px;
+        margin-bottom: 15px;
     }
     label {
         display: block;
         margin-bottom: 5px;
         color: #ff00ff;
         font-weight: bold;
+        font-size: 13px;
     }
     input, select {
         width: 100%;
-        padding: 12px;
+        padding: 10px;
         background: rgba(255, 255, 255, 0.1);
-        border: 2px solid #ff00ff;
-        border-radius: 10px;
+        border: 1px solid #ff00ff;
+        border-radius: 8px;
         color: #fff;
-        font-size: 16px;
+        font-size: 14px;
     }
     .payment-methods {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 15px;
-        margin: 30px 0;
+        gap: 10px;
+        margin: 20px 0;
     }
     .payment-method {
         background: rgba(255, 255, 255, 0.05);
-        border: 2px solid #ff00ff;
-        border-radius: 15px;
-        padding: 15px 10px;
+        border: 1px solid #ff00ff;
+        border-radius: 10px;
+        padding: 10px;
         text-align: center;
         cursor: pointer;
     }
@@ -100,70 +119,94 @@
         color: #000;
     }
     .payment-icon {
-        font-size: 30px;
+        font-size: 24px;
         margin-bottom: 5px;
         color: #ff00ff;
     }
     .payment-method span {
-        display: block;
+        font-size: 12px;
         font-weight: bold;
-        color: #fff;
     }
     .total {
         background: linear-gradient(45deg, #ff00ff, #00ffff);
-        padding: 20px;
-        border-radius: 15px;
+        padding: 15px;
+        border-radius: 10px;
         text-align: right;
-        margin: 30px 0;
+        margin: 20px 0;
     }
     .total-label {
-        font-size: 18px;
+        font-size: 14px;
         color: #000;
         font-weight: bold;
     }
     .total-amount {
-        font-size: 36px;
+        font-size: 28px;
         font-weight: bold;
         color: #000;
-        margin-left: 15px;
+        margin-left: 10px;
     }
     .btn {
         width: 100%;
-        padding: 16px;
+        padding: 12px;
         background: linear-gradient(45deg, #ff00ff, #00ffff);
         border: none;
         border-radius: 10px;
         color: #000;
         font-weight: bold;
-        font-size: 20px;
+        font-size: 16px;
         cursor: pointer;
     }
     .btn:hover {
         transform: scale(1.02);
-        box-shadow: 0 0 30px #ff00ff;
+        box-shadow: 0 0 20px #ff00ff;
     }
     .message.error {
         background: rgba(255, 0, 0, 0.2);
         border: 1px solid #ff0000;
-        padding: 10px;
-        margin-bottom: 20px;
-        border-radius: 10px;
+        padding: 8px;
+        margin-bottom: 15px;
+        border-radius: 8px;
         text-align: center;
+        font-size: 13px;
+    }
+    .back-link {
+        display: inline-block;
+        margin-bottom: 15px;
+        color: #00ffff;
+        text-decoration: none;
+        font-size: 13px;
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="checkout-container">
+    <a href="{% if is_cart %}{% url 'cart_view' %}{% else %}{% url 'product_detail' product.id %}{% endif %}" class="back-link">← Volver</a>
+    
     <h1>CHECKOUT</h1>
     
-    <div class="product-summary">
-        <img src="{{ product.image }}" alt="{{ product.name }}" class="product-image">
-        <div class="product-details">
-            <div class="product-name">{{ product.name }}</div>
-            <div class="product-price">${{ product.get_price }}</div>
+    {% if is_cart and cart %}
+        <div class="cart-summary">
+            <h2>📦 Resumen</h2>
+            <div class="cart-items-list">
+                {% for item in cart.items.all %}
+                <div class="cart-item-row">
+                    <span>{{ item.product.name }} x{{ item.quantity }}</span>
+                    <span>${{ item.get_total|floatformat:0 }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="cart-total">TOTAL: ${{ cart.get_total|floatformat:0 }}</div>
         </div>
-    </div>
+    {% elif product %}
+        <div class="product-summary">
+            <img src="{{ product.image }}" alt="{{ product.name }}" class="product-image">
+            <div>
+                <div class="product-name">{{ product.name }}</div>
+                <div class="product-price">${{ product.get_price|floatformat:0 }}</div>
+            </div>
+        </div>
+    {% endif %}
     
     {% if messages %}
         {% for message in messages %}
@@ -171,14 +214,19 @@
         {% endfor %}
     {% endif %}
     
-    <form method="post" action="{% url 'process_payment' product.id %}" id="payment-form">
+    <form method="post" 
+          action="{% if is_cart %}{% url 'process_payment_cart' %}{% else %}{% url 'process_payment' product.id %}{% endif %}" 
+          id="payment-form">
         {% csrf_token %}
+        {% if is_cart %}
+            <input type="hidden" name="is_cart" value="true">
+        {% endif %}
         
         <h2>📋 TUS DATOS</h2>
         
         <div class="form-group">
             <label>NOMBRE COMPLETO</label>
-            <input type="text" name="name" required value="{{ user.get_full_name|default:'' }}">
+            <input type="text" name="name" required value="{{ user.get_full_name|default:user.username }}">
         </div>
         
         <div class="form-group">
@@ -192,10 +240,14 @@
         </div>
         
         <h2>💳 MÉTODO DE PAGO</h2>
-        <input type="hidden" name="payment_method" id="selected_payment" value="CARD">
+        <input type="hidden" name="payment_method" id="selected_payment" value="NEQUI">
         
         <div class="payment-methods">
-            <div class="payment-method selected" onclick="selectPayment('CARD', this)">
+            <div class="payment-method selected" onclick="selectPayment('NEQUI', this)">
+                <div class="payment-icon">📱</div>
+                <span>NEQUI</span>
+            </div>
+            <div class="payment-method" onclick="selectPayment('CARD', this)">
                 <div class="payment-icon">💳</div>
                 <span>TARJETA</span>
             </div>
@@ -203,18 +255,16 @@
                 <div class="payment-icon">🅿️</div>
                 <span>PAYPAL</span>
             </div>
-            <div class="payment-method" onclick="selectPayment('NEQUI', this)">
-                <div class="payment-icon">📱</div>
-                <span>NEQUI</span>
-            </div>
         </div>
         
         <div class="total">
-            <span class="total-label">TOTAL A PAGAR:</span>
-            <span class="total-amount">${{ product.get_price }}</span>
+            <span class="total-label">TOTAL:</span>
+            <span class="total-amount">
+                ${% if is_cart and cart %}{{ cart.get_total|floatformat:0 }}{% elif product %}{{ product.get_price|floatformat:0 }}{% endif %}
+            </span>
         </div>
         
-        <button type="submit" class="btn">💰 PAGAR AHORA</button>
+        <button type="submit" class="btn">💰 CONFIRMAR PEDIDO</button>
     </form>
 </div>
 

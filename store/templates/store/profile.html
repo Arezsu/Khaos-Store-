@@ -53,6 +53,22 @@
         color: rgba(255, 255, 255, 0.7);
         margin-bottom: 10px;
     }
+    .btn-change-password {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 10px 20px;
+        background: transparent;
+        border: 2px solid #ff00ff;
+        color: #ff00ff;
+        text-decoration: none;
+        border-radius: 10px;
+        transition: all 0.3s;
+    }
+    .btn-change-password:hover {
+        background: #ff00ff;
+        color: #000;
+        box-shadow: 0 0 20px #ff00ff;
+    }
     .orders-section {
         background: rgba(0, 0, 0, 0.7);
         backdrop-filter: blur(15px);
@@ -115,16 +131,29 @@
         background: #ff0000;
         color: #fff;
     }
+    .order-products {
+        margin: 10px 0;
+        color: rgba(255, 255, 255, 0.8);
+    }
+    .order-products-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 5px;
+    }
+    .product-badge {
+        background: rgba(255, 0, 255, 0.2);
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+    }
     .order-details {
         display: flex;
         justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
         gap: 10px;
-    }
-    .order-product {
-        font-size: 18px;
-        font-weight: bold;
+        margin-top: 10px;
     }
     .order-total {
         font-size: 24px;
@@ -134,7 +163,6 @@
     .order-date {
         color: rgba(255, 255, 255, 0.5);
         font-size: 14px;
-        margin-top: 10px;
     }
     .btn-cancel {
         background: rgba(255, 0, 0, 0.2);
@@ -157,18 +185,6 @@
         margin-top: 10px;
         text-align: right;
     }
-    .back-link {
-        display: inline-block;
-        margin-bottom: 20px;
-        color: #00ffff;
-        text-decoration: none;
-        font-size: 18px;
-        transition: all 0.3s;
-    }
-    .back-link:hover {
-        text-shadow: 0 0 10px #00ffff;
-        transform: translateX(-5px);
-    }
     .no-orders {
         text-align: center;
         padding: 60px 40px;
@@ -178,9 +194,6 @@
         color: #ff00ff;
         text-decoration: none;
         font-weight: bold;
-    }
-    .no-orders a:hover {
-        text-shadow: 0 0 10px #ff00ff;
     }
     @media (max-width: 768px) {
         .profile-grid {
@@ -206,7 +219,7 @@
 
 {% block content %}
 <div class="profile-container">
-    <a href="{% url 'home' %}" class="back-link">← VOLVER A LA TIENDA</a>
+    <a href="{% url 'home' %}" class="back-link" style="display: inline-block; margin-bottom: 20px; color: #00ffff; text-decoration: none;">← VOLVER A LA TIENDA</a>
     
     <h1>👤 MI PERFIL</h1>
     
@@ -216,6 +229,7 @@
             <div class="username">{{ user.username }}</div>
             <div class="email">📧 {{ user.email }}</div>
             <div class="phone">📱 {{ profile.phone|default:"No especificado" }}</div>
+            <a href="{% url 'change_password' %}" class="btn-change-password">🔐 Cambiar Contraseña</a>
         </div>
         
         <div class="orders-section">
@@ -235,11 +249,24 @@
                         {{ order.get_status_display }}
                     </span>
                 </div>
-                <div class="order-details">
-                    <div class="order-product">{{ order.product.name }}</div>
-                    <div class="order-total">${{ order.total }}</div>
+                
+                <div class="order-products">
+                    <strong>🎮 Productos:</strong>
+                    <div class="order-products-list">
+                        {% if order.cart %}
+                            {% for item in order.cart.items.all %}
+                                <span class="product-badge">{{ item.product.name }} x{{ item.quantity }}</span>
+                            {% endfor %}
+                        {% elif order.product %}
+                            <span class="product-badge">{{ order.product.name }}</span>
+                        {% endif %}
+                    </div>
                 </div>
-                <div class="order-date">{{ order.created_at|date:"d/m/Y H:i" }}</div>
+                
+                <div class="order-details">
+                    <div class="order-total">${{ order.total|floatformat:0 }}</div>
+                    <div class="order-date">{{ order.created_at|date:"d/m/Y H:i" }}</div>
+                </div>
                 
                 {% if order.status == 'PENDING' %}
                 <div class="order-actions">

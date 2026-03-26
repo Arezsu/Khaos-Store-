@@ -1,93 +1,88 @@
 {% extends 'store/base.html' %}
 {% load static %}
 
+{% block body_class %}minimal-header{% endblock %}
 {% block title %}¡Compra Exitosa!{% endblock %}
 
 {% block extra_css %}
 <style>
     .success-container {
+        max-width: 500px;
+        margin: 0 auto;
         background: rgba(0, 0, 0, 0.7);
         backdrop-filter: blur(15px);
         border: 2px solid;
         border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
         border-radius: 20px;
-        padding: 50px;
-        width: 100%;
-        max-width: 500px;
+        padding: 30px;
         text-align: center;
-        margin: 0 auto;
         box-shadow: 0 0 50px rgba(255, 0, 255, 0.3);
     }
     .success-icon {
-        font-size: 80px;
-        margin-bottom: 20px;
+        font-size: 60px;
+        margin-bottom: 15px;
         animation: bounce 1s ease;
     }
     @keyframes bounce {
         0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.2); }
+        50% { transform: scale(1.1); }
     }
     h1 {
         font-family: 'Press Start 2P', cursive;
-        font-size: 24px;
-        margin-bottom: 20px;
+        font-size: 20px;
+        margin-bottom: 15px;
         background: linear-gradient(45deg, #ff00ff, #00ffff);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
     .order-number {
         background: rgba(255, 0, 255, 0.2);
-        padding: 20px;
-        border-radius: 15px;
-        margin: 30px 0;
+        padding: 15px;
+        border-radius: 12px;
+        margin: 20px 0;
         border: 1px solid #ff00ff;
     }
     .order-number-label {
-        font-size: 14px;
+        font-size: 12px;
         color: #ff00ff;
-        margin-bottom: 5px;
     }
     .order-number-value {
-        font-size: 20px;
+        font-size: 18px;
         font-weight: bold;
         color: #00ffff;
         font-family: monospace;
-        letter-spacing: 2px;
+        letter-spacing: 1px;
     }
     .message {
         color: rgba(255, 255, 255, 0.9);
-        line-height: 1.6;
-        margin-bottom: 30px;
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 20px;
     }
     .btn {
         display: inline-block;
-        padding: 16px 40px;
+        padding: 12px 25px;
         background: linear-gradient(45deg, #ff00ff, #00ffff);
         border: none;
         border-radius: 10px;
         color: #000;
         font-weight: bold;
-        font-size: 18px;
+        font-size: 14px;
         text-decoration: none;
-        transition: all 0.3s;
-        margin: 10px;
-    }
-    .btn:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 30px #ff00ff;
+        margin: 5px;
     }
     .btn-outline {
         background: transparent;
-        border: 2px solid #ff00ff;
+        border: 1px solid #ff00ff;
         color: #ff00ff;
     }
     .btn-outline:hover {
         background: #ff00ff;
         color: #000;
     }
-    @media (max-width: 768px) {
-        h1 { font-size: 18px; }
-        .btn { display: block; margin: 10px 0; }
+    .btn:hover {
+        transform: scale(1.02);
+        box-shadow: 0 0 20px #ff00ff;
     }
 </style>
 {% endblock %}
@@ -103,14 +98,19 @@
     </div>
     
     <div class="message">
-        <p>Hemos enviado la confirmación a tu correo electrónico.</p>
+        <p>Hemos enviado la confirmación a tu correo.</p>
         <p>En los próximos minutos recibirás la key de tu juego.</p>
-        <p style="font-size: 12px; margin-top: 20px;">💡 Revisa tu bandeja de spam</p>
+        <p style="font-size: 11px;">💡 Revisa tu bandeja de spam</p>
     </div>
     
     <div>
         <a href="{% url 'home' %}" class="btn">🎮 SEGUIR COMPRANDO</a>
-        <a href="{% url 'profile' %}" class="btn btn-outline">📦 VER MIS COMPRAS</a>
+        <a href="{% url 'profile' %}" class="btn btn-outline">📦 MIS COMPRAS</a>
     </div>
 </div>
+
+<script>
+    var audio = new Audio("{% static 'audio/registro.mp3' %}");
+    audio.play().catch(e => console.log("Audio no disponible"));
+</script>
 {% endblock %}
