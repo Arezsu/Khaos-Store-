@@ -36,7 +36,6 @@ class ProductAdmin(admin.ModelAdmin):
     readonly_fields = ['created_at', 'updated_at']
     
     def save_model(self, request, obj, form, change):
-        """Auto-generar slug si no existe"""
         if not obj.slug:
             from django.utils.text import slugify
             obj.slug = slugify(obj.name)
@@ -46,7 +45,7 @@ class ProductAdmin(admin.ModelAdmin):
 # ==================== ÓRDENES ====================
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['order_number', 'customer_name', 'product', 'total', 'status_colored', 'payment_method', 'created_at']
+    list_display = ['order_number', 'customer_name', 'product', 'total', 'status', 'status_colored', 'created_at']
     list_display_links = ['order_number', 'customer_name']
     list_filter = ['status', 'payment_method', 'created_at']
     search_fields = ['order_number', 'customer_name', 'customer_email', 'product__name']
@@ -78,7 +77,6 @@ class OrderAdmin(admin.ModelAdmin):
     )
     
     def status_colored(self, obj):
-        """Muestra el estado con colores en el admin"""
         colors = {
             'PENDING': '#ffaa00',
             'PAID': '#28a745',
@@ -92,31 +90,25 @@ class OrderAdmin(admin.ModelAdmin):
             '<span style="background-color: {}; color: white; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; display: inline-block;">{}</span>',
             color, status_display
         )
-    status_colored.short_description = 'Estado'
+    status_colored.short_description = 'Estado (color)'
     
     def get_queryset(self, request):
-        """Optimiza las consultas"""
         return super().get_queryset(request).select_related('product')
     
     def save_model(self, request, obj, form, change):
-        """Guarda la orden y envía email si el estado cambió"""
         if change:
             try:
-                # Obtener el estado original antes de guardar
                 original = Order.objects.get(pk=obj.pk)
                 old_status = original.status
                 new_status = obj.status
                 
-                # Guardar primero el objeto
                 super().save_model(request, obj, form, change)
                 
-                # Enviar email solo si el estado cambió y no es el mismo
                 if old_status != new_status:
-                    # Enviar email de cambio de estado
                     success = send_order_status_email(obj, old_status)
                     if success:
                         self.message_user(
-                            request, 
+                            request,
                             f'✓ Email de estado "{new_status}" enviado correctamente a {obj.customer_email}',
                             level='SUCCESS'
                         )
@@ -127,10 +119,8 @@ class OrderAdmin(admin.ModelAdmin):
                             level='WARNING'
                         )
             except Order.DoesNotExist:
-                # Es una nueva orden, no comparar estados
                 super().save_model(request, obj, form, change)
         else:
-            # Nueva orden creada desde el admin
             super().save_model(request, obj, form, change)
             self.message_user(
                 request,
@@ -139,7 +129,6 @@ class OrderAdmin(admin.ModelAdmin):
             )
     
     def has_delete_permission(self, request, obj=None):
-        """Permite eliminar órdenes solo si no están pagadas o enviadas"""
         if obj and obj.status in ['PAID', 'SENT', 'DELIVERED']:
             return False
         return super().has_delete_permission(request, obj)
@@ -175,7 +164,6 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 
 # ==================== USUARIOS ====================
-# Desregistrar el UserAdmin por defecto
 admin.site.unregister(User)
 
 @admin.register(User)
@@ -205,27 +193,11 @@ class CustomUserAdmin(UserAdmin):
         self.message_user(request, f"{updated} usuarios promovidos a staff.")
     make_staff.short_description = "Promover a staff"
     
-    fieldsets = UserAdmin.fieldsets + (
-        ('Información Adicional', {
-            'fields': ('user_permissions',),
-            'classes': ('collapse',)
-        }),
-    )
-    
-    def get_queryset(self, request):
-        """Optimiza consultas y excluye superusuarios de la lista normal si es necesario"""
-        qs = super().get_queryset(request)
-        if not request.user.is_superuser:
-            qs = qs.filter(is_superuser=False)
-        return qs
+    # Usamos los fieldsets originales de UserAdmin para evitar duplicados
+    fieldsets = UserAdmin.fieldsets
 
-
-# ==================== PERSONALIZACIÓN DEL ADMIN ====================
-# Cambiar el encabezado y título del admin
+# ==================== PERSONALIZACIÓN ====================
 admin.site.site_header = 'Khaos Store Admin'
 admin.site.site_title = 'Khaos Store'
 admin.site.index_title = 'Panel de Administración'
-admin.site.site_url = '/'  # Enlace para ir al sitio público
-
-# Agregar información en el índice del admin
-admin.site.index_template = 'admin/index.html'
+admin.site.site_url = '/'
