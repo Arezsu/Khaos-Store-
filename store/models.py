@@ -120,7 +120,7 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='orders')
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=True, blank=True, related_name='orders')
     
-    # Para compatibilidad con órdenes de producto único (se mantiene)
+    # CAMBIO IMPORTANTE: product ahora es opcional (null=True, blank=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)
     
     customer_name = models.CharField(max_length=200)

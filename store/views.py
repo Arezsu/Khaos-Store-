@@ -291,6 +291,7 @@ def process_payment(request, product_id=None):
                     messages.error(request, f'No hay suficiente stock de {item.product.name}')
                     return redirect('cart_view')
             
+            # CREAR ORDEN SIN PRODUCT (solo con cart)
             order = Order.objects.create(
                 cart=cart,
                 customer_name=name,
@@ -302,6 +303,7 @@ def process_payment(request, product_id=None):
                 total=cart.get_total(),
                 user=request.user if request.user.is_authenticated else None,
                 status='PENDING'
+                # NO incluir product aquí
             )
         else:
             product = get_object_or_404(Product, id=product_id)
@@ -310,6 +312,7 @@ def process_payment(request, product_id=None):
                 messages.error(request, 'Producto agotado')
                 return redirect('home')
             
+            # CREAR ORDEN CON PRODUCT (individual)
             order = Order.objects.create(
                 product=product,
                 customer_name=name,
@@ -455,7 +458,7 @@ def register(request):
     # Crear listas para los selects del formulario
     current_year = date.today().year
     years = list(range(current_year - 50, current_year + 1))
-    years.reverse()  # Del más reciente al más antiguo
+    years.reverse()
     
     months = list(range(1, 13))
     days = list(range(1, 32))
@@ -465,6 +468,7 @@ def register(request):
         'months': months,
         'days': days
     })
+
 
 def user_login(request):
     if request.user.is_authenticated:
