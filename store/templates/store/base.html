@@ -252,6 +252,75 @@
             font-size: 12px;
         }
 
+        /* MODAL DEL TUTORIAL */
+        .tutorial-modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            justify-content: center;
+            align-items: center;
+        }
+        .tutorial-modal.show {
+            display: flex;
+        }
+        .tutorial-modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 900px;
+            background: #000;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 3px solid #ff00ff;
+            box-shadow: 0 0 50px rgba(255, 0, 255, 0.5);
+        }
+        .tutorial-modal-header {
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .tutorial-modal-header h3 {
+            color: #000;
+            margin: 0;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+        }
+        .tutorial-close {
+            color: #000;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            line-height: 1;
+        }
+        .tutorial-close:hover {
+            transform: scale(1.2);
+        }
+        .tutorial-video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+        }
+        .tutorial-video-container iframe,
+        .tutorial-video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .tutorial-nav-btn {
+            cursor: pointer;
+        }
+
         @media (max-width: 768px) {
             .nav {
                 flex-direction: column;
@@ -271,6 +340,9 @@
             .social-links {
                 justify-content: center;
             }
+            .tutorial-modal-header h3 {
+                font-size: 10px;
+            }
         }
     </style>
     {% block extra_css %}{% endblock %}
@@ -289,6 +361,11 @@
                 <a href="{% url 'home' %}">INICIO</a>
             </div>
             <div class="user-menu">
+                <!-- BOTÓN DE TUTORIAL -->
+                <button class="btn btn-outline tutorial-nav-btn" onclick="openTutorialModal()">
+                     TUTORIAL
+                </button>
+
                 <a href="{% url 'cart_view' %}" class="btn btn-outline cart-btn">
                     🛒
                     {% if cart_total_items > 0 %}
@@ -345,6 +422,65 @@
             © 2026 KHAOS STORE
         </div>
     </footer>
+
+    <!-- MODAL DEL TUTORIAL -->
+    <div id="tutorialModal" class="tutorial-modal">
+        <div class="tutorial-modal-content">
+            <div class="tutorial-modal-header">
+                <h3>🎮 CÓMO CANJEAR TU CÓDIGO EN PLAYSTATION</h3>
+                <button class="tutorial-close" onclick="closeTutorialModal()">&times;</button>
+            </div>
+            <div class="tutorial-video-container">
+                <!-- VIDEO DE YOUTUBE (CAMBIA EL ID POR EL DE TU TUTORIAL) -->
+                <iframe id="tutorialVideo" 
+                        src="https://res.cloudinary.com/dxbsu1sud/video/upload/v1775327843/Video_Project_i3a4dj.mp4" 
+                        title="Tutorial PlayStation" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Abrir modal de tutorial
+        function openTutorialModal() {
+            const modal = document.getElementById('tutorialModal');
+            modal.classList.add('show');
+            
+            const iframe = document.getElementById('tutorialVideo');
+            if (iframe && iframe.src.includes('youtube')) {
+                iframe.src = iframe.src.replace('autoplay=0', 'autoplay=1');
+            }
+        }
+        
+        // Cerrar modal de tutorial
+        function closeTutorialModal() {
+            const modal = document.getElementById('tutorialModal');
+            modal.classList.remove('show');
+            
+            const iframe = document.getElementById('tutorialVideo');
+            if (iframe && iframe.src.includes('youtube')) {
+                iframe.src = iframe.src.replace('autoplay=1', 'autoplay=0');
+            }
+        }
+        
+        // Cerrar con tecla ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeTutorialModal();
+            }
+        });
+        
+        // Cerrar haciendo clic fuera del modal
+        window.onclick = function(event) {
+            const modal = document.getElementById('tutorialModal');
+            if (event.target === modal) {
+                closeTutorialModal();
+            }
+        }
+    </script>
 
     {% block extra_js %}{% endblock %}
 </body>

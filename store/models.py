@@ -7,7 +7,6 @@ import string
 
 
 class Product(models.Model):
-    """Producto - Videojuego"""
     name = models.CharField(max_length=200)
     price = models.FloatField(validators=[MinValueValidator(0)])
     image = models.URLField(max_length=500, verbose_name='URL de imagen')
@@ -15,13 +14,13 @@ class Product(models.Model):
     is_on_sale = models.BooleanField(default=False)
     sale_price = models.FloatField(null=True, blank=True, validators=[MinValueValidator(0)])
     stock = models.IntegerField(default=10, validators=[MinValueValidator(0)])
-    category = models.CharField(max_length=100, default='Acción')
+    category = models.CharField(max_length=100, default='Accion')
     rating = models.FloatField(default=5.0, validators=[MinValueValidator(0), MaxValueValidator(5)])
     reviews_count = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     created_at = models.DateTimeField(auto_now_add=True)
     
     trailer_url = models.URLField(max_length=500, blank=True, null=True, help_text="URL del video de YouTube o Vimeo")
-    video_file = models.FileField(upload_to='products/videos/', blank=True, null=True, help_text="Video local (MP4)")
+    video_file = models.FileField(upload_to='products/videos/', blank=True, null=True, help_text="Video local MP4")
     
     def __str__(self):
         return self.name
@@ -37,6 +36,19 @@ class Product(models.Model):
     
     def get_reviews_count(self):
         return self.reviews.count()
+    
+    def is_available(self):
+        return self.stock > 0
+    
+    def has_stock(self, quantity=1):
+        return self.stock >= quantity
+    
+    def reduce_stock(self, quantity=1):
+        if self.has_stock(quantity):
+            self.stock -= quantity
+            self.save()
+            return True
+        return False
 
 
 class UserProfile(models.Model):
@@ -44,7 +56,7 @@ class UserProfile(models.Model):
     phone = models.CharField(
         max_length=10, 
         blank=True, 
-        validators=[MinLengthValidator(10), RegexValidator(r'^\d{10}$', 'El teléfono debe tener exactamente 10 dígitos')]
+        validators=[MinLengthValidator(10), RegexValidator(r'^\d{10}$', 'El telefono debe tener exactamente 10 digitos')]
     )
     address = models.TextField(blank=True)
     city = models.CharField(max_length=100, blank=True)
@@ -90,8 +102,8 @@ class CartItem(models.Model):
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
     
     class Meta:
-        verbose_name = "Ítem del carrito"
-        verbose_name_plural = "Ítems del carrito"
+        verbose_name = "Item del carrito"
+        verbose_name_plural = "Items del carrito"
         unique_together = ['cart', 'product']
     
     def __str__(self):
@@ -103,24 +115,22 @@ class CartItem(models.Model):
 
 class Order(models.Model):
     PAYMENT_METHODS = [
-        ('CARD', 'Tarjeta de Crédito/Débito'),
+        ('CARD', 'Tarjeta de Credito/Debito'),
         ('PAYPAL', 'PayPal'),
         ('NEQUI', 'Nequi'),
     ]
     
     STATUS_CHOICES = [
-        ('PENDING', '⏳ Pendiente'),
-        ('PAID', '✅ Pagado'),
-        ('SENT', '📧 Enviado'),
-        ('DELIVERED', '🎮 Entregado'),
-        ('CANCELLED', '❌ Cancelado'),
+        ('PENDING', 'Pendiente'),
+        ('PAID', 'Pagado'),
+        ('SENT', 'Enviado'),
+        ('DELIVERED', 'Entregado'),
+        ('CANCELLED', 'Cancelado'),
     ]
     
     order_number = models.CharField(max_length=20, unique=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='orders')
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=True, blank=True, related_name='orders')
-    
-    # CAMBIO IMPORTANTE: product ahora es opcional (null=True, blank=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)
     
     customer_name = models.CharField(max_length=200)
@@ -146,7 +156,6 @@ class Order(models.Model):
         return dict(self.STATUS_CHOICES).get(self.status, self.status)
     
     def get_products_list(self):
-        """Obtiene la lista de productos de la orden"""
         if self.cart:
             return [item for item in self.cart.items.all()]
         elif self.product:
@@ -154,7 +163,6 @@ class Order(models.Model):
         return []
     
     def get_products_display(self):
-        """Obtiene el texto con todos los productos"""
         products = []
         if self.cart:
             for item in self.cart.items.all():
@@ -164,10 +172,9 @@ class Order(models.Model):
         return ", ".join(products)
     
     def send_pending_email(self):
-        """Envía email de orden pendiente con instrucciones de pago"""
         try:
             products_list = self.get_products_display()
-            subject = f'🎮 Orden Pendiente #{self.order_number} - KHAOS STORE'
+            subject = f'Orden Pendiente #{self.order_number} - KHAOS STORE'
             html_body = f"""
             <!DOCTYPE html>
             <html>
@@ -188,32 +195,32 @@ class Order(models.Model):
                         <h2 style="color: #ffaa00;">KHAOS STORE</h2>
                     </div>
                     <div class="order-number">
-                        <strong>NÚMERO DE ORDEN</strong><br>
+                        <strong>NUMERO DE ORDEN</strong><br>
                         <span style="font-size: 20px;">{self.order_number}</span>
                     </div>
                     <p><strong>Productos:</strong> {products_list}</p>
                     <p><strong>Total:</strong> <span class="amount">${self.total}</span></p>
-                    <p><strong>Método de pago:</strong> {self.get_payment_method_display()}</p>
+                    <p><strong>Metodo de pago:</strong> {self.get_payment_method_display()}</p>
                     
                     <div class="payment-info">
-                        <h3>💰 PARA REALIZAR EL PAGO:</h3>
+                        <h3>PARA REALIZAR EL PAGO:</h3>
                         <p><strong>Nequi:</strong> 333 7452514</p>
                         <p><strong>Bancolombia:</strong> 333 7452514</p>
                         <p><strong>Referencia:</strong> {self.order_number}</p>
                     </div>
                     
-                    <p><strong>⚠️ IMPORTANTE:</strong></p>
+                    <p><strong>IMPORTANTE:</strong></p>
                     <ol>
                         <li>Realiza el pago por el valor total</li>
-                        <li>Envía el comprobante a soportekhaosstore@gmail.com</li>
-                        <li>Tu orden será activada dentro de 24 horas</li>
+                        <li>Envia el comprobante a soportekhaosstore@gmail.com</li>
+                        <li>Tu orden sera activada dentro de 24 horas</li>
                     </ol>
                     
                     <p>Estado actual: <strong>PENDIENTE DE PAGO</strong></p>
-                    <p>¿Preguntas? Contáctanos: soportekhaosstore@gmail.com</p>
+                    <p>Preguntas? Contactanos: soportekhaosstore@gmail.com</p>
                 </div>
                 <div class="footer">
-                    <p>© 2026 Khaos Store | soportekhaosstore@gmail.com | 333 7452514</p>
+                    <p>2026 Khaos Store | soportekhaosstore@gmail.com | 333 7452514</p>
                 </div>
             </body>
             </html>
@@ -233,6 +240,10 @@ class Order(models.Model):
         except Exception as e:
             print(f"Error enviando email pendiente: {e}")
             return False
+    
+    def send_payment_confirmation(self):
+        from .email_utils import send_payment_confirmation
+        return send_payment_confirmation(self)
     
     def __str__(self): 
         return f"Order #{self.order_number}"
@@ -255,10 +266,10 @@ class Review(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
-        verbose_name = "Reseña"
-        verbose_name_plural = "Reseñas"
+        verbose_name = "Resena"
+        verbose_name_plural = "Resenas"
         unique_together = ['product', 'user']
         ordering = ['-created_at']
     
     def __str__(self):
-        return f"{self.user.username} - {self.product.name}: {self.rating}★"   
+        return f"{self.user.username} - {self.product.name}: {self.rating}★"

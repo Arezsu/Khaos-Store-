@@ -2,12 +2,12 @@
 {% load static %}
 
 {% block body_class %}minimal-header{% endblock %}
-{% block title %}¡Compra Exitosa!{% endblock %}
+{% block title %}Compra Exitosa{% endblock %}
 
 {% block extra_css %}
 <style>
     .success-container {
-        max-width: 500px;
+        max-width: 600px;
         margin: 0 auto;
         background: rgba(0, 0, 0, 0.7);
         backdrop-filter: blur(15px);
@@ -53,11 +53,35 @@
         font-family: monospace;
         letter-spacing: 1px;
     }
-    .message {
-        color: rgba(255, 255, 255, 0.9);
-        font-size: 14px;
-        line-height: 1.5;
-        margin-bottom: 20px;
+    .info-message {
+        background: rgba(0, 255, 0, 0.1);
+        border: 1px solid #00ff00;
+        border-radius: 15px;
+        padding: 20px;
+        margin: 20px 0;
+    }
+    .info-message p {
+        margin: 10px 0;
+        color: #00ff00;
+    }
+    .tutorial-success-btn {
+        background: linear-gradient(45deg, #ff00ff, #00ffff);
+        border: none;
+        color: #000;
+        padding: 12px 25px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        margin: 20px 0;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s;
+    }
+    .tutorial-success-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px #ff00ff;
     }
     .btn {
         display: inline-block;
@@ -80,9 +104,8 @@
         background: #ff00ff;
         color: #000;
     }
-    .btn:hover {
-        transform: scale(1.02);
-        box-shadow: 0 0 20px #ff00ff;
+    .message {
+        margin: 20px 0;
     }
 </style>
 {% endblock %}
@@ -90,27 +113,53 @@
 {% block content %}
 <div class="success-container">
     <div class="success-icon">✅</div>
-    <h1>¡COMPRA EXITOSA!</h1>
+    <h1>COMPRA EXITOSA</h1>
     
     <div class="order-number">
-        <div class="order-number-label">NÚMERO DE ORDEN</div>
+        <div class="order-number-label">NUMERO DE ORDEN</div>
         <div class="order-number-value">#{{ order_id }}</div>
     </div>
-    
+
+    <div class="info-message">
+        <p>Los datos de acceso a tu cuenta PSN han sido enviados a tu correo electronico.</p>
+        <p>Revisa tu bandeja de entrada o spam.</p>
+    </div>
+
+    <button class="tutorial-success-btn" onclick="openTutorialModal()">
+        VER TUTORIAL DE ACTIVACION
+    </button>
+
     <div class="message">
-        <p>Hemos enviado la confirmación a tu correo.</p>
-        <p>En los próximos minutos recibirás la key de tu juego.</p>
-        <p style="font-size: 11px;">💡 Revisa tu bandeja de spam</p>
+        <p>Hemos enviado una copia a tu correo electronico.</p>
+        <p style="font-size: 12px;">Revisa tu bandeja de spam si no la encuentras.</p>
     </div>
     
     <div>
-        <a href="{% url 'home' %}" class="btn">🎮 SEGUIR COMPRANDO</a>
-        <a href="{% url 'profile' %}" class="btn btn-outline">📦 MIS COMPRAS</a>
+        <a href="{% url 'home' %}" class="btn">SEGUIR COMPRANDO</a>
+        <a href="{% url 'profile' %}" class="btn btn-outline">MIS COMPRAS</a>
     </div>
 </div>
 
 <script>
+    function openTutorialModal() {
+        var modal = document.getElementById('tutorialModal');
+        if (modal) {
+            modal.classList.add('show');
+            var iframe = document.getElementById('tutorialVideo');
+            if (iframe && iframe.src.includes('youtube')) {
+                iframe.src = iframe.src.replace('autoplay=0', 'autoplay=1');
+            }
+        } else {
+            window.open('https://res.cloudinary.com/dxbsu1sud/video/upload/v1775327843/Video_Project_i3a4dj.mp4', '_blank');
+        }
+    }
+</script>
+
+<script>
     var audio = new Audio("{% static 'audio/pago.mp3' %}");
-    audio.play().catch(e => console.log("Audio no disponible"));
+    audio.volume = 0.5;
+    audio.play().catch(function(e) {
+        console.log("Audio no disponible");
+    });
 </script>
 {% endblock %}
