@@ -112,7 +112,7 @@
 
 {% block content %}
 <div class="success-container">
-    <div class="success-icon">✅</div>
+    <div class="success-icon">✔</div>
     <h1>COMPRA EXITOSA</h1>
     
     <div class="order-number">
@@ -146,7 +146,7 @@
         if (modal) {
             modal.classList.add('show');
             var iframe = document.getElementById('tutorialVideo');
-            if (iframe && iframe.src.includes('youtube')) {
+            if (iframe && iframe.src) {
                 iframe.src = iframe.src.replace('autoplay=0', 'autoplay=1');
             }
         } else {
@@ -156,10 +156,25 @@
 </script>
 
 <script>
-    var audio = new Audio("{% static 'audio/pago.mp3' %}");
-    audio.volume = 0.5;
-    audio.play().catch(function(e) {
-        console.log("Audio no disponible");
+    function playPaymentSound() {
+        var audio = new Audio("{% static 'audio/pago.mp3' %}");
+        audio.volume = 0.3;
+        
+        var playPromise = audio.play();
+        
+        if (playPromise !== undefined) {
+            playPromise.then(function() {
+                console.log("Audio de pago reproducido correctamente");
+            }).catch(function(error) {
+                console.log("Error al reproducir audio: " + error);
+            });
+        }
+    }
+    
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            playPaymentSound();
+        }, 500);
     });
 </script>
 {% endblock %}
