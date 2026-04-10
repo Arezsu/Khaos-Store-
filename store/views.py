@@ -64,6 +64,11 @@ def get_or_create_cart(request):
         return cart
 
 
+def ps5_launcher(request):
+    """Pantalla de inicio estilo PS5"""
+    return render(request, 'store/ps5_launcher.html')
+
+
 def home(request):
     products = Product.objects.all()
     
@@ -475,7 +480,7 @@ def user_login(request):
 def custom_logout(request):
     logout(request)
     messages.success(request, 'Has cerrado sesion correctamente!')
-    return redirect('home')
+    return redirect('ps5_launcher')
 
 
 def profile(request):
