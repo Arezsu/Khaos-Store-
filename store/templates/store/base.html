@@ -308,7 +308,6 @@
             padding-bottom: 56.25%;
             height: 0;
         }
-        .tutorial-video-container iframe,
         .tutorial-video-container video {
             position: absolute;
             top: 0;
@@ -429,37 +428,62 @@
                 <h3>COMO ACTIVAR TU JUEGO EN PLAYSTATION</h3>
                 <button class="tutorial-close" onclick="closeTutorialModal()">X</button>
             </div>
-            <div class="tutorial-video-container">
-                <iframe id="tutorialVideo" 
-                        src="https://res.cloudinary.com/dxbsu1sud/video/upload/v1775327843/Video_Project_i3a4dj.mp4" 
-                        title="Tutorial PlayStation 5" 
-                        frameborder="0" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                        allowfullscreen>
-                </iframe>
+            <div id="videoContainer" class="tutorial-video-container">
+                <!-- El video se cargara aqui dinamicamente -->
             </div>
         </div>
     </div>
 
     <script>
-        var videoIframe = document.getElementById('tutorialVideo');
-        var videoSrc = videoIframe ? videoIframe.src : '';
-        
+        var currentVideo = null;
+
         function openTutorialModal() {
             var modal = document.getElementById('tutorialModal');
+            var container = document.getElementById('videoContainer');
+            
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            var video = document.createElement('video');
+            video.id = 'tutorialVideo';
+            video.controls = true;
+            video.autoplay = true;
+            video.style.width = '100%';
+            video.style.height = '100%';
+            
+            var source = document.createElement('source');
+            source.src = 'https://res.cloudinary.com/dxbsu1sud/video/upload/v1775327843/Video_Project_i3a4dj.mp4';
+            source.type = 'video/mp4';
+            
+            video.appendChild(source);
+            container.appendChild(video);
+            
+            currentVideo = video;
+            
             modal.classList.add('show');
             
-            if (videoIframe) {
-                videoIframe.src = videoSrc.replace('autoplay=0', 'autoplay=1');
-            }
+            video.play().catch(function(error) {
+                console.log("Error al reproducir: " + error);
+            });
         }
-        
+
         function closeTutorialModal() {
             var modal = document.getElementById('tutorialModal');
-            modal.classList.remove('show');
             
-            if (videoIframe) {
-                videoIframe.src = videoSrc;
+            if (currentVideo) {
+                currentVideo.pause();
+                currentVideo.currentTime = 0;
+                currentVideo = null;
+            }
+            
+            var container = document.getElementById('videoContainer');
+            if (container) {
+                container.innerHTML = '';
+            }
+            
+            if (modal) {
+                modal.classList.remove('show');
             }
         }
         
