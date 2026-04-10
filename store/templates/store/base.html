@@ -361,20 +361,19 @@
                 <a href="{% url 'home' %}">INICIO</a>
             </div>
             <div class="user-menu">
-                <!-- BOTÓN DE TUTORIAL -->
                 <button class="btn btn-outline tutorial-nav-btn" onclick="openTutorialModal()">
-                     TUTORIAL
+                    TUTORIAL
                 </button>
 
                 <a href="{% url 'cart_view' %}" class="btn btn-outline cart-btn">
-                    🛒
+                    CARRITO
                     {% if cart_total_items > 0 %}
                         <span class="cart-badge">{{ cart_total_items }}</span>
                     {% endif %}
                 </a>
                 
                 {% if user.is_authenticated %}
-                    <span style="font-size: 13px;">🎮 {{ user.username }}</span>
+                    <span style="font-size: 13px;">{{ user.username }}</span>
                     <a href="{% url 'profile' %}" class="btn btn-outline">PERFIL</a>
                     <a href="{% url 'logout' %}" class="btn btn-outline">SALIR</a>
                 {% else %}
@@ -401,25 +400,25 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h3>KHAOS STORE</h3>
-                <p>La tienda gamer más épica</p>
+                <p>La tienda gamer mas epica</p>
             </div>
             <div class="footer-section">
                 <h3>CONTACTO</h3>
                 <ul>
-                    <li>📧 soportekhaosstore@gmail.com</li>
-                    <li>📱 333 7452514</li>
+                    <li>soportekhaosstore@gmail.com</li>
+                    <li>333 7452514</li>
                 </ul>
             </div>
             <div class="footer-section">
-                <h3>SÍGUENOS</h3>
+                <h3>SIGUENOS</h3>
                 <div class="social-links">
-                    <a href="https://www.instagram.com/khaos_storecol/" target="_blank">📷</a>
-                    <a href="https://wa.me/qr/YLR2HUTBBIQLO1" target="_blank">💬</a>
+                    <a href="https://www.instagram.com/khaos_storecol/" target="_blank">Instagram</a>
+                    <a href="https://wa.me/qr/YLR2HUTBBIQLO1" target="_blank">WhatsApp</a>
                 </div>
             </div>
         </div>
         <div class="copyright">
-            © 2026 KHAOS STORE
+            2026 KHAOS STORE
         </div>
     </footer>
 
@@ -427,13 +426,12 @@
     <div id="tutorialModal" class="tutorial-modal">
         <div class="tutorial-modal-content">
             <div class="tutorial-modal-header">
-                <h3>🎮 CÓMO CANJEAR TU CÓDIGO EN PLAYSTATION</h3>
-                <button class="tutorial-close" onclick="closeTutorialModal()">&times;</button>
+                <h3>COMO ACTIVAR TU JUEGO EN PLAYSTATION</h3>
+                <button class="tutorial-close" onclick="closeTutorialModal()">X</button>
             </div>
             <div class="tutorial-video-container">
-                <!-- VIDEO DE YOUTUBE (CAMBIA EL ID POR EL DE TU TUTORIAL) -->
                 <iframe id="tutorialVideo" 
-                        src="https://res.cloudinary.com/dxbsu1sud/video/upload/v1775327843/Video_Project_i3a4dj.mp4" 
+                        src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=0&enablejsapi=1" 
                         title="Tutorial PlayStation" 
                         frameborder="0" 
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
@@ -444,38 +442,35 @@
     </div>
 
     <script>
-        // Abrir modal de tutorial
+        var videoIframe = document.getElementById('tutorialVideo');
+        var videoSrc = videoIframe ? videoIframe.src : '';
+        
         function openTutorialModal() {
-            const modal = document.getElementById('tutorialModal');
+            var modal = document.getElementById('tutorialModal');
             modal.classList.add('show');
             
-            const iframe = document.getElementById('tutorialVideo');
-            if (iframe && iframe.src.includes('youtube')) {
-                iframe.src = iframe.src.replace('autoplay=0', 'autoplay=1');
+            if (videoIframe) {
+                videoIframe.src = videoSrc.replace('autoplay=0', 'autoplay=1');
             }
         }
         
-        // Cerrar modal de tutorial
         function closeTutorialModal() {
-            const modal = document.getElementById('tutorialModal');
+            var modal = document.getElementById('tutorialModal');
             modal.classList.remove('show');
             
-            const iframe = document.getElementById('tutorialVideo');
-            if (iframe && iframe.src.includes('youtube')) {
-                iframe.src = iframe.src.replace('autoplay=1', 'autoplay=0');
+            if (videoIframe) {
+                videoIframe.src = videoSrc;
             }
         }
         
-        // Cerrar con tecla ESC
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 closeTutorialModal();
             }
         });
         
-        // Cerrar haciendo clic fuera del modal
         window.onclick = function(event) {
-            const modal = document.getElementById('tutorialModal');
+            var modal = document.getElementById('tutorialModal');
             if (event.target === modal) {
                 closeTutorialModal();
             }
