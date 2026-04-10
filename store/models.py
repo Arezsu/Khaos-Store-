@@ -172,59 +172,150 @@ class Order(models.Model):
         return ", ".join(products)
     
     def send_pending_email(self):
+        """Envia email de orden pendiente con instrucciones de pago y boton de WhatsApp"""
         try:
             products_list = self.get_products_display()
+            whatsapp_link = "https://wa.link/1pelm8"
+            
             subject = f'Orden Pendiente #{self.order_number} - KHAOS STORE'
             html_body = f"""
             <!DOCTYPE html>
             <html>
             <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Orden Pendiente - KHAOS STORE</title>
                 <style>
-                    body {{ font-family: 'Montserrat', Arial, sans-serif; background-color: #0f0c29; margin: 0; padding: 20px; }}
-                    .container {{ max-width: 600px; margin: auto; background: linear-gradient(135deg, #1a1a2e, #16213e); border-radius: 20px; padding: 30px; border: 2px solid #ffaa00; }}
-                    .header {{ text-align: center; border-bottom: 2px solid #ffaa00; padding-bottom: 20px; }}
-                    .order-number {{ background: rgba(255, 170, 0, 0.2); padding: 15px; border-radius: 10px; text-align: center; margin: 20px 0; }}
-                    .amount {{ font-size: 32px; font-weight: bold; color: #ffaa00; }}
-                    .payment-info {{ background: #000; padding: 20px; border-radius: 10px; margin: 20px 0; }}
-                    .footer {{ text-align: center; margin-top: 30px; font-size: 12px; color: #888; }}
+                    body {{
+                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                        background-color: #0f0c29;
+                        margin: 0;
+                        padding: 20px;
+                    }}
+                    .container {{
+                        max-width: 600px;
+                        margin: auto;
+                        background: linear-gradient(135deg, #1a1a2e, #16213e);
+                        border-radius: 20px;
+                        padding: 30px;
+                        border: 2px solid #ffaa00;
+                        box-shadow: 0 0 20px rgba(255, 170, 0, 0.3);
+                    }}
+                    .header {{
+                        text-align: center;
+                        border-bottom: 2px solid #ffaa00;
+                        padding-bottom: 20px;
+                        margin-bottom: 20px;
+                    }}
+                    .logo {{
+                        font-family: 'Courier New', monospace;
+                        font-size: 28px;
+                        font-weight: bold;
+                        color: #ffaa00;
+                    }}
+                    .order-number {{
+                        background: rgba(255, 170, 0, 0.2);
+                        padding: 15px;
+                        border-radius: 10px;
+                        text-align: center;
+                        margin: 20px 0;
+                    }}
+                    .amount {{
+                        font-size: 32px;
+                        font-weight: bold;
+                        color: #ffaa00;
+                    }}
+                    .payment-info {{
+                        background: #000;
+                        padding: 20px;
+                        border-radius: 10px;
+                        margin: 20px 0;
+                    }}
+                    .whatsapp-btn {{
+                        display: block;
+                        background-color: #25D366;
+                        color: white;
+                        text-align: center;
+                        padding: 14px 20px;
+                        margin: 30px 0;
+                        border-radius: 50px;
+                        text-decoration: none;
+                        font-weight: bold;
+                        font-size: 18px;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+                    }}
+                    .whatsapp-btn:hover {{
+                        background-color: #128C7E;
+                        transform: scale(1.02);
+                        box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+                    }}
+                    .footer {{
+                        text-align: center;
+                        margin-top: 30px;
+                        font-size: 12px;
+                        color: #888;
+                        border-top: 1px solid #333;
+                        padding-top: 20px;
+                    }}
+                    .note {{
+                        font-size: 12px;
+                        color: #ffaa00;
+                        text-align: center;
+                        margin-top: 15px;
+                    }}
                 </style>
             </head>
             <body>
                 <div class="container">
                     <div class="header">
-                        <h2 style="color: #ffaa00;">KHAOS STORE</h2>
+                        <div class="logo">KHAOS STORE</div>
+                        <p>Orden Pendiente de Pago</p>
                     </div>
+                    
                     <div class="order-number">
                         <strong>NUMERO DE ORDEN</strong><br>
-                        <span style="font-size: 20px;">{self.order_number}</span>
+                        <span style="font-size: 24px;">{self.order_number}</span>
                     </div>
-                    <p><strong>Productos:</strong> {products_list}</p>
-                    <p><strong>Total:</strong> <span class="amount">${self.total}</span></p>
-                    <p><strong>Metodo de pago:</strong> {self.get_payment_method_display()}</p>
+                    
+                    <p><strong>Producto(s):</strong> {products_list}</p>
+                    <p><strong>Total a pagar:</strong> <span class="amount">${self.total}</span></p>
+                    <p><strong>Metodo de pago seleccionado:</strong> {self.get_payment_method_display()}</p>
                     
                     <div class="payment-info">
-                        <h3>PARA REALIZAR EL PAGO:</h3>
-                        <p><strong>Nequi:</strong> 333 7452514</p>
-                        <p><strong>Bancolombia:</strong> 333 7452514</p>
+                        <h3 style="margin-top: 0; color: #ffaa00;">INSTRUCCIONES DE PAGO</h3>
+                        <p>Realiza el pago por el valor total a las siguientes cuentas:</p>
+                        <ul>
+                            <li><strong>Nequi:</strong> 333 7452514</li>
+                            <li><strong>Bancolombia:</strong> 333 7452514</li>
+                        </ul>
                         <p><strong>Referencia:</strong> {self.order_number}</p>
                     </div>
+                    
+                    <a href="{whatsapp_link}" class="whatsapp-btn" target="_blank">
+                        ENVIAR COMPROBANTE POR WHATSAPP
+                    </a>
                     
                     <p><strong>IMPORTANTE:</strong></p>
                     <ol>
                         <li>Realiza el pago por el valor total</li>
-                        <li>Envia el comprobante a soportekhaosstore@gmail.com</li>
+                        <li>Haz clic en el boton de WhatsApp</li>
+                        <li>Adjunta el comprobante de pago en el chat</li>
                         <li>Tu orden sera activada dentro de 24 horas</li>
                     </ol>
                     
-                    <p>Estado actual: <strong>PENDIENTE DE PAGO</strong></p>
-                    <p>Preguntas? Contactanos: soportekhaosstore@gmail.com</p>
-                </div>
-                <div class="footer">
-                    <p>2026 Khaos Store | soportekhaosstore@gmail.com | 333 7452514</p>
+                    <div class="note">
+                        Si no puedes usar el boton, envia el comprobante manualmente a soportekhaosstore@gmail.com
+                    </div>
+                    
+                    <div class="footer">
+                        <p>2026 Khaos Store | soportekhaosstore@gmail.com | 333 7452514</p>
+                    </div>
                 </div>
             </body>
             </html>
             """
+            
             from django.core.mail import EmailMultiAlternatives
             from django.utils.html import strip_tags
             
