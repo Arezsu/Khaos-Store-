@@ -7,7 +7,6 @@
 
 {% block extra_css %}
 <style>
-    /* Reset y base */
     * {
         margin: 0;
         padding: 0;
@@ -17,18 +16,18 @@
     body.ps5-home {
         background: transparent;
         overflow-x: hidden;
-        font-family: 'Montserrat', 'Segoe UI', sans-serif;
+        font-family: 'Poppins', 'Montserrat', sans-serif;
     }
 
-    /* Header estilo PS5 (sobre el video) */
+    /* Header estilo PS5 */
     .ps5-nav {
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
         z-index: 100;
-        padding: 20px 50px;
-        background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 100%);
+        padding: 25px 60px;
+        background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 100%);
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -37,31 +36,38 @@
 
     .nav-left {
         display: flex;
-        gap: 30px;
+        gap: 40px;
     }
 
     .nav-item {
-        color: rgba(255,255,255,0.8);
-        font-size: 14px;
-        font-weight: 600;
+        color: rgba(255,255,255,0.7);
+        font-size: 16px;
+        font-weight: 500;
         cursor: pointer;
         transition: all 0.3s;
-        letter-spacing: 1px;
         background: none;
         border: none;
-        padding: 8px 12px;
-        border-radius: 8px;
+        padding: 8px 0;
+        position: relative;
     }
 
     .nav-item:hover, .nav-item.selected {
         color: #fff;
-        text-shadow: 0 0 5px rgba(255,255,255,0.5);
-        background: rgba(255,255,255,0.1);
+    }
+
+    .nav-item.selected::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, #ff00ff, #00ffff);
     }
 
     .nav-right {
         display: flex;
-        gap: 25px;
+        gap: 30px;
         align-items: center;
     }
 
@@ -72,22 +78,20 @@
         transition: all 0.3s;
         background: none;
         border: none;
-        padding: 8px 12px;
-        border-radius: 8px;
+        padding: 8px;
     }
 
     .nav-icon:hover, .nav-icon.selected {
         color: #fff;
         transform: scale(1.05);
-        background: rgba(255,255,255,0.1);
     }
 
     .user-badge {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
         background: rgba(255,255,255,0.1);
-        padding: 6px 15px;
+        padding: 6px 18px;
         border-radius: 40px;
         cursor: pointer;
         transition: background 0.3s;
@@ -98,30 +102,30 @@
     }
 
     .user-avatar {
-        width: 28px;
-        height: 28px;
+        width: 32px;
+        height: 32px;
         background: linear-gradient(45deg, #ff00ff, #00ffff);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 12px;
+        font-size: 13px;
         font-weight: bold;
     }
 
     .user-name {
-        font-size: 13px;
+        font-size: 14px;
         font-weight: 500;
     }
 
-    /* Contenedor principal de juegos estilo PS5 */
+    /* Contenedor de juegos - CAJITAS ARRIBA */
     .games-container {
         position: relative;
         width: 100%;
         min-height: 100vh;
         display: flex;
-        align-items: center;
-        padding: 100px 0 60px 0;
+        align-items: flex-start;
+        padding-top: 120px;
         overflow-x: hidden;
     }
 
@@ -131,6 +135,7 @@
         scroll-behavior: smooth;
         scrollbar-width: none;
         cursor: grab;
+        padding: 20px 0;
     }
 
     .games-carousel-wrapper:active {
@@ -143,36 +148,36 @@
 
     .games-carousel {
         display: flex;
-        gap: 25px;
-        padding: 40px 80px;
-        transition: all 0.3s;
+        gap: 20px;
+        padding: 20px 60px;
+        align-items: flex-start;
     }
 
-    /* Tarjeta de juego estilo PS5 */
+    /* Tarjeta tipo cajita estilo PS5 */
     .game-card {
-        min-width: 280px;
-        width: 280px;
-        background: rgba(20, 20, 40, 0.7);
+        min-width: 180px;
+        width: 180px;
+        background: rgba(20, 20, 40, 0.5);
         backdrop-filter: blur(15px);
-        border-radius: 20px;
+        border-radius: 16px;
         overflow: hidden;
         cursor: pointer;
         transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         border: 1px solid rgba(255,255,255,0.1);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         position: relative;
     }
 
     .game-card.selected {
-        transform: scale(1.05) translateY(-15px);
+        transform: scale(1.08) translateY(-10px);
         border-color: #ff00ff;
-        box-shadow: 0 0 30px rgba(255,0,255,0.4);
-        background: rgba(40, 40, 70, 0.8);
+        box-shadow: 0 0 25px rgba(255,0,255,0.3);
+        background: rgba(40, 40, 70, 0.7);
     }
 
     .game-card-image {
         width: 100%;
-        height: 160px;
+        height: 180px;
         object-fit: cover;
         transition: transform 0.5s;
     }
@@ -182,41 +187,43 @@
     }
 
     .game-card-info {
-        padding: 20px;
+        padding: 15px;
+        text-align: center;
     }
 
     .game-card-title {
-        font-size: 18px;
-        font-weight: 700;
-        margin-bottom: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 5px;
         white-space: normal;
         word-break: break-word;
     }
 
     .game-card-price {
-        font-size: 16px;
+        font-size: 13px;
         color: #00ffff;
         font-weight: 600;
-        margin-bottom: 5px;
     }
 
     .game-card-category {
-        font-size: 11px;
+        font-size: 10px;
         color: rgba(255,255,255,0.5);
         text-transform: uppercase;
+        margin-top: 4px;
     }
 
     /* Badges */
     .game-card-badge {
         position: absolute;
-        top: 10px;
-        right: 10px;
+        top: 8px;
+        right: 8px;
         background: rgba(0,0,0,0.7);
         backdrop-filter: blur(5px);
-        padding: 4px 12px;
+        padding: 3px 10px;
         border-radius: 20px;
-        font-size: 11px;
+        font-size: 10px;
         font-weight: bold;
+        z-index: 2;
     }
 
     .game-card-badge.sale {
@@ -229,7 +236,7 @@
         color: #fff;
     }
 
-    /* Indicador de seleccion para juegos */
+    /* Indicador de seleccion */
     .selection-indicator {
         position: fixed;
         bottom: 30px;
@@ -255,41 +262,17 @@
         background: linear-gradient(90deg, #ff00ff, #00ffff);
     }
 
-    /* Instrucciones flotantes */
-    .controls-hint {
-        position: fixed;
-        bottom: 20px;
-        right: 30px;
-        background: rgba(0,0,0,0.6);
-        backdrop-filter: blur(10px);
-        padding: 10px 20px;
-        border-radius: 40px;
-        display: flex;
-        gap: 20px;
-        z-index: 50;
-        font-size: 12px;
-        border: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .hint-key {
-        background: rgba(255,255,255,0.15);
-        padding: 4px 10px;
-        border-radius: 8px;
-        font-weight: bold;
-        margin: 0 4px;
-    }
-
-    /* Seccion de informacion adicional estilo PS5 */
+    /* Info del juego seleccionado */
     .info-section {
         position: fixed;
         bottom: 80px;
-        left: 50px;
+        left: 60px;
         z-index: 40;
-        max-width: 400px;
+        max-width: 500px;
     }
 
     .info-title {
-        font-size: 28px;
+        font-size: 32px;
         font-weight: 800;
         margin-bottom: 10px;
         background: linear-gradient(135deg, #fff, #aaa);
@@ -299,11 +282,35 @@
 
     .info-description {
         font-size: 14px;
-        color: rgba(255,255,255,0.6);
+        color: rgba(255,255,255,0.7);
         line-height: 1.4;
     }
 
-    /* Modal de busqueda estilo PS5 */
+    /* Controles flotantes */
+    .controls-hint {
+        position: fixed;
+        bottom: 20px;
+        right: 30px;
+        background: rgba(0,0,0,0.5);
+        backdrop-filter: blur(10px);
+        padding: 8px 18px;
+        border-radius: 40px;
+        display: flex;
+        gap: 20px;
+        z-index: 50;
+        font-size: 11px;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .hint-key {
+        background: rgba(255,255,255,0.15);
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-weight: bold;
+        margin: 0 4px;
+    }
+
+    /* Modal de busqueda */
     .search-modal {
         display: none;
         position: fixed;
@@ -339,10 +346,6 @@
         outline: none;
     }
 
-    .search-input::placeholder {
-        color: rgba(255,255,255,0.3);
-    }
-
     .search-close {
         position: absolute;
         top: 30px;
@@ -354,25 +357,25 @@
 
     /* Responsive */
     @media (max-width: 1024px) {
-        .ps5-nav { padding: 15px 30px; }
-        .games-carousel { padding: 30px 50px; }
-        .game-card { min-width: 240px; width: 240px; }
+        .ps5-nav { padding: 20px 30px; }
+        .games-carousel { padding: 20px 30px; }
+        .game-card { min-width: 150px; width: 150px; }
+        .game-card-image { height: 150px; }
         .info-section { left: 30px; bottom: 60px; }
-        .info-title { font-size: 22px; }
+        .info-title { font-size: 24px; }
     }
 
     @media (max-width: 768px) {
-        .ps5-nav { padding: 12px 20px; }
-        .nav-left { gap: 15px; }
-        .nav-item { font-size: 11px; }
-        .nav-right { gap: 12px; }
+        .ps5-nav { padding: 15px 20px; }
+        .nav-left { gap: 20px; }
+        .nav-item { font-size: 12px; }
+        .nav-right { gap: 15px; }
         .user-name { display: none; }
-        .games-carousel { padding: 20px 30px; gap: 15px; }
-        .game-card { min-width: 200px; width: 200px; }
-        .game-card-title { font-size: 14px; }
+        .games-carousel { padding: 15px 20px; gap: 12px; }
+        .game-card { min-width: 130px; width: 130px; }
+        .game-card-image { height: 130px; }
         .info-section { display: none; }
-        .controls-hint { bottom: 10px; right: 10px; padding: 6px 12px; font-size: 10px; }
-        .hint-key { padding: 2px 6px; }
+        .controls-hint { bottom: 10px; right: 10px; padding: 5px 12px; font-size: 9px; }
     }
 </style>
 {% endblock %}
@@ -381,9 +384,9 @@
 <!-- Header estilo PS5 -->
 <div class="ps5-nav">
     <div class="nav-left" id="navLeft">
-        <button class="nav-item" data-action="games">Games</button>
-        <button class="nav-item" data-action="search">Search</button>
-        <button class="nav-item" data-action="media">Media</button>
+        <button class="nav-item" data-action="games">Juegos</button>
+        <button class="nav-item" data-action="search">Buscar</button>
+        <button class="nav-item" data-action="media">Multimedia</button>
     </div>
     <div class="nav-right" id="navRight">
         <button class="nav-icon" data-action="cart">🛒</button>
@@ -396,11 +399,11 @@
         {% else %}
         <div class="user-badge" data-action="login">
             <div class="user-avatar">?</div>
-            <span class="user-name">Sign In</span>
+            <span class="user-name">Ingresar</span>
         </div>
         <div class="user-badge" data-action="register">
             <div class="user-avatar">+</div>
-            <span class="user-name">Register</span>
+            <span class="user-name">Registro</span>
         </div>
         {% endif %}
     </div>
@@ -412,26 +415,26 @@
     <div class="info-description" id="selectedGameDesc">Usa ← → para navegar entre juegos</div>
 </div>
 
-<!-- Carrusel de juegos estilo PS5 -->
+<!-- Carrusel de juegos tipo cajitas -->
 <div class="games-container">
     <div class="games-carousel-wrapper" id="carouselWrapper">
         <div class="games-carousel" id="gamesCarousel">
             {% for product in page_obj %}
             <div class="game-card" data-id="{{ product.id }}" data-name="{{ product.name }}" data-price="{{ product.get_price }}" data-category="{{ product.category }}" data-url="{% url 'product_detail' product.id %}" data-buy-url="{% url 'checkout' product.id %}" data-cart-url="{% url 'add_to_cart' product.id %}">
                 {% if product.is_on_sale %}
-                <div class="game-card-badge sale">SALE</div>
+                <div class="game-card-badge sale">OFERTA</div>
                 {% elif not product.is_available %}
-                <div class="game-card-badge out">OUT</div>
+                <div class="game-card-badge out">AGOTADO</div>
                 {% endif %}
-                <img src="{{ product.image }}" alt="{{ product.name }}" class="game-card-image">
+                <img src="{{ product.image }}" alt="{{ product.name }}" class="game-card-image" loading="lazy">
                 <div class="game-card-info">
-                    <div class="game-card-title">{{ product.name|truncatechars:25 }}</div>
+                    <div class="game-card-title">{{ product.name|truncatechars:20 }}</div>
                     <div class="game-card-price">${{ product.get_price|floatformat:0 }}</div>
                     <div class="game-card-category">{{ product.category }}</div>
                 </div>
             </div>
             {% empty %}
-            <div style="color: white; text-align: center; padding: 50px;">No games available</div>
+            <div style="color: white; text-align: center; padding: 50px;">No hay juegos disponibles</div>
             {% endfor %}
         </div>
     </div>
@@ -442,23 +445,23 @@
 
 <!-- Controles flotantes -->
 <div class="controls-hint">
-    <span><span class="hint-key">←</span> <span class="hint-key">→</span> Navigate Menu/Games</span>
-    <span><span class="hint-key">↑</span> Buy Game</span>
-    <span><span class="hint-key">↓</span> Add to Cart</span>
-    <span><span class="hint-key">↵</span> Select/Details</span>
+    <span><span class="hint-key">←</span> <span class="hint-key">→</span> Navegar</span>
+    <span><span class="hint-key">↑</span> Comprar</span>
+    <span><span class="hint-key">↓</span> Carrito</span>
+    <span><span class="hint-key">↵</span> Detalles</span>
 </div>
 
 <!-- Modal de busqueda -->
 <div id="searchModal" class="search-modal">
     <div class="search-close" onclick="closeSearchModal()">✕</div>
     <div class="search-container">
-        <input type="text" class="search-input" id="searchInput" placeholder="Search games..." autocomplete="off">
+        <input type="text" class="search-input" id="searchInput" placeholder="Buscar juegos..." autocomplete="off">
         <div id="searchResults" style="margin-top: 20px;"></div>
     </div>
 </div>
 
 <script>
-    // ========== ELEMENTOS DEL MENU ==========
+    // Elementos del menu
     const menuItems = [
         ...document.querySelectorAll('#navLeft .nav-item'),
         ...document.querySelectorAll('#navRight .nav-icon'),
@@ -466,11 +469,11 @@
     ];
     
     const gameCards = document.querySelectorAll('.game-card');
-    let currentMenuIndex = -1; // -1 significa que estamos en juegos
+    let currentMenuIndex = -1;
     let currentGameIndex = 0;
     let isInMenu = false;
 
-    // Generar indicadores de juegos
+    // Generar indicadores
     const indicator = document.getElementById('indicator');
     if (gameCards.length > 0) {
         gameCards.forEach((_, i) => {
@@ -482,7 +485,6 @@
     }
     const dots = document.querySelectorAll('.indicator-dot');
 
-    // Actualizar seleccion de juegos
     function updateGameSelection() {
         gameCards.forEach((card, i) => {
             if (i === currentGameIndex) {
@@ -491,7 +493,7 @@
                 const name = card.dataset.name;
                 const category = card.dataset.category;
                 document.getElementById('selectedGameTitle').textContent = name;
-                document.getElementById('selectedGameDesc').textContent = category + ' - Presiona ↑ para comprar, ↓ para carrito, Enter para detalles';
+                document.getElementById('selectedGameDesc').textContent = category + ' - ↑ comprar, ↓ carrito, Enter detalles';
                 card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
             } else {
                 card.classList.remove('selected');
@@ -500,7 +502,6 @@
         });
     }
 
-    // Actualizar seleccion del menu
     function updateMenuSelection() {
         menuItems.forEach((item, i) => {
             if (isInMenu && i === currentMenuIndex) {
@@ -511,7 +512,6 @@
         });
     }
 
-    // Ejecutar accion del menu seleccionado
     function executeMenuAction() {
         if (!isInMenu || currentMenuIndex < 0) return;
         const item = menuItems[currentMenuIndex];
@@ -519,7 +519,6 @@
         
         switch(action) {
             case 'games':
-                // Salir del menu y volver a juegos
                 isInMenu = false;
                 updateMenuSelection();
                 updateGameSelection();
@@ -546,7 +545,6 @@
         }
     }
 
-    // Acciones de juegos
     function buyCurrentGame() {
         const currentCard = gameCards[currentGameIndex];
         const buyUrl = currentCard.dataset.buyUrl;
@@ -582,26 +580,22 @@
         if (url) window.location.href = url;
     }
 
-    // ========== NAVEGACION POR TECLADO ==========
+    // Navegacion por teclado
     document.addEventListener('keydown', function(event) {
-        // Si el modal de busqueda esta abierto
         if (document.getElementById('searchModal').classList.contains('show')) {
             if (event.key === 'Escape') closeSearchModal();
             return;
         }
 
-        // Navegacion
         switch(event.key) {
             case 'ArrowRight':
                 event.preventDefault();
                 if (isInMenu) {
-                    // Navegar en el menu
                     if (currentMenuIndex < menuItems.length - 1) {
                         currentMenuIndex++;
                         updateMenuSelection();
                     }
                 } else {
-                    // Navegar en juegos
                     if (currentGameIndex < gameCards.length - 1) {
                         currentGameIndex++;
                         updateGameSelection();
@@ -627,7 +621,6 @@
             case 'ArrowUp':
                 event.preventDefault();
                 if (!isInMenu) {
-                    // Subir al menu
                     isInMenu = true;
                     currentMenuIndex = 0;
                     updateMenuSelection();
@@ -639,7 +632,6 @@
             case 'ArrowDown':
                 event.preventDefault();
                 if (isInMenu) {
-                    // Bajar a los juegos
                     isInMenu = false;
                     updateMenuSelection();
                     updateGameSelection();
@@ -659,7 +651,7 @@
         }
     });
 
-    // Click con mouse tambien funciona
+    // Click con mouse
     gameCards.forEach((card, index) => {
         card.addEventListener('click', () => {
             currentGameIndex = index;
@@ -690,7 +682,6 @@
         });
     });
 
-    // Click fuera del menu para volver a juegos
     document.addEventListener('click', function(event) {
         if (!event.target.closest('.ps5-nav') && !event.target.closest('.game-card')) {
             isInMenu = false;
@@ -699,7 +690,7 @@
         }
     });
 
-    // ========== BUSQUEDA ==========
+    // Busqueda
     function openSearchModal() {
         const modal = document.getElementById('searchModal');
         modal.classList.add('show');
@@ -731,7 +722,7 @@
         }
         
         if (results.length === 0) {
-            resultsDiv.innerHTML = '<div style="color: white; text-align: center;">No results found</div>';
+            resultsDiv.innerHTML = '<div style="color: white; text-align: center;">No se encontraron resultados</div>';
             return;
         }
         
@@ -754,7 +745,7 @@
     // Inicializar
     if (gameCards.length > 0) updateGameSelection();
 
-    // Soporte para drag scroll
+    // Drag scroll
     const wrapper = document.getElementById('carouselWrapper');
     let isDown = false;
     let startX;
