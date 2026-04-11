@@ -1,407 +1,625 @@
 {% extends 'store/base.html' %}
 {% load static %}
 
-{% block title %}Inicio - KHAOS STORE{% endblock %}
+{% block title %}Khaos Store {% endblock %}
 
-{# Esto evita que el overlay tenga blur #}
-{% block overlay_class %}{% endblock %}
+{% block body_class %}ps5-home{% endblock %}
 
 {% block extra_css %}
 <style>
-    .hero {
-        text-align: center;
-        padding: 4rem 2rem;
-        margin-bottom: 3rem;
-        background: rgba(0, 0, 0, 0.5);
-        border-radius: 20px;
-        border: 2px solid;
-        border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
+    /* ========== RESET Y ESTILOS BASE ========== */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
     }
-    .hero h1 {
-        font-family: 'Press Start 2P', cursive;
-        font-size: 48px;
-        margin-bottom: 1rem;
-        background: linear-gradient(45deg, #ff00ff, #00ffff);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+
+    body.ps5-home {
+        background: #1a1a2e;
+        font-family: 'Montserrat', 'Segoe UI', sans-serif;
+        overflow-x: hidden;
     }
-    .hero p {
-        font-size: 1.2rem;
-        color: rgba(255, 255, 255, 0.9);
-    }
-    .search-section {
-        margin: 2rem 0;
+
+    /* ========== HEADER ESTILO PS5 ========== */
+    .ps5-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        padding: 20px 40px;
+        background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
         display: flex;
-        justify-content: center;
-    }
-    .search-form {
-        display: flex;
-        width: 100%;
-        max-width: 600px;
-        gap: 10px;
-    }
-    .search-input {
-        flex: 1;
-        padding: 15px 20px;
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(5px);
-        border: 2px solid #ff00ff;
-        border-radius: 50px;
-        color: #fff;
-        font-size: 18px;
-    }
-    .search-input:focus {
-        outline: none;
-        box-shadow: 0 0 20px #ff00ff;
-        border-color: #00ffff;
-    }
-    .search-btn {
-        padding: 15px 30px;
-        background: linear-gradient(45deg, #ff00ff, #00ffff);
-        border: none;
-        border-radius: 50px;
-        color: #000;
-        font-weight: bold;
-        font-size: 18px;
-        cursor: pointer;
-        transition: all 0.3s;
-    }
-    .search-btn:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 30px #ff00ff;
-    }
-    .filters-bar {
-        display: flex;
-        gap: 20px;
-        margin-bottom: 30px;
-        flex-wrap: wrap;
         justify-content: space-between;
         align-items: center;
+        pointer-events: none;
     }
-    .filters-group {
+
+    .ps5-header-left {
         display: flex;
-        gap: 15px;
-        flex-wrap: wrap;
-        flex: 1;
+        gap: 30px;
+        pointer-events: auto;
     }
-    .filter-select {
-        padding: 12px 20px;
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(5px);
-        border: 2px solid #ff00ff;
-        border-radius: 50px;
+
+    .ps5-header-left span {
         color: #fff;
+        font-weight: 600;
         font-size: 14px;
         cursor: pointer;
-        min-width: 180px;
+        transition: opacity 0.3s;
+        letter-spacing: 1px;
     }
-    .filter-select option {
-        background: #1a1a2e;
+
+    .ps5-header-left span:hover {
+        opacity: 0.7;
     }
-    .price-filters {
+
+    .ps5-header-right {
         display: flex;
+        align-items: center;
+        gap: 20px;
+        pointer-events: auto;
+    }
+
+    .time-display {
+        color: #fff;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .user-indicator {
+        display: flex;
+        align-items: center;
         gap: 10px;
+        background: rgba(255,255,255,0.1);
+        padding: 5px 15px;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: background 0.3s;
     }
-    .price-input {
-        width: 120px;
-        padding: 12px 15px;
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(5px);
-        border: 2px solid #ff00ff;
-        border-radius: 50px;
-        color: #fff;
-        font-size: 14px;
+
+    .user-indicator:hover {
+        background: rgba(255,255,255,0.2);
     }
-    .results-count {
-        color: rgba(255, 255, 255, 0.6);
-        margin-bottom: 20px;
-        font-size: 14px;
-    }
-    .products-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 2rem;
-        margin-top: 2rem;
-    }
-    .product-card {
-        background: rgba(0, 0, 0, 0.7);
-        backdrop-filter: blur(10px);
-        border: 2px solid;
-        border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
-        border-radius: 15px;
-        overflow: hidden;
-        transition: all 0.3s;
-    }
-    .product-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 0 30px #ff00ff;
-    }
-    .product-image {
-        width: 100%;
-        height: 250px;
-        object-fit: cover;
-        border-bottom: 2px solid #ff00ff;
-    }
-    .product-info {
-        padding: 1.5rem;
-    }
-    .product-title {
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-        color: #fff;
-    }
-    .product-price {
-        font-size: 2rem;
-        font-weight: bold;
+
+    .user-avatar-small {
+        width: 30px;
+        height: 30px;
         background: linear-gradient(45deg, #ff00ff, #00ffff);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .user-name-small {
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    /* ========== HERO SECTION ESTILO PS5 ========== */
+    .ps5-hero {
+        height: 85vh;
+        min-height: 600px;
+        background: linear-gradient(135deg, #1a1a2e 0%, #0f0c29 100%);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: flex-end;
+        padding: 0 60px 80px 60px;
+    }
+
+    .ps5-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 70% 30%, rgba(255,0,255,0.15), transparent 70%);
+        pointer-events: none;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 50%;
+    }
+
+    .hero-badge {
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        display: inline-block;
+        padding: 6px 15px;
+        border-radius: 30px;
+        font-size: 12px;
+        margin-bottom: 20px;
+        letter-spacing: 1px;
+    }
+
+    .hero-title {
+        font-size: 56px;
+        font-weight: 800;
+        margin-bottom: 20px;
+        background: linear-gradient(135deg, #fff, #aaa);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        margin-bottom: 1rem;
+        line-height: 1.2;
     }
-    .product-actions {
+
+    .hero-description {
+        font-size: 16px;
+        color: rgba(255,255,255,0.7);
+        margin-bottom: 30px;
+        line-height: 1.5;
+        max-width: 500px;
+    }
+
+    .hero-button {
+        background: linear-gradient(45deg, #ff00ff, #00ffff);
+        border: none;
+        padding: 14px 35px;
+        border-radius: 40px;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .hero-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(255,0,255,0.5);
+    }
+
+    /* ========== SECCIONES ESTILO PS5 ========== */
+    .ps5-section {
+        padding: 60px 40px;
+        position: relative;
+    }
+
+    .section-header {
         display: flex;
-        gap: 10px;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 30px;
+        padding: 0 20px;
     }
+
+    .section-title {
+        font-size: 28px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #fff, #aaa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .section-link {
+        color: #00ffff;
+        font-size: 14px;
+        cursor: pointer;
+        transition: opacity 0.3s;
+    }
+
+    .section-link:hover {
+        opacity: 0.7;
+    }
+
+    /* ========== TARJETAS ESTILO PS5 (HORIZONTALES) ========== */
+    .games-carousel {
+        display: flex;
+        gap: 20px;
+        overflow-x: auto;
+        scrollbar-width: none;
+        padding: 20px;
+        scroll-behavior: smooth;
+    }
+
+    .games-carousel::-webkit-scrollbar {
+        display: none;
+    }
+
+    .game-card {
+        min-width: 280px;
+        background: rgba(30, 30, 50, 0.6);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        border: 1px solid rgba(255,255,255,0.1);
+        position: relative;
+    }
+
+    .game-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        border-color: rgba(255,0,255,0.3);
+        box-shadow: 0 20px 30px rgba(0,0,0,0.3);
+    }
+
+    .game-card-image {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+    }
+
+    .game-card-info {
+        padding: 20px;
+    }
+
+    .game-card-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .game-card-price {
+        font-size: 16px;
+        color: #00ffff;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .game-card-category {
+        font-size: 12px;
+        color: rgba(255,255,255,0.5);
+    }
+
+    .game-card-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(0,0,0,0.7);
+        backdrop-filter: blur(5px);
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: bold;
+    }
+
+    .game-card-badge.sale {
+        background: #ff00ff;
+        color: #fff;
+    }
+
+    /* ========== PRODUCTOS DESTACADOS ========== */
+    .featured-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 25px;
+        padding: 20px;
+    }
+
+    .featured-card {
+        background: rgba(30, 30, 50, 0.6);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .featured-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(255,0,255,0.3);
+    }
+
+    .featured-image {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+    }
+
+    .featured-info {
+        padding: 20px;
+    }
+
+    .featured-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .featured-price {
+        font-size: 20px;
+        color: #00ffff;
+        font-weight: 700;
+    }
+
+    .original-price {
+        font-size: 14px;
+        color: rgba(255,255,255,0.4);
+        text-decoration: line-through;
+        margin-left: 10px;
+    }
+
+    .featured-category {
+        font-size: 12px;
+        color: rgba(255,255,255,0.5);
+        margin-top: 8px;
+    }
+
+    /* ========== BOTONES DE ACCION ========== */
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 15px;
+    }
+
+    .btn-cart {
+        flex: 1;
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
+        padding: 10px;
+        border-radius: 30px;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-align: center;
+        text-decoration: none;
+        color: #fff;
+    }
+
+    .btn-cart:hover {
+        background: rgba(255,255,255,0.2);
+    }
+
     .btn-buy {
         flex: 1;
-        display: block;
-        padding: 0.8rem;
         background: linear-gradient(45deg, #ff00ff, #00ffff);
         border: none;
-        color: #000;
-        font-weight: bold;
-        font-size: 1rem;
+        padding: 10px;
+        border-radius: 30px;
+        font-weight: 600;
+        font-size: 13px;
         cursor: pointer;
-        transition: all 0.3s;
-        text-decoration: none;
+        transition: transform 0.3s;
         text-align: center;
-        border-radius: 8px;
-    }
-    .btn-detail {
-        flex: 1;
-        display: block;
-        padding: 0.8rem;
-        background: transparent;
-        border: 2px solid #ff00ff;
-        color: #ff00ff;
-        font-weight: bold;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: all 0.3s;
         text-decoration: none;
-        text-align: center;
-        border-radius: 8px;
-    }
-    .btn-detail:hover {
-        background: #ff00ff;
         color: #000;
     }
+
     .btn-buy:hover {
         transform: scale(1.02);
-        box-shadow: 0 0 20px #ff00ff;
     }
-    .no-results {
+
+    /* ========== LOADING Y ESTADOS ========== */
+    .loading-spinner {
         text-align: center;
-        padding: 4rem;
-        grid-column: 1/-1;
-        color: rgba(255, 255, 255, 0.7);
+        padding: 50px;
+        color: rgba(255,255,255,0.5);
     }
-    .pagination {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        margin-top: 40px;
-        flex-wrap: wrap;
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 1024px) {
+        .ps5-hero { padding: 0 40px 60px 40px; }
+        .hero-title { font-size: 42px; }
+        .hero-content { max-width: 60%; }
     }
-    .page-link {
-        padding: 10px 18px;
-        background: rgba(0, 0, 0, 0.6);
-        backdrop-filter: blur(5px);
-        border: 2px solid #ff00ff;
-        border-radius: 10px;
-        color: #fff;
-        text-decoration: none;
-        transition: all 0.3s;
-    }
-    .page-link:hover {
-        background: linear-gradient(45deg, #ff00ff, #00ffff);
-        color: #000;
-        transform: scale(1.05);
-    }
-    .page-current {
-        background: linear-gradient(45deg, #ff00ff, #00ffff);
-        color: #000;
-        border: none;
-    }
+
     @media (max-width: 768px) {
-        .hero h1 { font-size: 28px; }
-        .products-grid { grid-template-columns: 1fr; }
-        .search-form { flex-direction: column; }
-        .filters-bar { flex-direction: column; }
-        .filters-group { flex-direction: column; width: 100%; }
-        .filter-select { width: 100%; }
-        .price-filters { flex-direction: column; }
-        .price-input { width: 100%; }
+        .ps5-header { padding: 15px 20px; }
+        .ps5-hero { flex-direction: column; justify-content: flex-end; padding: 0 20px 40px 20px; }
+        .hero-content { max-width: 100%; text-align: center; }
+        .hero-title { font-size: 32px; }
+        .hero-description { font-size: 14px; margin: 0 auto 20px auto; }
+        .section-title { font-size: 22px; }
+        .ps5-section { padding: 40px 20px; }
+        .featured-grid { grid-template-columns: 1fr; }
+        .game-card { min-width: 240px; }
+    }
+
+    @media (max-width: 480px) {
+        .ps5-header-left span { font-size: 11px; }
+        .user-name-small { display: none; }
+        .game-card { min-width: 200px; }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<section class="hero">
-    <h1>⚡ BIENVENIDO A KHAOS ⚡</h1>
-    <p>La tienda gamer más épica</p>
-</section>
-
-<div class="search-section">
-    <form method="get" class="search-form" id="search-form">
-        <input type="text" name="q" class="search-input" placeholder="🔍 Buscar juego..." value="{{ query }}">
-        <button type="submit" class="search-btn">BUSCAR</button>
-    </form>
-</div>
-
-<div class="filters-bar">
-    <div class="filters-group">
-        <select name="category" class="filter-select" id="category-select">
-            <option value="">📁 Todas las categorías</option>
-            {% for cat in categories %}
-                <option value="{{ cat }}" {% if category == cat %}selected{% endif %}>{{ cat }}</option>
-            {% endfor %}
-        </select>
-        
-        <div class="price-filters">
-            <input type="number" name="min_price" class="price-input" placeholder="Mínimo" value="{{ min_price }}" id="min-price">
-            <input type="number" name="max_price" class="price-input" placeholder="Máximo" value="{{ max_price }}" id="max-price">
+<!-- HEADER ESTILO PS5 -->
+<div class="ps5-header">
+    <div class="ps5-header-left">
+        <span>Games</span>
+        <span>Media</span>
+        <span>News</span>
+        <span>Store</span>
+    </div>
+    <div class="ps5-header-right">
+        <div class="time-display" id="ps5Time"></div>
+        <div class="user-indicator" onclick="window.location.href='{% url 'profile' %}'">
+            <div class="user-avatar-small">
+                {% if user.is_authenticated %}{{ user.username|first|upper }}{% else %}?{% endif %}
+            </div>
+            <span class="user-name-small">{% if user.is_authenticated %}{{ user.username }}{% else %}Sign In{% endif %}</span>
         </div>
     </div>
-    
-    <select id="sort-select" class="filter-select" style="min-width: 180px;">
-        <option value="name" {% if sort_by == 'name' %}selected{% endif %}>📌 Nombre (A-Z)</option>
-        <option value="price_asc" {% if sort_by == 'price_asc' %}selected{% endif %}>💰 Precio: menor a mayor</option>
-        <option value="price_desc" {% if sort_by == 'price_desc' %}selected{% endif %}>💰 Precio: mayor a menor</option>
-        <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>🆕 Más recientes</option>
-    </select>
 </div>
 
-<div class="results-count">
-    {{ page_obj.paginator.count }} productos encontrados
+<!-- HERO SECTION -->
+<div class="ps5-hero">
+    <div class="hero-content">
+        <div class="hero-badge">WELCOME TO KHAOS</div>
+        <h1 class="hero-title">Ready for a Gaming Adventure?</h1>
+        <p class="hero-description">Explore the new capabilities of Khaos Store and discover the best games at the best prices. Level up your gaming experience.</p>
+        <button class="hero-button" onclick="window.location.href='#featured'">Explore Now →</button>
+    </div>
 </div>
 
-<div class="products-grid">
-    {% for product in page_obj %}
-    <div class="product-card">
-        {% if product.image %}
-        <img src="{{ product.image }}" alt="{{ product.name }}" class="product-image">
-        {% else %}
-        <div class="product-image" style="background: #333; display: flex; align-items: center; justify-content: center;">
-            <span style="color: #999;">Sin imagen</span>
-        </div>
-        {% endif %}
-        <div class="product-info">
-            <h3 class="product-title">{{ product.name }}</h3>
+<!-- SECCION: JUEGOS DESTACADOS (CARRUSEL) -->
+<div class="ps5-section" id="featured">
+    <div class="section-header">
+        <h2 class="section-title">Featured Games</h2>
+        <span class="section-link" onclick="window.location.href='{% url 'home' %}'">View All →</span>
+    </div>
+    <div class="games-carousel" id="featuredCarousel">
+        {% for product in page_obj|slice:":8" %}
+        <div class="game-card" onclick="window.location.href='{% url 'product_detail' product.id %}'">
             {% if product.is_on_sale %}
-                <div class="product-price">
-                    <span style="font-size: 1rem; text-decoration: line-through; color: #ff6666;">${{ product.price|floatformat:0 }}</span>
-                    <span>${{ product.sale_price|floatformat:0 }}</span>
-                </div>
-            {% else %}
-                <div class="product-price">${{ product.price|floatformat:0 }}</div>
+            <div class="game-card-badge sale">SALE</div>
+            {% elif not product.is_available %}
+            <div class="game-card-badge">OUT OF STOCK</div>
             {% endif %}
-            <div class="product-actions">
-                <a href="{% url 'product_detail' product.id %}" class="btn-detail">🔍 VER MÁS</a>
-                <form method="post" action="{% url 'add_to_cart' product.id %}" style="flex: 1;">
-                    {% csrf_token %}
-                    <input type="hidden" name="quantity" value="1">
-                    <button type="submit" class="btn-buy">🛒 AGREGAR</button>
-                </form>
+            <img src="{{ product.image }}" alt="{{ product.name }}" class="game-card-image">
+            <div class="game-card-info">
+                <div class="game-card-title">{{ product.name|truncatechars:25 }}</div>
+                <div class="game-card-price">${{ product.get_price|floatformat:0 }}</div>
+                <div class="game-card-category">{{ product.category }}</div>
             </div>
         </div>
+        {% endfor %}
     </div>
-    {% empty %}
-    <div class="no-results">
-        <p style="font-size: 48px;">🔍</p>
-        <p style="font-size: 24px;">No se encontraron juegos</p>
-        <p>Intenta con otra búsqueda o quita los filtros</p>
-    </div>
-    {% endfor %}
 </div>
 
-{% if page_obj.has_other_pages %}
-<div class="pagination">
-    {% if page_obj.has_previous %}
-        <a href="?page=1{% if query %}&q={{ query }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if sort_by != 'name' %}&sort={{ sort_by }}{% endif %}" class="page-link">« Primera</a>
-        <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if sort_by != 'name' %}&sort={{ sort_by }}{% endif %}" class="page-link">‹ Anterior</a>
-    {% endif %}
+<!-- SECCION: JUEGOS POPULARES -->
+<div class="ps5-section">
+    <div class="section-header">
+        <h2 class="section-title">Popular Games</h2>
+        <span class="section-link" onclick="window.location.href='{% url 'home' %}'">View All →</span>
+    </div>
+    <div class="games-carousel">
+        {% for product in page_obj|slice:"8:16" %}
+        <div class="game-card" onclick="window.location.href='{% url 'product_detail' product.id %}'">
+            <img src="{{ product.image }}" alt="{{ product.name }}" class="game-card-image">
+            <div class="game-card-info">
+                <div class="game-card-title">{{ product.name|truncatechars:25 }}</div>
+                <div class="game-card-price">${{ product.get_price|floatformat:0 }}</div>
+                <div class="game-card-category">{{ product.category }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- SECCION: TODOS LOS JUEGOS (GRID) -->
+<div class="ps5-section">
+    <div class="section-header">
+        <h2 class="section-title">All Games</h2>
+        <div style="display: flex; gap: 15px;">
+            <select id="categoryFilter" class="section-link" style="background: transparent; border: 1px solid rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; color: #00ffff;">
+                <option value="">All Categories</option>
+                {% for cat in categories %}
+                <option value="{{ cat }}">{{ cat }}</option>
+                {% endfor %}
+            </select>
+            <select id="sortFilter" class="section-link" style="background: transparent; border: 1px solid rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; color: #00ffff;">
+                <option value="name">Name A-Z</option>
+                <option value="price_asc">Price: Low to High</option>
+                <option value="price_desc">Price: High to Low</option>
+                <option value="newest">Newest First</option>
+            </select>
+        </div>
+    </div>
     
-    {% for num in page_obj.paginator.page_range %}
-        {% if page_obj.number == num %}
-            <span class="page-link page-current">{{ num }}</span>
-        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-            <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if sort_by != 'name' %}&sort={{ sort_by }}{% endif %}" class="page-link">{{ num }}</a>
+    <div class="featured-grid" id="productsGrid">
+        {% for product in page_obj %}
+        <div class="featured-card">
+            <img src="{{ product.image }}" alt="{{ product.name }}" class="featured-image">
+            <div class="featured-info">
+                <div class="featured-title">{{ product.name|truncatechars:30 }}</div>
+                <div class="featured-price">
+                    {% if product.is_on_sale %}
+                    <span style="color: #ff00ff;">${{ product.sale_price|floatformat:0 }}</span>
+                    <span class="original-price">${{ product.price|floatformat:0 }}</span>
+                    {% else %}
+                    ${{ product.price|floatformat:0 }}
+                    {% endif %}
+                </div>
+                <div class="featured-category">{{ product.category }}</div>
+                <div class="action-buttons">
+                    <a href="{% url 'product_detail' product.id %}" class="btn-cart">Details</a>
+                    <form method="post" action="{% url 'add_to_cart' product.id %}" style="flex: 1;">
+                        {% csrf_token %}
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="btn-buy">Add to Cart</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="loading-spinner">No games found</div>
+        {% endfor %}
+    </div>
+    
+    <!-- PAGINACION ESTILO PS5 -->
+    {% if page_obj.has_other_pages %}
+    <div style="display: flex; justify-content: center; gap: 10px; margin-top: 40px;">
+        {% if page_obj.has_previous %}
+        <a href="?page=1{% if query %}&q={{ query }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}" class="btn-cart" style="padding: 8px 16px;">First</a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}" class="btn-cart" style="padding: 8px 16px;">Previous</a>
         {% endif %}
-    {% endfor %}
-    
-    {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if sort_by != 'name' %}&sort={{ sort_by }}{% endif %}" class="page-link">Siguiente ›</a>
-        <a href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}{% if sort_by != 'name' %}&sort={{ sort_by }}{% endif %}" class="page-link">Última »</a>
+        
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <span style="background: linear-gradient(45deg, #ff00ff, #00ffff); color: #000; padding: 8px 16px; border-radius: 30px; font-weight: bold;">{{ num }}</span>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}" class="btn-cart" style="padding: 8px 16px;">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+        
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}" class="btn-cart" style="padding: 8px 16px;">Next</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}{% if category %}&category={{ category }}{% endif %}{% if min_price %}&min_price={{ min_price }}{% endif %}{% if max_price %}&max_price={{ max_price }}{% endif %}" class="btn-cart" style="padding: 8px 16px;">Last</a>
+        {% endif %}
+    </div>
     {% endif %}
 </div>
-{% endif %}
 
 <script>
-    const sortSelect = document.getElementById('sort-select');
-    if (sortSelect) {
-        sortSelect.addEventListener('change', function() {
-            const url = new URL(window.location.href);
-            url.searchParams.set('sort', this.value);
-            window.location.href = url.toString();
-        });
+    // Reloj estilo PS5
+    function updatePS5Time() {
+        const now = new Date();
+        let hours = now.getHours();
+        let minutes = now.getMinutes();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12 || 12;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        document.getElementById('ps5Time').textContent = `${hours}:${minutes} ${ampm}`;
     }
+    updatePS5Time();
+    setInterval(updatePS5Time, 1000);
     
-    const categorySelect = document.getElementById('category-select');
-    if (categorySelect) {
-        categorySelect.addEventListener('change', function() {
-            const url = new URL(window.location.href);
-            if (this.value) {
-                url.searchParams.set('category', this.value);
-            } else {
-                url.searchParams.delete('category');
-            }
-            window.location.href = url.toString();
-        });
-    }
-    
-    let priceTimeout;
-    const minPrice = document.getElementById('min-price');
-    const maxPrice = document.getElementById('max-price');
-    
-    function applyPriceFilters() {
+    // Filtros y ordenamiento
+    document.getElementById('categoryFilter').addEventListener('change', function() {
         const url = new URL(window.location.href);
-        if (minPrice.value) {
-            url.searchParams.set('min_price', minPrice.value);
-        } else {
-            url.searchParams.delete('min_price');
-        }
-        if (maxPrice.value) {
-            url.searchParams.set('max_price', maxPrice.value);
-        } else {
-            url.searchParams.delete('max_price');
-        }
+        if (this.value) url.searchParams.set('category', this.value);
+        else url.searchParams.delete('category');
         window.location.href = url.toString();
-    }
+    });
     
-    if (minPrice) {
-        minPrice.addEventListener('input', function() {
-            clearTimeout(priceTimeout);
-            priceTimeout = setTimeout(applyPriceFilters, 500);
-        });
-    }
+    document.getElementById('sortFilter').addEventListener('change', function() {
+        const url = new URL(window.location.href);
+        url.searchParams.set('sort', this.value);
+        window.location.href = url.toString();
+    });
     
-    if (maxPrice) {
-        maxPrice.addEventListener('input', function() {
-            clearTimeout(priceTimeout);
-            priceTimeout = setTimeout(applyPriceFilters, 500);
+    // Scroll suave para el carrusel
+    const carousels = document.querySelectorAll('.games-carousel');
+    carousels.forEach(carousel => {
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+        
+        carousel.addEventListener('mousedown', (e) => {
+            isDown = true;
+            startX = e.pageX - carousel.offsetLeft;
+            scrollLeft = carousel.scrollLeft;
         });
-    }
+        
+        carousel.addEventListener('mouseleave', () => { isDown = false; });
+        carousel.addEventListener('mouseup', () => { isDown = false; });
+        
+        carousel.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - carousel.offsetLeft;
+            const walk = (x - startX) * 1.5;
+            carousel.scrollLeft = scrollLeft - walk;
+        });
+    });
 </script>
 {% endblock %}

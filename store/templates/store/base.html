@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KHAOS STORE - {% block title %}Tienda Gamer{% endblock %}</title>
     <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -14,6 +14,7 @@
             box-sizing: border-box;
         }
 
+        /* Video de fondo solo para paginas que no son ps5-home */
         .video-background {
             position: fixed;
             top: 0;
@@ -46,6 +47,7 @@
             position: relative;
         }
 
+        /* Header normal (se oculta en ps5-home) */
         .header {
             background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(8px);
@@ -252,7 +254,27 @@
             font-size: 12px;
         }
 
-        /* MODAL DEL TUTORIAL */
+        /* Ocultar header normal en la pagina de inicio estilo PS5 */
+        body.ps5-home .header {
+            display: none;
+        }
+
+        body.ps5-home .video-background,
+        body.ps5-home .overlay {
+            display: none;
+        }
+
+        body.ps5-home .main {
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body.ps5-home .footer {
+            display: none;
+        }
+
+        /* Modal del tutorial */
         .tutorial-modal {
             display: none;
             position: fixed;
@@ -308,6 +330,7 @@
             padding-bottom: 56.25%;
             height: 0;
         }
+        .tutorial-video-container iframe,
         .tutorial-video-container video {
             position: absolute;
             top: 0;
@@ -421,7 +444,7 @@
         </div>
     </footer>
 
-    <!-- MODAL DEL TUTORIAL -->
+    <!-- Modal del tutorial -->
     <div id="tutorialModal" class="tutorial-modal">
         <div class="tutorial-modal-content">
             <div class="tutorial-modal-header">
@@ -429,7 +452,7 @@
                 <button class="tutorial-close" onclick="closeTutorialModal()">X</button>
             </div>
             <div id="videoContainer" class="tutorial-video-container">
-                <!-- El video se cargara aqui dinamicamente -->
+                <!-- El video se carga dinamicamente -->
             </div>
         </div>
     </div>
@@ -482,14 +505,15 @@
                 container.innerHTML = '';
             }
             
-            if (modal) {
-                modal.classList.remove('show');
-            }
+            modal.classList.remove('show');
         }
         
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
-                closeTutorialModal();
+                var modal = document.getElementById('tutorialModal');
+                if (modal.classList.contains('show')) {
+                    closeTutorialModal();
+                }
             }
         });
         
