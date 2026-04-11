@@ -49,11 +49,14 @@
         letter-spacing: 1px;
         background: none;
         border: none;
+        padding: 8px 12px;
+        border-radius: 8px;
     }
 
-    .nav-item:hover {
+    .nav-item:hover, .nav-item.selected {
         color: #fff;
         text-shadow: 0 0 5px rgba(255,255,255,0.5);
+        background: rgba(255,255,255,0.1);
     }
 
     .nav-right {
@@ -69,11 +72,14 @@
         transition: all 0.3s;
         background: none;
         border: none;
+        padding: 8px 12px;
+        border-radius: 8px;
     }
 
-    .nav-icon:hover {
+    .nav-icon:hover, .nav-icon.selected {
         color: #fff;
         transform: scale(1.05);
+        background: rgba(255,255,255,0.1);
     }
 
     .user-badge {
@@ -87,7 +93,7 @@
         transition: background 0.3s;
     }
 
-    .user-badge:hover {
+    .user-badge:hover, .user-badge.selected {
         background: rgba(255,255,255,0.2);
     }
 
@@ -154,6 +160,7 @@
         transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
         border: 1px solid rgba(255,255,255,0.1);
         box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        position: relative;
     }
 
     .game-card.selected {
@@ -222,7 +229,7 @@
         color: #fff;
     }
 
-    /* Indicador de seleccion */
+    /* Indicador de seleccion para juegos */
     .selection-indicator {
         position: fixed;
         bottom: 30px;
@@ -373,27 +380,36 @@
 {% block content %}
 <!-- Header estilo PS5 -->
 <div class="ps5-nav">
-    <div class="nav-left">
-        <button class="nav-item" onclick="window.location.href='#games'">Games</button>
-        <button class="nav-item" onclick="openSearchModal()">Search</button>
-        <button class="nav-item" onclick="openTutorialModal()">Media</button>
+    <div class="nav-left" id="navLeft">
+        <button class="nav-item" data-action="games">Games</button>
+        <button class="nav-item" data-action="search">Search</button>
+        <button class="nav-item" data-action="media">Media</button>
     </div>
-    <div class="nav-right">
-        <button class="nav-icon" onclick="window.location.href='{% url 'cart_view' %}'">🛒</button>
-        <button class="nav-icon" onclick="openTutorialModal()">🎬</button>
-        <div class="user-badge" onclick="window.location.href='{% url 'profile' %}'">
-            <div class="user-avatar">
-                {% if user.is_authenticated %}{{ user.username|first|upper }}{% else %}?{% endif %}
-            </div>
-            <span class="user-name">{% if user.is_authenticated %}{{ user.username }}{% else %}Sign In{% endif %}</span>
+    <div class="nav-right" id="navRight">
+        <button class="nav-icon" data-action="cart">🛒</button>
+        <button class="nav-icon" data-action="tutorial">🎬</button>
+        {% if user.is_authenticated %}
+        <div class="user-badge" data-action="profile">
+            <div class="user-avatar">{{ user.username|first|upper }}</div>
+            <span class="user-name">{{ user.username }}</span>
         </div>
+        {% else %}
+        <div class="user-badge" data-action="login">
+            <div class="user-avatar">?</div>
+            <span class="user-name">Sign In</span>
+        </div>
+        <div class="user-badge" data-action="register">
+            <div class="user-avatar">+</div>
+            <span class="user-name">Register</span>
+        </div>
+        {% endif %}
     </div>
 </div>
 
 <!-- Informacion del juego seleccionado -->
 <div class="info-section" id="infoSection">
     <div class="info-title" id="selectedGameTitle">KHAOS STORE</div>
-    <div class="info-description" id="selectedGameDesc">Selecciona un juego con las flechas ← →</div>
+    <div class="info-description" id="selectedGameDesc">Usa ← → para navegar entre juegos</div>
 </div>
 
 <!-- Carrusel de juegos estilo PS5 -->
@@ -426,10 +442,10 @@
 
 <!-- Controles flotantes -->
 <div class="controls-hint">
-    <span><span class="hint-key">←</span> <span class="hint-key">→</span> Navigate</span>
-    <span><span class="hint-key">↑</span> Buy</span>
+    <span><span class="hint-key">←</span> <span class="hint-key">→</span> Navigate Menu/Games</span>
+    <span><span class="hint-key">↑</span> Buy Game</span>
     <span><span class="hint-key">↓</span> Add to Cart</span>
-    <span><span class="hint-key">↵</span> Details</span>
+    <span><span class="hint-key">↵</span> Select/Details</span>
 </div>
 
 <!-- Modal de busqueda -->
@@ -442,12 +458,19 @@
 </div>
 
 <script>
-    // ========== VARIABLES ==========
+    // ========== ELEMENTOS DEL MENU ==========
+    const menuItems = [
+        ...document.querySelectorAll('#navLeft .nav-item'),
+        ...document.querySelectorAll('#navRight .nav-icon'),
+        ...document.querySelectorAll('#navRight .user-badge')
+    ];
+    
     const gameCards = document.querySelectorAll('.game-card');
-    let currentIndex = 0;
-    let currentFocusIndex = 0;
+    let currentMenuIndex = -1; // -1 significa que estamos en juegos
+    let currentGameIndex = 0;
+    let isInMenu = false;
 
-    // Generar indicadores
+    // Generar indicadores de juegos
     const indicator = document.getElementById('indicator');
     if (gameCards.length > 0) {
         gameCards.forEach((_, i) => {
@@ -459,18 +482,16 @@
     }
     const dots = document.querySelectorAll('.indicator-dot');
 
-    // Actualizar seleccion visual
-    function updateSelection() {
+    // Actualizar seleccion de juegos
+    function updateGameSelection() {
         gameCards.forEach((card, i) => {
-            if (i === currentIndex) {
+            if (i === currentGameIndex) {
                 card.classList.add('selected');
                 if (dots[i]) dots[i].classList.add('active');
-                // Actualizar info lateral
                 const name = card.dataset.name;
                 const category = card.dataset.category;
                 document.getElementById('selectedGameTitle').textContent = name;
-                document.getElementById('selectedGameDesc').textContent = category + ' - Selecciona ↑ ↓ ↵ para acciones';
-                // Scroll al elemento
+                document.getElementById('selectedGameDesc').textContent = category + ' - Presiona ↑ para comprar, ↓ para carrito, Enter para detalles';
                 card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
             } else {
                 card.classList.remove('selected');
@@ -479,15 +500,61 @@
         });
     }
 
-    // Acciones
+    // Actualizar seleccion del menu
+    function updateMenuSelection() {
+        menuItems.forEach((item, i) => {
+            if (isInMenu && i === currentMenuIndex) {
+                item.classList.add('selected');
+            } else {
+                item.classList.remove('selected');
+            }
+        });
+    }
+
+    // Ejecutar accion del menu seleccionado
+    function executeMenuAction() {
+        if (!isInMenu || currentMenuIndex < 0) return;
+        const item = menuItems[currentMenuIndex];
+        const action = item.dataset.action;
+        
+        switch(action) {
+            case 'games':
+                // Salir del menu y volver a juegos
+                isInMenu = false;
+                updateMenuSelection();
+                updateGameSelection();
+                break;
+            case 'search':
+                openSearchModal();
+                break;
+            case 'media':
+            case 'tutorial':
+                openTutorialModal();
+                break;
+            case 'cart':
+                window.location.href = "{% url 'cart_view' %}";
+                break;
+            case 'profile':
+                window.location.href = "{% url 'profile' %}";
+                break;
+            case 'login':
+                window.location.href = "{% url 'login' %}";
+                break;
+            case 'register':
+                window.location.href = "{% url 'register' %}";
+                break;
+        }
+    }
+
+    // Acciones de juegos
     function buyCurrentGame() {
-        const currentCard = gameCards[currentIndex];
+        const currentCard = gameCards[currentGameIndex];
         const buyUrl = currentCard.dataset.buyUrl;
         if (buyUrl) window.location.href = buyUrl;
     }
 
     function addToCartCurrentGame() {
-        const currentCard = gameCards[currentIndex];
+        const currentCard = gameCards[currentGameIndex];
         const cartUrl = currentCard.dataset.cartUrl;
         if (cartUrl) {
             fetch(cartUrl, {
@@ -502,7 +569,6 @@
             .then(data => {
                 if (data.success) {
                     alert(data.message);
-                    // Actualizar badge del carrito si es necesario
                     const cartBadge = document.querySelector('.cart-badge');
                     if (cartBadge) cartBadge.textContent = data.cart_total_items;
                 }
@@ -511,44 +577,84 @@
     }
 
     function detailsCurrentGame() {
-        const currentCard = gameCards[currentIndex];
+        const currentCard = gameCards[currentGameIndex];
         const url = currentCard.dataset.url;
         if (url) window.location.href = url;
     }
 
     // ========== NAVEGACION POR TECLADO ==========
     document.addEventListener('keydown', function(event) {
+        // Si el modal de busqueda esta abierto
         if (document.getElementById('searchModal').classList.contains('show')) {
             if (event.key === 'Escape') closeSearchModal();
             return;
         }
 
+        // Navegacion
         switch(event.key) {
             case 'ArrowRight':
                 event.preventDefault();
-                if (currentIndex < gameCards.length - 1) {
-                    currentIndex++;
-                    updateSelection();
+                if (isInMenu) {
+                    // Navegar en el menu
+                    if (currentMenuIndex < menuItems.length - 1) {
+                        currentMenuIndex++;
+                        updateMenuSelection();
+                    }
+                } else {
+                    // Navegar en juegos
+                    if (currentGameIndex < gameCards.length - 1) {
+                        currentGameIndex++;
+                        updateGameSelection();
+                    }
                 }
                 break;
+                
             case 'ArrowLeft':
                 event.preventDefault();
-                if (currentIndex > 0) {
-                    currentIndex--;
-                    updateSelection();
+                if (isInMenu) {
+                    if (currentMenuIndex > 0) {
+                        currentMenuIndex--;
+                        updateMenuSelection();
+                    }
+                } else {
+                    if (currentGameIndex > 0) {
+                        currentGameIndex--;
+                        updateGameSelection();
+                    }
                 }
                 break;
+                
             case 'ArrowUp':
                 event.preventDefault();
-                buyCurrentGame();
+                if (!isInMenu) {
+                    // Subir al menu
+                    isInMenu = true;
+                    currentMenuIndex = 0;
+                    updateMenuSelection();
+                } else {
+                    executeMenuAction();
+                }
                 break;
+                
             case 'ArrowDown':
                 event.preventDefault();
-                addToCartCurrentGame();
+                if (isInMenu) {
+                    // Bajar a los juegos
+                    isInMenu = false;
+                    updateMenuSelection();
+                    updateGameSelection();
+                } else {
+                    addToCartCurrentGame();
+                }
                 break;
+                
             case 'Enter':
                 event.preventDefault();
-                detailsCurrentGame();
+                if (isInMenu) {
+                    executeMenuAction();
+                } else {
+                    detailsCurrentGame();
+                }
                 break;
         }
     });
@@ -556,14 +662,41 @@
     // Click con mouse tambien funciona
     gameCards.forEach((card, index) => {
         card.addEventListener('click', () => {
-            currentIndex = index;
-            updateSelection();
+            currentGameIndex = index;
+            isInMenu = false;
+            updateGameSelection();
             detailsCurrentGame();
         });
         card.addEventListener('mouseenter', () => {
-            currentIndex = index;
-            updateSelection();
+            if (!isInMenu) {
+                currentGameIndex = index;
+                updateGameSelection();
+            }
         });
+    });
+
+    menuItems.forEach((item, index) => {
+        item.addEventListener('click', () => {
+            currentMenuIndex = index;
+            isInMenu = true;
+            updateMenuSelection();
+            executeMenuAction();
+        });
+        item.addEventListener('mouseenter', () => {
+            if (isInMenu) {
+                currentMenuIndex = index;
+                updateMenuSelection();
+            }
+        });
+    });
+
+    // Click fuera del menu para volver a juegos
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.ps5-nav') && !event.target.closest('.game-card')) {
+            isInMenu = false;
+            updateMenuSelection();
+            updateGameSelection();
+        }
     });
 
     // ========== BUSQUEDA ==========
@@ -618,15 +751,8 @@
         resultsDiv.innerHTML = html;
     });
 
-    // Cerrar busqueda con Escape
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape' && document.getElementById('searchModal').classList.contains('show')) {
-            closeSearchModal();
-        }
-    });
-
     // Inicializar
-    if (gameCards.length > 0) updateSelection();
+    if (gameCards.length > 0) updateGameSelection();
 
     // Soporte para drag scroll
     const wrapper = document.getElementById('carouselWrapper');
@@ -634,19 +760,21 @@
     let startX;
     let scrollLeft;
 
-    wrapper.addEventListener('mousedown', (e) => {
-        isDown = true;
-        startX = e.pageX - wrapper.offsetLeft;
-        scrollLeft = wrapper.scrollLeft;
-    });
-    wrapper.addEventListener('mouseleave', () => { isDown = false; });
-    wrapper.addEventListener('mouseup', () => { isDown = false; });
-    wrapper.addEventListener('mousemove', (e) => {
-        if (!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - wrapper.offsetLeft;
-        const walk = (x - startX) * 1.5;
-        wrapper.scrollLeft = scrollLeft - walk;
-    });
+    if (wrapper) {
+        wrapper.addEventListener('mousedown', (e) => {
+            isDown = true;
+            startX = e.pageX - wrapper.offsetLeft;
+            scrollLeft = wrapper.scrollLeft;
+        });
+        wrapper.addEventListener('mouseleave', () => { isDown = false; });
+        wrapper.addEventListener('mouseup', () => { isDown = false; });
+        wrapper.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - wrapper.offsetLeft;
+            const walk = (x - startX) * 1.5;
+            wrapper.scrollLeft = scrollLeft - walk;
+        });
+    }
 </script>
 {% endblock %}

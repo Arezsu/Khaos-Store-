@@ -3,7 +3,7 @@ from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
-    # Pantalla principal (ahora es estilo PS5)
+    # Pantalla principal (estilo PS5)
     path('', views.home, name='home'),
     
     # Tienda y productos
