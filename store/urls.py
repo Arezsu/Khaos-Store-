@@ -3,11 +3,11 @@ from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
-    # Pantalla de inicio estilo PS5
-    path('', views.ps5_launcher, name='ps5_launcher'),
+    # Pantalla principal (ahora es estilo PS5)
+    path('', views.home, name='home'),
     
     # Tienda y productos
-    path('tienda/', views.home, name='home'),
+    path('tienda/', views.home, name='store_home'),
     path('producto/<int:product_id>/', views.product_detail, name='product_detail'),
     
     # Autenticacion
