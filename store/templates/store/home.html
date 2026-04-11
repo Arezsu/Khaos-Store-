@@ -118,14 +118,15 @@
         font-weight: 500;
     }
 
-    /* Contenedor de juegos - CAJITAS ARRIBA */
+    /* Contenedor de juegos */
     .games-container {
         position: relative;
         width: 100%;
         min-height: 100vh;
         display: flex;
-        align-items: flex-start;
-        padding-top: 120px;
+        flex-direction: column;
+        justify-content: flex-start;
+        padding-top: 100px;
         overflow-x: hidden;
     }
 
@@ -148,46 +149,46 @@
 
     .games-carousel {
         display: flex;
-        gap: 20px;
+        gap: 25px;
         padding: 20px 60px;
         align-items: flex-start;
     }
 
-    /* Tarjeta tipo cajita estilo PS5 */
+    /* Tarjeta tipo cajita rectangular estilo PS5 */
     .game-card {
-        min-width: 180px;
-        width: 180px;
+        min-width: 200px;
+        width: 200px;
         background: rgba(20, 20, 40, 0.5);
         backdrop-filter: blur(15px);
         border-radius: 16px;
         overflow: hidden;
         cursor: pointer;
         transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-        border: 1px solid rgba(255,255,255,0.1);
+        border: 2px solid transparent;
         box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         position: relative;
     }
 
     .game-card.selected {
-        transform: scale(1.08) translateY(-10px);
+        transform: scale(1.05) translateY(-10px);
         border-color: #ff00ff;
-        box-shadow: 0 0 25px rgba(255,0,255,0.3);
-        background: rgba(40, 40, 70, 0.7);
+        box-shadow: 0 0 25px rgba(255,0,255,0.4);
+        background: rgba(40, 40, 70, 0.8);
     }
 
     .game-card-image {
         width: 100%;
-        height: 180px;
+        height: 200px;
         object-fit: cover;
         transition: transform 0.5s;
     }
 
     .game-card:hover .game-card-image {
-        transform: scale(1.05);
+        transform: scale(1.03);
     }
 
     .game-card-info {
-        padding: 15px;
+        padding: 12px;
         text-align: center;
     }
 
@@ -195,19 +196,20 @@
         font-size: 14px;
         font-weight: 600;
         margin-bottom: 5px;
-        white-space: normal;
-        word-break: break-word;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .game-card-price {
-        font-size: 13px;
+        font-size: 14px;
         color: #00ffff;
-        font-weight: 600;
+        font-weight: 700;
     }
 
     .game-card-category {
         font-size: 10px;
-        color: rgba(255,255,255,0.5);
+        color: rgba(255,255,255,0.4);
         text-transform: uppercase;
         margin-top: 4px;
     }
@@ -236,15 +238,87 @@
         color: #fff;
     }
 
+    /* Seccion de informacion del juego seleccionado (abajo) */
+    .game-info-section {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+        padding: 30px 60px 40px 60px;
+        z-index: 40;
+    }
+
+    .game-info-content {
+        max-width: 600px;
+    }
+
+    .game-info-title {
+        font-size: 36px;
+        font-weight: 800;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        background: linear-gradient(135deg, #fff, #aaa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .game-info-desc {
+        font-size: 14px;
+        color: rgba(255,255,255,0.7);
+        line-height: 1.5;
+        margin-bottom: 20px;
+        max-width: 500px;
+    }
+
+    .game-info-actions {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .btn-play {
+        background: white;
+        color: black;
+        padding: 10px 35px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-play:hover {
+        transform: scale(1.05);
+        background: #e0e0e0;
+    }
+
+    .btn-more {
+        background: rgba(255,255,255,0.15);
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+
+    .btn-more:hover {
+        background: rgba(255,255,255,0.3);
+    }
+
     /* Indicador de seleccion */
     .selection-indicator {
         position: fixed;
-        bottom: 30px;
-        left: 0;
-        right: 0;
+        bottom: 120px;
+        right: 60px;
         display: flex;
-        justify-content: center;
-        gap: 12px;
+        gap: 10px;
         z-index: 50;
     }
 
@@ -257,33 +331,9 @@
     }
 
     .indicator-dot.active {
-        width: 30px;
+        width: 25px;
         border-radius: 4px;
         background: linear-gradient(90deg, #ff00ff, #00ffff);
-    }
-
-    /* Info del juego seleccionado */
-    .info-section {
-        position: fixed;
-        bottom: 80px;
-        left: 60px;
-        z-index: 40;
-        max-width: 500px;
-    }
-
-    .info-title {
-        font-size: 32px;
-        font-weight: 800;
-        margin-bottom: 10px;
-        background: linear-gradient(135deg, #fff, #aaa);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .info-description {
-        font-size: 14px;
-        color: rgba(255,255,255,0.7);
-        line-height: 1.4;
     }
 
     /* Controles flotantes */
@@ -355,14 +405,13 @@
         color: #fff;
     }
 
-    /* Responsive */
     @media (max-width: 1024px) {
         .ps5-nav { padding: 20px 30px; }
         .games-carousel { padding: 20px 30px; }
-        .game-card { min-width: 150px; width: 150px; }
-        .game-card-image { height: 150px; }
-        .info-section { left: 30px; bottom: 60px; }
-        .info-title { font-size: 24px; }
+        .game-card { min-width: 170px; width: 170px; }
+        .game-card-image { height: 170px; }
+        .game-info-section { padding: 20px 30px 30px 30px; }
+        .game-info-title { font-size: 28px; }
     }
 
     @media (max-width: 768px) {
@@ -371,11 +420,14 @@
         .nav-item { font-size: 12px; }
         .nav-right { gap: 15px; }
         .user-name { display: none; }
-        .games-carousel { padding: 15px 20px; gap: 12px; }
-        .game-card { min-width: 130px; width: 130px; }
-        .game-card-image { height: 130px; }
-        .info-section { display: none; }
-        .controls-hint { bottom: 10px; right: 10px; padding: 5px 12px; font-size: 9px; }
+        .games-carousel { padding: 15px 20px; gap: 15px; }
+        .game-card { min-width: 140px; width: 140px; }
+        .game-card-image { height: 140px; }
+        .game-info-title { font-size: 20px; }
+        .game-info-desc { font-size: 11px; }
+        .btn-play { padding: 6px 20px; font-size: 12px; }
+        .selection-indicator { bottom: 100px; right: 20px; }
+        .controls-hint { display: none; }
     }
 </style>
 {% endblock %}
@@ -409,18 +461,12 @@
     </div>
 </div>
 
-<!-- Informacion del juego seleccionado -->
-<div class="info-section" id="infoSection">
-    <div class="info-title" id="selectedGameTitle">KHAOS STORE</div>
-    <div class="info-description" id="selectedGameDesc">Usa ← → para navegar entre juegos</div>
-</div>
-
 <!-- Carrusel de juegos tipo cajitas -->
 <div class="games-container">
     <div class="games-carousel-wrapper" id="carouselWrapper">
         <div class="games-carousel" id="gamesCarousel">
             {% for product in page_obj %}
-            <div class="game-card" data-id="{{ product.id }}" data-name="{{ product.name }}" data-price="{{ product.get_price }}" data-category="{{ product.category }}" data-url="{% url 'product_detail' product.id %}" data-buy-url="{% url 'checkout' product.id %}" data-cart-url="{% url 'add_to_cart' product.id %}">
+            <div class="game-card" data-id="{{ product.id }}" data-name="{{ product.name }}" data-price="{{ product.get_price }}" data-category="{{ product.category }}" data-desc="{{ product.description|truncatechars:100 }}" data-url="{% url 'product_detail' product.id %}" data-buy-url="{% url 'checkout' product.id %}" data-cart-url="{% url 'add_to_cart' product.id %}">
                 {% if product.is_on_sale %}
                 <div class="game-card-badge sale">OFERTA</div>
                 {% elif not product.is_available %}
@@ -428,7 +474,7 @@
                 {% endif %}
                 <img src="{{ product.image }}" alt="{{ product.name }}" class="game-card-image" loading="lazy">
                 <div class="game-card-info">
-                    <div class="game-card-title">{{ product.name|truncatechars:20 }}</div>
+                    <div class="game-card-title">{{ product.name|truncatechars:18 }}</div>
                     <div class="game-card-price">${{ product.get_price|floatformat:0 }}</div>
                     <div class="game-card-category">{{ product.category }}</div>
                 </div>
@@ -436,6 +482,18 @@
             {% empty %}
             <div style="color: white; text-align: center; padding: 50px;">No hay juegos disponibles</div>
             {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Seccion de informacion del juego seleccionado (abajo) -->
+<div class="game-info-section" id="gameInfoSection">
+    <div class="game-info-content">
+        <div class="game-info-title" id="gameInfoTitle">KHAOS STORE</div>
+        <div class="game-info-desc" id="gameInfoDesc">Selecciona un juego con las flechas ← →</div>
+        <div class="game-info-actions">
+            <button class="btn-play" id="buyButton">Comprar</button>
+            <a href="#" class="btn-more" id="detailsButton">⋯</a>
         </div>
     </div>
 </div>
@@ -473,6 +531,12 @@
     let currentGameIndex = 0;
     let isInMenu = false;
 
+    // Elementos de info
+    const gameInfoTitle = document.getElementById('gameInfoTitle');
+    const gameInfoDesc = document.getElementById('gameInfoDesc');
+    const buyButton = document.getElementById('buyButton');
+    const detailsButton = document.getElementById('detailsButton');
+
     // Generar indicadores
     const indicator = document.getElementById('indicator');
     if (gameCards.length > 0) {
@@ -485,21 +549,39 @@
     }
     const dots = document.querySelectorAll('.indicator-dot');
 
+    function updateGameInfo() {
+        if (currentGameIndex >= 0 && gameCards[currentGameIndex]) {
+            const currentCard = gameCards[currentGameIndex];
+            const name = currentCard.dataset.name;
+            const desc = currentCard.dataset.desc || 'Descubre este increible juego en Khaos Store';
+            gameInfoTitle.textContent = name;
+            gameInfoDesc.textContent = desc;
+            
+            // Actualizar botones con las URLs
+            const buyUrl = currentCard.dataset.buyUrl;
+            const detailsUrl = currentCard.dataset.url;
+            
+            buyButton.onclick = function() {
+                if (buyUrl) window.location.href = buyUrl;
+            };
+            detailsButton.onclick = function() {
+                if (detailsUrl) window.location.href = detailsUrl;
+            };
+        }
+    }
+
     function updateGameSelection() {
         gameCards.forEach((card, i) => {
             if (i === currentGameIndex) {
                 card.classList.add('selected');
                 if (dots[i]) dots[i].classList.add('active');
-                const name = card.dataset.name;
-                const category = card.dataset.category;
-                document.getElementById('selectedGameTitle').textContent = name;
-                document.getElementById('selectedGameDesc').textContent = category + ' - ↑ comprar, ↓ carrito, Enter detalles';
                 card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
             } else {
                 card.classList.remove('selected');
                 if (dots[i]) dots[i].classList.remove('active');
             }
         });
+        updateGameInfo();
     }
 
     function updateMenuSelection() {
@@ -683,10 +765,9 @@
     });
 
     document.addEventListener('click', function(event) {
-        if (!event.target.closest('.ps5-nav') && !event.target.closest('.game-card')) {
+        if (!event.target.closest('.ps5-nav') && !event.target.closest('.game-card') && !event.target.closest('.game-info-section')) {
             isInMenu = false;
             updateMenuSelection();
-            updateGameSelection();
         }
     });
 
@@ -743,7 +824,9 @@
     });
 
     // Inicializar
-    if (gameCards.length > 0) updateGameSelection();
+    if (gameCards.length > 0) {
+        updateGameSelection();
+    }
 
     // Drag scroll
     const wrapper = document.getElementById('carouselWrapper');
