@@ -238,37 +238,54 @@
         color: #fff;
     }
 
-    /* Seccion de informacion del juego seleccionado (abajo) */
+    /* Seccion de informacion del juego seleccionado (mas arriba) */
     .game-info-section {
         position: fixed;
-        bottom: 0;
+        bottom: 100px;
         left: 0;
         right: 0;
-        background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
-        padding: 30px 60px 40px 60px;
+        background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
+        padding: 40px 60px 50px 60px;
         z-index: 40;
     }
 
     .game-info-content {
-        max-width: 600px;
+        max-width: 700px;
     }
 
     .game-info-title {
-        font-size: 36px;
+        font-size: 42px;
         font-weight: 800;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
         text-transform: uppercase;
         background: linear-gradient(135deg, #fff, #aaa);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
 
+    .game-info-category {
+        display: inline-block;
+        background: rgba(255,255,255,0.15);
+        padding: 4px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        margin-bottom: 15px;
+        color: #ff00ff;
+    }
+
+    .game-info-price {
+        font-size: 28px;
+        font-weight: 700;
+        color: #00ffff;
+        margin-bottom: 15px;
+    }
+
     .game-info-desc {
         font-size: 14px;
-        color: rgba(255,255,255,0.7);
-        line-height: 1.5;
-        margin-bottom: 20px;
-        max-width: 500px;
+        color: rgba(255,255,255,0.8);
+        line-height: 1.6;
+        margin-bottom: 25px;
+        max-width: 600px;
     }
 
     .game-info-actions {
@@ -280,8 +297,8 @@
     .btn-play {
         background: white;
         color: black;
-        padding: 10px 35px;
-        border-radius: 30px;
+        padding: 12px 40px;
+        border-radius: 40px;
         text-decoration: none;
         font-weight: 600;
         font-size: 14px;
@@ -295,17 +312,38 @@
         background: #e0e0e0;
     }
 
+    .btn-cart {
+        background: rgba(255,255,255,0.15);
+        color: white;
+        padding: 12px 30px;
+        border-radius: 40px;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 14px;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-cart:hover {
+        background: rgba(255,255,255,0.3);
+    }
+
     .btn-more {
         background: rgba(255,255,255,0.15);
         color: white;
-        width: 40px;
-        height: 40px;
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
         display: inline-flex;
         justify-content: center;
         align-items: center;
         text-decoration: none;
         transition: all 0.3s;
+        font-size: 20px;
     }
 
     .btn-more:hover {
@@ -315,7 +353,7 @@
     /* Indicador de seleccion */
     .selection-indicator {
         position: fixed;
-        bottom: 120px;
+        bottom: 180px;
         right: 60px;
         display: flex;
         gap: 10px;
@@ -410,8 +448,10 @@
         .games-carousel { padding: 20px 30px; }
         .game-card { min-width: 170px; width: 170px; }
         .game-card-image { height: 170px; }
-        .game-info-section { padding: 20px 30px 30px 30px; }
-        .game-info-title { font-size: 28px; }
+        .game-info-section { padding: 30px 30px 40px 30px; bottom: 80px; }
+        .game-info-title { font-size: 32px; }
+        .game-info-price { font-size: 22px; }
+        .selection-indicator { bottom: 160px; right: 30px; }
     }
 
     @media (max-width: 768px) {
@@ -423,10 +463,13 @@
         .games-carousel { padding: 15px 20px; gap: 15px; }
         .game-card { min-width: 140px; width: 140px; }
         .game-card-image { height: 140px; }
-        .game-info-title { font-size: 20px; }
+        .game-info-section { padding: 20px 20px 30px 20px; bottom: 60px; }
+        .game-info-title { font-size: 22px; }
+        .game-info-price { font-size: 18px; }
         .game-info-desc { font-size: 11px; }
-        .btn-play { padding: 6px 20px; font-size: 12px; }
-        .selection-indicator { bottom: 100px; right: 20px; }
+        .btn-play { padding: 8px 25px; font-size: 12px; }
+        .btn-cart { padding: 8px 20px; font-size: 12px; }
+        .selection-indicator { bottom: 130px; right: 20px; }
         .controls-hint { display: none; }
     }
 </style>
@@ -466,7 +509,7 @@
     <div class="games-carousel-wrapper" id="carouselWrapper">
         <div class="games-carousel" id="gamesCarousel">
             {% for product in page_obj %}
-            <div class="game-card" data-id="{{ product.id }}" data-name="{{ product.name }}" data-price="{{ product.get_price }}" data-category="{{ product.category }}" data-desc="{{ product.description|truncatechars:100 }}" data-url="{% url 'product_detail' product.id %}" data-buy-url="{% url 'checkout' product.id %}" data-cart-url="{% url 'add_to_cart' product.id %}">
+            <div class="game-card" data-id="{{ product.id }}" data-name="{{ product.name }}" data-price="{{ product.get_price }}" data-category="{{ product.category }}" data-desc="{{ product.description }}" data-url="{% url 'product_detail' product.id %}" data-buy-url="{% url 'checkout' product.id %}" data-cart-url="{% url 'add_to_cart' product.id %}">
                 {% if product.is_on_sale %}
                 <div class="game-card-badge sale">OFERTA</div>
                 {% elif not product.is_available %}
@@ -486,13 +529,16 @@
     </div>
 </div>
 
-<!-- Seccion de informacion del juego seleccionado (abajo) -->
+<!-- Seccion de informacion completa del juego seleccionado -->
 <div class="game-info-section" id="gameInfoSection">
     <div class="game-info-content">
         <div class="game-info-title" id="gameInfoTitle">KHAOS STORE</div>
+        <div class="game-info-category" id="gameInfoCategory"></div>
+        <div class="game-info-price" id="gameInfoPrice"></div>
         <div class="game-info-desc" id="gameInfoDesc">Selecciona un juego con las flechas ← →</div>
         <div class="game-info-actions">
-            <button class="btn-play" id="buyButton">Comprar</button>
+            <button class="btn-play" id="buyButton">Comprar ahora</button>
+            <button class="btn-cart" id="cartButton">🛒 Agregar al carrito</button>
             <a href="#" class="btn-more" id="detailsButton">⋯</a>
         </div>
     </div>
@@ -533,8 +579,11 @@
 
     // Elementos de info
     const gameInfoTitle = document.getElementById('gameInfoTitle');
+    const gameInfoCategory = document.getElementById('gameInfoCategory');
+    const gameInfoPrice = document.getElementById('gameInfoPrice');
     const gameInfoDesc = document.getElementById('gameInfoDesc');
     const buyButton = document.getElementById('buyButton');
+    const cartButton = document.getElementById('cartButton');
     const detailsButton = document.getElementById('detailsButton');
 
     // Generar indicadores
@@ -553,16 +602,40 @@
         if (currentGameIndex >= 0 && gameCards[currentGameIndex]) {
             const currentCard = gameCards[currentGameIndex];
             const name = currentCard.dataset.name;
+            const category = currentCard.dataset.category;
+            const price = currentCard.dataset.price;
             const desc = currentCard.dataset.desc || 'Descubre este increible juego en Khaos Store';
-            gameInfoTitle.textContent = name;
-            gameInfoDesc.textContent = desc;
-            
-            // Actualizar botones con las URLs
             const buyUrl = currentCard.dataset.buyUrl;
+            const cartUrl = currentCard.dataset.cartUrl;
             const detailsUrl = currentCard.dataset.url;
+            
+            gameInfoTitle.textContent = name;
+            gameInfoCategory.textContent = category;
+            gameInfoPrice.textContent = '$' + parseFloat(price).toLocaleString('es-CO');
+            gameInfoDesc.textContent = desc;
             
             buyButton.onclick = function() {
                 if (buyUrl) window.location.href = buyUrl;
+            };
+            cartButton.onclick = function() {
+                if (cartUrl) {
+                    fetch(cartUrl, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: new URLSearchParams({ quantity: 1 })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert(data.message);
+                            const cartBadge = document.querySelector('.cart-badge');
+                            if (cartBadge) cartBadge.textContent = data.cart_total_items;
+                        }
+                    });
+                }
             };
             detailsButton.onclick = function() {
                 if (detailsUrl) window.location.href = detailsUrl;
@@ -627,41 +700,6 @@
         }
     }
 
-    function buyCurrentGame() {
-        const currentCard = gameCards[currentGameIndex];
-        const buyUrl = currentCard.dataset.buyUrl;
-        if (buyUrl) window.location.href = buyUrl;
-    }
-
-    function addToCartCurrentGame() {
-        const currentCard = gameCards[currentGameIndex];
-        const cartUrl = currentCard.dataset.cartUrl;
-        if (cartUrl) {
-            fetch(cartUrl, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: new URLSearchParams({ quantity: 1 })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert(data.message);
-                    const cartBadge = document.querySelector('.cart-badge');
-                    if (cartBadge) cartBadge.textContent = data.cart_total_items;
-                }
-            });
-        }
-    }
-
-    function detailsCurrentGame() {
-        const currentCard = gameCards[currentGameIndex];
-        const url = currentCard.dataset.url;
-        if (url) window.location.href = url;
-    }
-
     // Navegacion por teclado
     document.addEventListener('keydown', function(event) {
         if (document.getElementById('searchModal').classList.contains('show')) {
@@ -717,8 +755,6 @@
                     isInMenu = false;
                     updateMenuSelection();
                     updateGameSelection();
-                } else {
-                    addToCartCurrentGame();
                 }
                 break;
                 
@@ -727,7 +763,9 @@
                 if (isInMenu) {
                     executeMenuAction();
                 } else {
-                    detailsCurrentGame();
+                    const currentCard = gameCards[currentGameIndex];
+                    const detailsUrl = currentCard.dataset.url;
+                    if (detailsUrl) window.location.href = detailsUrl;
                 }
                 break;
         }
@@ -739,7 +777,8 @@
             currentGameIndex = index;
             isInMenu = false;
             updateGameSelection();
-            detailsCurrentGame();
+            const detailsUrl = card.dataset.url;
+            if (detailsUrl) window.location.href = detailsUrl;
         });
         card.addEventListener('mouseenter', () => {
             if (!isInMenu) {
