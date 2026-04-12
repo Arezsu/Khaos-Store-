@@ -241,25 +241,58 @@
         color: #fff;
     }
 
-    /* Seccion de informacion del juego seleccionado (mas arriba) */
+    /* Seccion de informacion del juego seleccionado con imagen expandida */
     .game-info-section {
         position: fixed;
-        bottom: 100px;
+        bottom: 0;
         left: 0;
         right: 0;
-        background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
-        padding: 40px 60px 50px 60px;
+        background: linear-gradient(0deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 100%);
+        padding: 30px 60px 40px 60px;
         z-index: 40;
+        backdrop-filter: blur(10px);
+        border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .game-info-wrapper {
+        display: flex;
+        gap: 50px;
+        align-items: center;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    /* Imagen expandida estilo PS5 */
+    .game-preview-image {
+        flex-shrink: 0;
+        width: 200px;
+        height: 200px;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        border: 2px solid rgba(255,0,255,0.3);
+        transition: all 0.3s ease;
+    }
+
+    .game-preview-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .game-preview-image:hover img {
+        transform: scale(1.05);
     }
 
     .game-info-content {
-        max-width: 700px;
+        flex: 1;
     }
 
     .game-info-title {
-        font-size: 42px;
+        font-size: 32px;
         font-weight: 800;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
         text-transform: uppercase;
         background: linear-gradient(135deg, #fff, #aaa);
         -webkit-background-clip: text;
@@ -272,39 +305,40 @@
         padding: 4px 15px;
         border-radius: 20px;
         font-size: 12px;
-        margin-bottom: 15px;
+        margin-bottom: 12px;
         color: #ff00ff;
     }
 
     .game-info-price {
-        font-size: 28px;
+        font-size: 24px;
         font-weight: 700;
         color: #00ffff;
-        margin-bottom: 15px;
+        margin-bottom: 12px;
     }
 
     .game-info-desc {
-        font-size: 14px;
+        font-size: 13px;
         color: rgba(255,255,255,0.8);
-        line-height: 1.6;
-        margin-bottom: 25px;
-        max-width: 600px;
+        line-height: 1.5;
+        margin-bottom: 20px;
+        max-width: 500px;
     }
 
     .game-info-actions {
         display: flex;
         gap: 15px;
         align-items: center;
+        flex-wrap: wrap;
     }
 
     .btn-play {
         background: white;
         color: black;
-        padding: 12px 40px;
+        padding: 10px 35px;
         border-radius: 40px;
         text-decoration: none;
         font-weight: 600;
-        font-size: 14px;
+        font-size: 13px;
         transition: all 0.3s;
         border: none;
         cursor: pointer;
@@ -318,11 +352,11 @@
     .btn-cart {
         background: rgba(255,255,255,0.15);
         color: white;
-        padding: 12px 30px;
+        padding: 10px 25px;
         border-radius: 40px;
         text-decoration: none;
         font-weight: 500;
-        font-size: 14px;
+        font-size: 13px;
         transition: all 0.3s;
         border: none;
         cursor: pointer;
@@ -338,15 +372,15 @@
     .btn-more {
         background: rgba(255,255,255,0.15);
         color: white;
-        width: 44px;
-        height: 44px;
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
         display: inline-flex;
         justify-content: center;
         align-items: center;
         text-decoration: none;
         transition: all 0.3s;
-        font-size: 20px;
+        font-size: 18px;
     }
 
     .btn-more:hover {
@@ -356,7 +390,7 @@
     /* Indicador de seleccion */
     .selection-indicator {
         position: fixed;
-        bottom: 180px;
+        bottom: 280px;
         right: 60px;
         display: flex;
         gap: 10px;
@@ -545,10 +579,12 @@
         .games-carousel { padding: 20px 30px; }
         .game-card { min-width: 170px; width: 170px; }
         .game-card-image { height: 170px; }
-        .game-info-section { padding: 30px 30px 40px 30px; bottom: 80px; }
-        .game-info-title { font-size: 32px; }
-        .game-info-price { font-size: 22px; }
-        .selection-indicator { bottom: 160px; right: 30px; }
+        .game-info-section { padding: 25px 30px 30px 30px; }
+        .game-info-wrapper { gap: 30px; }
+        .game-preview-image { width: 150px; height: 150px; }
+        .game-info-title { font-size: 26px; }
+        .game-info-price { font-size: 20px; }
+        .selection-indicator { bottom: 260px; right: 30px; }
     }
 
     @media (max-width: 768px) {
@@ -560,13 +596,17 @@
         .games-carousel { padding: 15px 20px; gap: 15px; }
         .game-card { min-width: 140px; width: 140px; }
         .game-card-image { height: 140px; }
-        .game-info-section { padding: 20px 20px 30px 20px; bottom: 60px; }
-        .game-info-title { font-size: 22px; }
+        .game-info-section { padding: 15px 20px 20px 20px; }
+        .game-info-wrapper { flex-direction: column; gap: 15px; text-align: center; }
+        .game-preview-image { width: 120px; height: 120px; margin: 0 auto; }
+        .game-info-content { text-align: center; }
+        .game-info-desc { max-width: 100%; }
+        .game-info-actions { justify-content: center; }
+        .game-info-title { font-size: 20px; }
         .game-info-price { font-size: 18px; }
-        .game-info-desc { font-size: 11px; }
         .btn-play { padding: 8px 25px; font-size: 12px; }
         .btn-cart { padding: 8px 20px; font-size: 12px; }
-        .selection-indicator { bottom: 130px; right: 20px; }
+        .selection-indicator { bottom: 380px; right: 20px; }
         .controls-hint { 
             padding: 8px 12px; 
             right: 15px; 
@@ -591,10 +631,10 @@
 <div class="ps5-nav">
     <div class="nav-left" id="navLeft">
         <button class="nav-item" data-action="games">Juegos</button>
-        <button class="nav-item" data-action="search">🔍 Buscar</button>
         <button class="nav-item" data-action="media">Multimedia</button>
     </div>
     <div class="nav-right" id="navRight">
+        <button class="nav-icon" data-action="search">🔍</button>
         <button class="nav-icon" data-action="cart">🛒</button>
         <button class="nav-icon" data-action="tutorial">🎬</button>
         {% if user.is_authenticated %}
@@ -620,7 +660,7 @@
     <div class="games-carousel-wrapper" id="carouselWrapper">
         <div class="games-carousel" id="gamesCarousel">
             {% for product in page_obj %}
-            <div class="game-card" data-id="{{ product.id }}" data-name="{{ product.name }}" data-price="{{ product.get_price }}" data-category="{{ product.category }}" data-desc="{{ product.description }}" data-url="{% url 'product_detail' product.id %}" data-buy-url="{% url 'checkout' product.id %}" data-cart-url="{% url 'add_to_cart' product.id %}">
+            <div class="game-card" data-id="{{ product.id }}" data-name="{{ product.name }}" data-price="{{ product.get_price }}" data-category="{{ product.category }}" data-desc="{{ product.description }}" data-image="{{ product.image }}" data-url="{% url 'product_detail' product.id %}" data-buy-url="{% url 'checkout' product.id %}" data-cart-url="{% url 'add_to_cart' product.id %}">
                 {% if product.is_on_sale %}
                 <div class="game-card-badge sale">OFERTA</div>
                 {% elif not product.is_available %}
@@ -640,17 +680,22 @@
     </div>
 </div>
 
-<!-- Seccion de informacion completa del juego seleccionado -->
+<!-- Seccion de informacion del juego con imagen expandida -->
 <div class="game-info-section" id="gameInfoSection">
-    <div class="game-info-content">
-        <div class="game-info-title" id="gameInfoTitle">KHAOS STORE</div>
-        <div class="game-info-category" id="gameInfoCategory"></div>
-        <div class="game-info-price" id="gameInfoPrice"></div>
-        <div class="game-info-desc" id="gameInfoDesc">Selecciona un juego con las flechas ← →</div>
-        <div class="game-info-actions">
-            <button class="btn-play" id="buyButton">Comprar ahora</button>
-            <button class="btn-cart" id="cartButton">Agregar al carrito</button>
-            <a href="#" class="btn-more" id="detailsButton">⋯</a>
+    <div class="game-info-wrapper">
+        <div class="game-preview-image" id="gamePreviewImage">
+            <img id="previewImg" src="{% static 'images/placeholder.jpg' %}" alt="Game preview">
+        </div>
+        <div class="game-info-content">
+            <div class="game-info-title" id="gameInfoTitle">KHAOS STORE</div>
+            <div class="game-info-category" id="gameInfoCategory"></div>
+            <div class="game-info-price" id="gameInfoPrice"></div>
+            <div class="game-info-desc" id="gameInfoDesc">Selecciona un juego con las flechas ← →</div>
+            <div class="game-info-actions">
+                <button class="btn-play" id="buyButton">Comprar ahora</button>
+                <button class="btn-cart" id="cartButton">Agregar al carrito</button>
+                <a href="#" class="btn-more" id="detailsButton">⋯</a>
+            </div>
         </div>
     </div>
 </div>
@@ -726,6 +771,7 @@
     const gameInfoCategory = document.getElementById('gameInfoCategory');
     const gameInfoPrice = document.getElementById('gameInfoPrice');
     const gameInfoDesc = document.getElementById('gameInfoDesc');
+    const previewImg = document.getElementById('previewImg');
     const buyButton = document.getElementById('buyButton');
     const cartButton = document.getElementById('cartButton');
     const detailsButton = document.getElementById('detailsButton');
@@ -749,6 +795,7 @@
             const category = currentCard.dataset.category;
             const price = currentCard.dataset.price;
             const desc = currentCard.dataset.desc || 'Descubre este increible juego en Khaos Store';
+            const imageUrl = currentCard.dataset.image;
             const buyUrl = currentCard.dataset.buyUrl;
             const cartUrl = currentCard.dataset.cartUrl;
             const detailsUrl = currentCard.dataset.url;
@@ -757,6 +804,11 @@
             gameInfoCategory.textContent = category;
             gameInfoPrice.textContent = '$' + parseFloat(price).toLocaleString('es-CO');
             gameInfoDesc.textContent = desc;
+            
+            if (imageUrl && previewImg) {
+                previewImg.src = imageUrl;
+                previewImg.alt = name;
+            }
             
             buyButton.onclick = function() {
                 if (buyUrl) window.location.href = buyUrl;
@@ -1006,7 +1058,7 @@
         resultsDiv.innerHTML = html;
     });
 
-    // REPRODUCTOR DE MUSICA
+    // REPRODUCTOR DE MUSICA - SIEMPRE ACTIVO
     const MUSIC_URL = "{% static 'audio/musica_tienda.mp3' %}";
 
     let audio = null;
@@ -1026,7 +1078,7 @@
         player.style.display = 'flex';
         
         audio.addEventListener('canplaythrough', function() {
-            musicStatus.textContent = 'Listo para reproducir';
+            musicStatus.textContent = 'Reproduciendo';
         });
         
         audio.addEventListener('playing', function() {
@@ -1046,11 +1098,19 @@
             musicStatus.textContent = 'Error al cargar';
         });
         
-        function tryAutoPlay() {
-            audio.play().catch(function(error) {
+        function startMusic() {
+            audio.play().then(function() {
+                console.log('Musica reproduciendose');
+                musicStatus.textContent = 'Reproduciendo';
+            }).catch(function(error) {
                 console.log('Autoplay bloqueado por el navegador:', error);
                 musicStatus.textContent = 'Presiona PLAY para iniciar';
                 playPauseBtn.textContent = 'PLAY';
+                
+                document.addEventListener('click', function startOnClick() {
+                    audio.play();
+                    document.removeEventListener('click', startOnClick);
+                }, { once: true });
             });
         }
         
@@ -1065,7 +1125,7 @@
             }
         });
         
-        tryAutoPlay();
+        startMusic();
     }
 
     // Inicializar
