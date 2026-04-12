@@ -443,6 +443,75 @@
         color: #fff;
     }
 
+    /* Reproductor de musica flotante estilo PS5 */
+    .music-player {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        z-index: 1000;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(15px);
+        border-radius: 50px;
+        padding: 8px 16px;
+        border: 1px solid rgba(255, 0, 255, 0.5);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .music-player:hover {
+        transform: scale(1.05);
+        border-color: #ff00ff;
+        box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
+    }
+
+    .music-icon {
+        font-size: 16px;
+        color: #ff00ff;
+        font-weight: bold;
+    }
+
+    .music-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .music-title {
+        font-size: 11px;
+        font-weight: bold;
+        color: #fff;
+    }
+
+    .music-status {
+        font-size: 9px;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .music-controls {
+        display: flex;
+        gap: 10px;
+        margin-left: 10px;
+    }
+
+    .music-control-btn {
+        background: none;
+        border: none;
+        color: #fff;
+        cursor: pointer;
+        font-size: 12px;
+        padding: 4px;
+        border-radius: 50%;
+        transition: all 0.3s;
+        font-weight: bold;
+    }
+
+    .music-control-btn:hover {
+        color: #ff00ff;
+        transform: scale(1.1);
+    }
+
     @media (max-width: 1024px) {
         .ps5-nav { padding: 20px 30px; }
         .games-carousel { padding: 20px 30px; }
@@ -471,6 +540,13 @@
         .btn-cart { padding: 8px 20px; font-size: 12px; }
         .selection-indicator { bottom: 130px; right: 20px; }
         .controls-hint { display: none; }
+        .music-player {
+            bottom: 10px;
+            left: 10px;
+            padding: 6px 12px;
+        }
+        .music-title { font-size: 9px; }
+        .music-status { font-size: 7px; }
     }
 </style>
 {% endblock %}
@@ -538,7 +614,7 @@
         <div class="game-info-desc" id="gameInfoDesc">Selecciona un juego con las flechas ← →</div>
         <div class="game-info-actions">
             <button class="btn-play" id="buyButton">Comprar ahora</button>
-            <button class="btn-cart" id="cartButton">🛒 Agregar al carrito</button>
+            <button class="btn-cart" id="cartButton">Agregar al carrito</button>
             <a href="#" class="btn-more" id="detailsButton">⋯</a>
         </div>
     </div>
@@ -561,6 +637,18 @@
     <div class="search-container">
         <input type="text" class="search-input" id="searchInput" placeholder="Buscar juegos..." autocomplete="off">
         <div id="searchResults" style="margin-top: 20px;"></div>
+    </div>
+</div>
+
+<!-- REPRODUCTOR DE MUSICA FLOTANTE -->
+<div id="musicPlayer" class="music-player" style="display: none;">
+    <div class="music-icon">MUSIC</div>
+    <div class="music-info">
+        <div class="music-title">KHAOS STORE SOUNDTRACK</div>
+        <div class="music-status" id="musicStatus">Cargando...</div>
+    </div>
+    <div class="music-controls">
+        <button id="playPauseBtn" class="music-control-btn">PAUSE</button>
     </div>
 </div>
 
@@ -862,6 +950,68 @@
         resultsDiv.innerHTML = html;
     });
 
+    // REPRODUCTOR DE MUSICA
+    const MUSIC_URL = "{% static 'audio/musica_tienda.mp3' %}";
+
+    let audio = null;
+    let isPlaying = false;
+
+    function initMusicPlayer() {
+        const player = document.getElementById('musicPlayer');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const musicStatus = document.getElementById('musicStatus');
+        
+        if (!player) return;
+        
+        audio = new Audio(MUSIC_URL);
+        audio.loop = true;
+        audio.volume = 0.3;
+        
+        player.style.display = 'flex';
+        
+        audio.addEventListener('canplaythrough', function() {
+            musicStatus.textContent = 'Listo para reproducir';
+        });
+        
+        audio.addEventListener('playing', function() {
+            isPlaying = true;
+            playPauseBtn.textContent = 'PAUSE';
+            musicStatus.textContent = 'Reproduciendo';
+        });
+        
+        audio.addEventListener('pause', function() {
+            isPlaying = false;
+            playPauseBtn.textContent = 'PLAY';
+            musicStatus.textContent = 'Pausado';
+        });
+        
+        audio.addEventListener('error', function() {
+            console.error('Error al cargar el audio');
+            musicStatus.textContent = 'Error al cargar';
+        });
+        
+        function tryAutoPlay() {
+            audio.play().catch(function(error) {
+                console.log('Autoplay bloqueado por el navegador:', error);
+                musicStatus.textContent = 'Presiona PLAY para iniciar';
+                playPauseBtn.textContent = 'PLAY';
+            });
+        }
+        
+        playPauseBtn.addEventListener('click', function() {
+            if (isPlaying) {
+                audio.pause();
+            } else {
+                audio.play().catch(function(error) {
+                    console.error('Error al reproducir:', error);
+                    musicStatus.textContent = 'Error al reproducir';
+                });
+            }
+        });
+        
+        tryAutoPlay();
+    }
+
     // Inicializar
     if (gameCards.length > 0) {
         updateGameSelection();
@@ -889,5 +1039,7 @@
             wrapper.scrollLeft = scrollLeft - walk;
         });
     }
+
+    document.addEventListener('DOMContentLoaded', initMusicPlayer);
 </script>
 {% endblock %}
