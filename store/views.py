@@ -8,7 +8,7 @@ from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.db.models import Q
 from .models import Product, Order, UserProfile, Cart, CartItem, Review
-from .email_utils import send_welcome_email, send_payment_confirmation
+from .email_utils import send_welcome_email
 from datetime import date
 import re
 
@@ -65,7 +65,6 @@ def get_or_create_cart(request):
 
 
 def ps5_launcher(request):
-    """Pantalla de inicio estilo PS5"""
     return render(request, 'store/ps5_launcher.html')
 
 

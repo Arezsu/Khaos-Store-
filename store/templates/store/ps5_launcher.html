@@ -1,0 +1,576 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>KHAOS STORE - PS5 Launcher</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #1a1a2e;
+            min-height: 100vh;
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .ps5-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f0c29 50%, #1a1a2e 100%);
+        }
+
+        .waves {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40%;
+            background: repeating-linear-gradient(
+                transparent 0px,
+                transparent 50px,
+                rgba(0, 255, 255, 0.03) 50px,
+                rgba(255, 0, 255, 0.03) 100px
+            );
+            animation: waveMove 20s linear infinite;
+        }
+
+        @keyframes waveMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 200px; }
+        }
+
+        .ps5-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 50px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .time-date {
+            font-size: 14px;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .time {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .user-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 20px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .user-name {
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .ps5-menu {
+            position: absolute;
+            bottom: 100px;
+            left: 0;
+            right: 0;
+            padding: 0 50px;
+        }
+
+        .menu-items {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .menu-card {
+            width: 260px;
+            background: rgba(20, 20, 40, 0.6);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ff00ff, #00ffff);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .menu-card.selected {
+            transform: translateY(-20px) scale(1.05);
+            background: rgba(40, 40, 70, 0.8);
+            border-color: rgba(255, 0, 255, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 0, 255, 0.3);
+        }
+
+        .menu-card.selected::before {
+            transform: scaleX(1);
+        }
+
+        .menu-icon {
+            font-size: 56px;
+            margin-bottom: 20px;
+        }
+
+        .menu-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .menu-desc {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 400;
+        }
+
+        .selection-indicator {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .indicator-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .indicator-dot.active {
+            width: 30px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #ff00ff, #00ffff);
+        }
+
+        .instructions-panel {
+            position: absolute;
+            bottom: 20px;
+            right: 30px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            padding: 12px 20px;
+            border-radius: 40px;
+            font-size: 12px;
+            display: flex;
+            gap: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .instruction {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .key-icon {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 11px;
+            font-family: monospace;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-10px);
+            background: rgba(50, 50, 80, 0.8);
+        }
+
+        .ps5-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ps5-modal.show {
+            display: flex;
+        }
+
+        .ps5-modal-content {
+            width: 80%;
+            max-width: 1000px;
+            background: #1a1a2e;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 0, 255, 0.3);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .ps5-modal-header {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .ps5-modal-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .ps5-modal-close {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 28px;
+            cursor: pointer;
+            padding: 0 10px;
+            transition: all 0.3s;
+        }
+
+        .ps5-modal-close:hover {
+            color: #ff00ff;
+            transform: scale(1.1);
+        }
+
+        .ps5-video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+        }
+
+        .ps5-video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        @media (max-width: 1200px) {
+            .menu-items { gap: 20px; }
+            .menu-card { width: 240px; padding: 25px 15px; }
+            .menu-icon { font-size: 44px; }
+            .menu-title { font-size: 18px; }
+        }
+
+        @media (max-width: 900px) {
+            .ps5-header { padding: 15px 20px; }
+            .ps5-menu { padding: 0 20px; bottom: 80px; }
+            .menu-card { width: 200px; padding: 20px 15px; }
+            .menu-icon { font-size: 36px; }
+            .menu-title { font-size: 16px; }
+            .instructions-panel { bottom: 10px; right: 10px; padding: 8px 15px; }
+            .instruction { font-size: 10px; }
+        }
+
+        @media (max-width: 700px) {
+            .menu-items { gap: 15px; }
+            .menu-card { width: 170px; padding: 15px 10px; }
+            .menu-icon { font-size: 30px; }
+            .menu-title { font-size: 13px; }
+            .menu-desc { font-size: 9px; }
+            .user-name { display: none; }
+        }
+
+        @media (max-width: 550px) {
+            .ps5-menu { bottom: 100px; }
+            .menu-card { width: 140px; padding: 12px 8px; }
+            .menu-icon { font-size: 24px; margin-bottom: 10px; }
+            .menu-title { font-size: 11px; }
+            .selection-indicator { bottom: 70px; }
+            .time-date { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="ps5-background">
+    <div class="waves"></div>
+</div>
+
+<header class="ps5-header">
+    <div class="time-date">
+        <div class="time" id="currentTime"></div>
+        <div id="currentDate"></div>
+    </div>
+    <div class="user-card">
+        <div class="user-avatar">
+            {% if user.is_authenticated %}
+                {{ user.username|first|upper }}
+            {% else %}
+                ?
+            {% endif %}
+        </div>
+        <div class="user-name">
+            {% if user.is_authenticated %}
+                {{ user.username }}
+            {% else %}
+                Invitado
+            {% endif %}
+        </div>
+    </div>
+</header>
+
+<div class="ps5-menu">
+    <div class="menu-items" id="menuItems">
+        <div class="menu-card" data-url="{% url 'home' %}" data-action="store">
+            <div class="menu-icon">🎮</div>
+            <div class="menu-title">PlayStation Store</div>
+            <div class="menu-desc">Descubre los mejores juegos</div>
+        </div>
+        <div class="menu-card" data-url="{% url 'profile' %}" data-action="profile">
+            <div class="menu-icon">👤</div>
+            <div class="menu-title">Gamer Profile</div>
+            <div class="menu-desc">Tu identidad gamer</div>
+        </div>
+        <div class="menu-card" data-url="{% url 'cart_view' %}" data-action="cart">
+            <div class="menu-icon">🛒</div>
+            <div class="menu-title">Carrito de Compras</div>
+            <div class="menu-desc">Tus juegos seleccionados</div>
+        </div>
+        <div class="menu-card" data-action="tutorial">
+            <div class="menu-icon">🎬</div>
+            <div class="menu-title">Media Gallery</div>
+            <div class="menu-desc">Tutoriales y guias</div>
+        </div>
+        {% if not user.is_authenticated %}
+        <div class="menu-card" data-url="{% url 'login' %}" data-action="login">
+            <div class="menu-icon">🔑</div>
+            <div class="menu-title">Sign In</div>
+            <div class="menu-desc">Accede a tu cuenta</div>
+        </div>
+        {% else %}
+        <div class="menu-card" data-url="{% url 'logout' %}" data-action="logout">
+            <div class="menu-icon">🚪</div>
+            <div class="menu-title">Sign Out</div>
+            <div class="menu-desc">Cerrar sesion</div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="selection-indicator" id="indicator"></div>
+
+<div class="instructions-panel">
+    <div class="instruction">
+        <span class="key-icon">←</span>
+        <span class="key-icon">→</span>
+        <span>Navegar</span>
+    </div>
+    <div class="instruction">
+        <span class="key-icon">↵</span>
+        <span>Seleccionar</span>
+    </div>
+</div>
+
+<div id="tutorialModal" class="ps5-modal">
+    <div class="ps5-modal-content">
+        <div class="ps5-modal-header">
+            <h3>Media Gallery - Tutorial</h3>
+            <button class="ps5-modal-close" onclick="closeTutorialModal()">✕</button>
+        </div>
+        <div id="videoContainer" class="ps5-video-container"></div>
+    </div>
+</div>
+
+<script>
+    function updateTime() {
+        var now = new Date();
+        var time = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+        var date = now.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+        var timeEl = document.getElementById('currentTime');
+        var dateEl = document.getElementById('currentDate');
+        if (timeEl) timeEl.textContent = time;
+        if (dateEl) dateEl.textContent = date;
+    }
+    updateTime();
+    setInterval(updateTime, 1000);
+
+    var menuItems = document.querySelectorAll('.menu-card');
+    var currentIndex = 0;
+
+    var indicatorContainer = document.getElementById('indicator');
+    if (indicatorContainer) {
+        for (var i = 0; i < menuItems.length; i++) {
+            var dot = document.createElement('div');
+            dot.classList.add('indicator-dot');
+            if (i === 0) dot.classList.add('active');
+            indicatorContainer.appendChild(dot);
+        }
+    }
+    var dots = document.querySelectorAll('.indicator-dot');
+
+    function updateSelection() {
+        for (var i = 0; i < menuItems.length; i++) {
+            if (i === currentIndex) {
+                menuItems[i].classList.add('selected');
+                if (dots[i]) dots[i].classList.add('active');
+                menuItems[i].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            } else {
+                menuItems[i].classList.remove('selected');
+                if (dots[i]) dots[i].classList.remove('active');
+            }
+        }
+    }
+
+    function executeCurrentAction() {
+        var currentItem = menuItems[currentIndex];
+        var url = currentItem.getAttribute('data-url');
+        var action = currentItem.getAttribute('data-action');
+
+        if (url) {
+            window.location.href = url;
+        } else if (action === 'tutorial') {
+            openTutorialModal();
+        }
+    }
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'ArrowRight') {
+            event.preventDefault();
+            currentIndex = (currentIndex + 1) % menuItems.length;
+            updateSelection();
+        } else if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            currentIndex = (currentIndex - 1 + menuItems.length) % menuItems.length;
+            updateSelection();
+        } else if (event.key === 'Enter') {
+            event.preventDefault();
+            executeCurrentAction();
+        } else if (event.key === 'Escape') {
+            var modal = document.getElementById('tutorialModal');
+            if (modal && modal.classList.contains('show')) {
+                closeTutorialModal();
+            }
+        }
+    });
+
+    for (var i = 0; i < menuItems.length; i++) {
+        menuItems[i].addEventListener('click', (function(index) {
+            return function() {
+                currentIndex = index;
+                updateSelection();
+                executeCurrentAction();
+            };
+        })(i));
+        menuItems[i].addEventListener('mouseenter', (function(index) {
+            return function() {
+                currentIndex = index;
+                updateSelection();
+            };
+        })(i));
+    }
+
+    var currentVideo = null;
+
+    function openTutorialModal() {
+        var modal = document.getElementById('tutorialModal');
+        var container = document.getElementById('videoContainer');
+        
+        if (!container) return;
+        
+        container.innerHTML = '';
+        
+        var video = document.createElement('video');
+        video.id = 'tutorialVideo';
+        video.controls = true;
+        video.autoplay = true;
+        video.style.width = '100%';
+        video.style.height = '100%';
+        
+        var source = document.createElement('source');
+        source.src = 'https://res.cloudinary.com/dxbsu1sud/video/upload/v1775327843/Video_Project_i3a4dj.mp4';
+        source.type = 'video/mp4';
+        
+        video.appendChild(source);
+        container.appendChild(video);
+        
+        currentVideo = video;
+        
+        modal.classList.add('show');
+        
+        video.play().catch(function(error) {
+            console.log("Error al reproducir: " + error);
+        });
+    }
+
+    function closeTutorialModal() {
+        var modal = document.getElementById('tutorialModal');
+        
+        if (currentVideo) {
+            currentVideo.pause();
+            currentVideo.currentTime = 0;
+            currentVideo = null;
+        }
+        
+        var container = document.getElementById('videoContainer');
+        if (container) {
+            container.innerHTML = '';
+        }
+        
+        if (modal) {
+            modal.classList.remove('show');
+        }
+    }
+
+    updateSelection();
+</script>
+
+</body>
+</html>
