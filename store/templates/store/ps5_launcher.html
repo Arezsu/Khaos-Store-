@@ -13,6 +13,97 @@
             box-sizing: border-box;
         }
 
+        /* ---------- BOOT ANIMATION (Pantalla de Inicio) ---------- */
+        .boot-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #0a0a1a, #000000);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1.5s ease-in-out;
+            opacity: 1;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Ocultar el boot screen después de la animación */
+        .boot-screen.hide {
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
+        }
+
+        /* Contenedor del logo y la animación */
+        .boot-content {
+            text-align: center;
+            transform: scale(0.9);
+            animation: bootPulse 1.5s infinite alternate;
+        }
+
+        @keyframes bootPulse {
+            0% {
+                transform: scale(0.9);
+                opacity: 0.5;
+                filter: blur(2px);
+            }
+            100% {
+                transform: scale(1.1);
+                opacity: 1;
+                filter: blur(0px);
+                text-shadow: 0 0 20px #ff00ff, 0 0 30px #00ffff;
+            }
+        }
+
+        .boot-logo {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 48px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 30px;
+        }
+
+        .boot-subtitle {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            letter-spacing: 2px;
+            margin-bottom: 50px;
+        }
+
+        .press-key {
+            margin-top: 80px;
+            animation: blinkText 1.5s step-end infinite;
+            font-size: 18px;
+            font-weight: 300;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px 24px;
+            border-radius: 50px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes blinkText {
+            0%, 100% { opacity: 1; text-shadow: 0 0 5px #ff00ff; }
+            50% { opacity: 0.5; text-shadow: none; }
+        }
+
+        .ps-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            animation: rotateIcon 2s linear infinite;
+        }
+
+        @keyframes rotateIcon {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ---------- ESTILOS DEL LAUNCHER PS5 (TU CÓDIGO ACTUAL) ---------- */
         body {
             font-family: 'Montserrat', sans-serif;
             background: #1a1a2e;
@@ -340,6 +431,16 @@
 </head>
 <body>
 
+<!-- Pantalla de Boot (Aparece al cargar la página) -->
+<div id="bootScreen" class="boot-screen">
+    <div class="boot-content">
+        <div class="ps-icon">🎮</div>
+        <div class="boot-logo">KHAOS STORE</div>
+        <div class="boot-subtitle">PLAYSTATION 5 EDITION</div>
+        <div class="press-key">⚡ PRESIONA CUALQUIER TECLA PARA INICIAR ⚡</div>
+    </div>
+</div>
+
 <div class="ps5-background">
     <div class="waves"></div>
 </div>
@@ -430,6 +531,39 @@
 </div>
 
 <script>
+    // ---------- LÓGICA DE LA PANTALLA DE BOOT ----------
+    const bootScreen = document.getElementById('bootScreen');
+
+    function hideBootScreen() {
+        if (bootScreen) {
+            bootScreen.classList.add('hide');
+            // Opcional: eliminar el div del DOM después de la transición para liberar recursos
+            setTimeout(() => {
+                if (bootScreen && bootScreen.parentNode) {
+                    bootScreen.style.display = 'none';
+                }
+            }, 1500); // Debe coincidir con la transición CSS (1.5s)
+        }
+    }
+
+    // Detectar cualquier tecla presionada
+    document.addEventListener('keydown', function(event) {
+        // Si la pantalla de boot está visible, la ocultamos
+        if (bootScreen && !bootScreen.classList.contains('hide')) {
+            hideBootScreen();
+        }
+    });
+
+    // También permitir que un clic en cualquier lugar de la pantalla de boot la cierre
+    if (bootScreen) {
+        bootScreen.addEventListener('click', function() {
+            if (!bootScreen.classList.contains('hide')) {
+                hideBootScreen();
+            }
+        });
+    }
+
+    // ---------- RELOJ ----------
     function updateTime() {
         var now = new Date();
         var time = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
@@ -442,6 +576,7 @@
     updateTime();
     setInterval(updateTime, 1000);
 
+    // ---------- MENU Y NAVEGACION ----------
     var menuItems = document.querySelectorAll('.menu-card');
     var currentIndex = 0;
 
@@ -482,6 +617,11 @@
     }
 
     document.addEventListener('keydown', function(event) {
+        // Ignorar la navegación si la pantalla de boot está activa y aún no se ha ocultado
+        if (bootScreen && !bootScreen.classList.contains('hide')) {
+            return;
+        }
+
         if (event.key === 'ArrowRight') {
             event.preventDefault();
             currentIndex = (currentIndex + 1) % menuItems.length;
@@ -517,6 +657,7 @@
         })(i));
     }
 
+    // ---------- MODAL DE TUTORIAL ----------
     var currentVideo = null;
 
     function openTutorialModal() {
