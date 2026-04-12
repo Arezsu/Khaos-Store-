@@ -14,46 +14,31 @@
     }
 
     body.ps5-home {
-        background: #1a1a1a;
+        background: transparent;
         overflow-x: hidden;
         font-family: 'Poppins', 'Montserrat', sans-serif;
+        position: relative;
     }
 
-    /* Fondo estilo PS5 - gris con granulos que laten */
-    .ps5-bg {
+    /* Video de fondo */
+    .video-background {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: #2a2a2a;
+        object-fit: cover;
         z-index: -2;
     }
 
-    .granules {
-        position: absolute;
+    .overlay-bg {
+        position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background-image: radial-gradient(circle at 10% 20%, rgba(255,255,255,0.1) 1px, transparent 1px);
-        background-size: 40px 40px;
-        animation: heartbeatPulse 3s ease-in-out infinite;
-    }
-
-    @keyframes heartbeatPulse {
-        0% {
-            opacity: 0.2;
-            transform: scale(1);
-        }
-        50% {
-            opacity: 0.6;
-            transform: scale(1.02);
-        }
-        100% {
-            opacity: 0.2;
-            transform: scale(1);
-        }
+        background: rgba(0, 0, 0, 0.6);
+        z-index: -1;
     }
 
     /* Header estilo PS5 */
@@ -281,7 +266,7 @@
         color: #fff;
     }
 
-    /* Seccion de informacion del juego seleccionado con imagen expandida */
+    /* Seccion de informacion del juego seleccionado con imagen expandida en la parte inferior derecha */
     .game-info-section {
         position: fixed;
         bottom: 0;
@@ -296,38 +281,10 @@
 
     .game-info-wrapper {
         display: flex;
-        gap: 50px;
+        justify-content: space-between;
         align-items: center;
         max-width: 1400px;
         margin: 0 auto;
-    }
-
-    /* Imagen expandida estilo PS5 - se hace mas grande */
-    .game-preview-image {
-        flex-shrink: 0;
-        width: 280px;
-        height: 280px;
-        border-radius: 24px;
-        overflow: hidden;
-        box-shadow: 0 30px 50px rgba(0,0,0,0.5);
-        border: 1px solid rgba(255,255,255,0.1);
-        transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-    }
-
-    .game-preview-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.4s ease;
-    }
-
-    .game-preview-image:hover {
-        transform: scale(1.02);
-        border-color: rgba(255,255,255,0.3);
-    }
-
-    .game-preview-image:hover img {
-        transform: scale(1.05);
     }
 
     .game-info-content {
@@ -428,6 +385,35 @@
 
     .btn-more:hover {
         background: rgba(255,255,255,0.1);
+    }
+
+    /* Imagen expandida mas grande en la parte derecha */
+    .game-preview-image {
+        flex-shrink: 0;
+        width: 300px;
+        height: 300px;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        border: 1px solid rgba(255,255,255,0.1);
+        transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        margin-left: 40px;
+    }
+
+    .game-preview-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+
+    .game-preview-image:hover {
+        transform: scale(1.02);
+        border-color: rgba(255,255,255,0.3);
+    }
+
+    .game-preview-image:hover img {
+        transform: scale(1.05);
     }
 
     /* Indicador de seleccion */
@@ -548,75 +534,6 @@
         color: #fff;
     }
 
-    /* Reproductor de musica flotante estilo PS5 */
-    .music-player {
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-        z-index: 1000;
-        background: rgba(0,0,0,0.5);
-        backdrop-filter: blur(15px);
-        border-radius: 50px;
-        padding: 8px 16px;
-        border: 1px solid rgba(255,255,255,0.05);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        transition: all 0.3s ease;
-        cursor: pointer;
-    }
-
-    .music-player:hover {
-        transform: scale(1.05);
-        border-color: rgba(255,255,255,0.2);
-        box-shadow: 0 0 15px rgba(0,0,0,0.3);
-    }
-
-    .music-icon {
-        font-size: 16px;
-        color: #fff;
-        font-weight: bold;
-    }
-
-    .music-info {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .music-title {
-        font-size: 11px;
-        font-weight: bold;
-        color: #fff;
-    }
-
-    .music-status {
-        font-size: 9px;
-        color: rgba(255,255,255,0.5);
-    }
-
-    .music-controls {
-        display: flex;
-        gap: 10px;
-        margin-left: 10px;
-    }
-
-    .music-control-btn {
-        background: none;
-        border: none;
-        color: #fff;
-        cursor: pointer;
-        font-size: 12px;
-        padding: 4px;
-        border-radius: 50%;
-        transition: all 0.3s;
-        font-weight: bold;
-    }
-
-    .music-control-btn:hover {
-        color: #fff;
-        transform: scale(1.1);
-    }
-
     @media (max-width: 1024px) {
         .ps5-nav { padding: 20px 30px; }
         .games-carousel { padding: 20px 30px; }
@@ -624,7 +541,7 @@
         .game-card-image { height: 170px; }
         .game-info-section { padding: 25px 30px 30px 30px; }
         .game-info-wrapper { gap: 30px; }
-        .game-preview-image { width: 200px; height: 200px; }
+        .game-preview-image { width: 220px; height: 220px; }
         .game-info-title { font-size: 26px; }
         .game-info-price { font-size: 20px; }
         .selection-indicator { bottom: 280px; right: 30px; }
@@ -640,8 +557,8 @@
         .game-card { min-width: 140px; width: 140px; }
         .game-card-image { height: 140px; }
         .game-info-section { padding: 15px 20px 20px 20px; }
-        .game-info-wrapper { flex-direction: column; gap: 15px; text-align: center; }
-        .game-preview-image { width: 160px; height: 160px; margin: 0 auto; }
+        .game-info-wrapper { flex-direction: column; text-align: center; }
+        .game-preview-image { width: 180px; height: 180px; margin: 0 auto; }
         .game-info-content { text-align: center; }
         .game-info-desc { max-width: 100%; }
         .game-info-actions { justify-content: center; }
@@ -658,22 +575,17 @@
         .hint-item { padding: 2px 6px; }
         .hint-key { font-size: 8px; padding: 2px 5px; }
         .hint-text { font-size: 8px; }
-        .music-player {
-            bottom: 10px;
-            left: 10px;
-            padding: 6px 12px;
-        }
-        .music-title { font-size: 9px; }
-        .music-status { font-size: 7px; }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Fondo estilo PS5 -->
-<div class="ps5-bg">
-    <div class="granules"></div>
-</div>
+<!-- Video de fondo -->
+<video autoplay muted loop playsinline class="video-background">
+    <source src="{% static 'videos/gow.mp4' %}" type="video/mp4">
+    Tu navegador no soporta videos.
+</video>
+<div class="overlay-bg"></div>
 
 <!-- Header estilo PS5 -->
 <div class="ps5-nav">
@@ -728,12 +640,9 @@
     </div>
 </div>
 
-<!-- Seccion de informacion del juego con imagen expandida -->
+<!-- Seccion de informacion del juego con imagen expandida a la derecha -->
 <div class="game-info-section" id="gameInfoSection">
     <div class="game-info-wrapper">
-        <div class="game-preview-image" id="gamePreviewImage">
-            <img id="previewImg" src="{% static 'images/placeholder.jpg' %}" alt="Game preview">
-        </div>
         <div class="game-info-content">
             <div class="game-info-title" id="gameInfoTitle">KHAOS STORE</div>
             <div class="game-info-category" id="gameInfoCategory"></div>
@@ -744,6 +653,9 @@
                 <button class="btn-cart" id="cartButton">Agregar al carrito</button>
                 <a href="#" class="btn-more" id="detailsButton">⋯</a>
             </div>
+        </div>
+        <div class="game-preview-image" id="gamePreviewImage">
+            <img id="previewImg" src="{% static 'images/placeholder.jpg' %}" alt="Game preview">
         </div>
     </div>
 </div>
@@ -786,18 +698,6 @@
     <div class="search-container">
         <input type="text" class="search-input" id="searchInput" placeholder="Buscar juegos..." autocomplete="off">
         <div id="searchResults" style="margin-top: 20px;"></div>
-    </div>
-</div>
-
-<!-- REPRODUCTOR DE MUSICA FLOTANTE -->
-<div id="musicPlayer" class="music-player" style="display: none;">
-    <div class="music-icon">MUSIC</div>
-    <div class="music-info">
-        <div class="music-title">KHAOS STORE SOUNDTRACK</div>
-        <div class="music-status" id="musicStatus">Cargando...</div>
-    </div>
-    <div class="music-controls">
-        <button id="playPauseBtn" class="music-control-btn">PAUSE</button>
     </div>
 </div>
 
@@ -1106,72 +1006,46 @@
         resultsDiv.innerHTML = html;
     });
 
-    // REPRODUCTOR DE MUSICA - SIEMPRE ACTIVO
+    // REPRODUCTOR DE MUSICA - SIEMPRE ACTIVO (SIN BOTON)
     const MUSIC_URL = "{% static 'audio/musica_tienda.mp3' %}";
 
     let audio = null;
     let isPlaying = false;
 
     function initMusicPlayer() {
-        const player = document.getElementById('musicPlayer');
-        const playPauseBtn = document.getElementById('playPauseBtn');
-        const musicStatus = document.getElementById('musicStatus');
-        
-        if (!player) return;
-        
         audio = new Audio(MUSIC_URL);
         audio.loop = true;
         audio.volume = 0.3;
         
-        player.style.display = 'flex';
-        
         audio.addEventListener('canplaythrough', function() {
-            musicStatus.textContent = 'Reproduciendo';
+            console.log('Musica lista para reproducir');
         });
         
         audio.addEventListener('playing', function() {
             isPlaying = true;
-            playPauseBtn.textContent = 'PAUSE';
-            musicStatus.textContent = 'Reproduciendo';
+            console.log('Musica reproduciendose');
         });
         
         audio.addEventListener('pause', function() {
             isPlaying = false;
-            playPauseBtn.textContent = 'PLAY';
-            musicStatus.textContent = 'Pausado';
+            console.log('Musica pausada');
         });
         
         audio.addEventListener('error', function() {
             console.error('Error al cargar el audio');
-            musicStatus.textContent = 'Error al cargar';
         });
         
         function startMusic() {
             audio.play().then(function() {
-                console.log('Musica reproduciendose');
-                musicStatus.textContent = 'Reproduciendo';
+                console.log('Musica iniciada automaticamente');
             }).catch(function(error) {
                 console.log('Autoplay bloqueado por el navegador:', error);
-                musicStatus.textContent = 'Presiona PLAY para iniciar';
-                playPauseBtn.textContent = 'PLAY';
-                
                 document.addEventListener('click', function startOnClick() {
                     audio.play();
                     document.removeEventListener('click', startOnClick);
                 }, { once: true });
             });
         }
-        
-        playPauseBtn.addEventListener('click', function() {
-            if (isPlaying) {
-                audio.pause();
-            } else {
-                audio.play().catch(function(error) {
-                    console.error('Error al reproducir:', error);
-                    musicStatus.textContent = 'Error al reproducir';
-                });
-            }
-        });
         
         startMusic();
     }
