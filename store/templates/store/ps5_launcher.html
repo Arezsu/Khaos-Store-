@@ -15,11 +15,22 @@
 
         body {
             font-family: 'Montserrat', sans-serif;
-            background: radial-gradient(circle at center, #0a0a1a, #000000);
+            background: #1a1a1a;
             min-height: 100vh;
             color: #fff;
             overflow: hidden;
             position: relative;
+        }
+
+        /* Canvas para las particulas */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: #2a2a2a;
         }
 
         /* Pantalla de boot completa */
@@ -29,7 +40,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at center, #0a0a1a, #000000);
+            background: rgba(0,0,0,0.85);
             z-index: 2000;
             display: flex;
             flex-direction: column;
@@ -37,16 +48,16 @@
             align-items: center;
             transition: opacity 1.5s ease-in-out;
             opacity: 1;
+            backdrop-filter: blur(5px);
         }
 
-        /* Ocultar el boot screen después de la animación */
         .boot-screen.hide {
             opacity: 0;
             pointer-events: none;
             visibility: hidden;
         }
 
-        /* Contenedor del logo y la animación */
+        /* Contenedor del logo y la animacion */
         .boot-content {
             text-align: center;
             transform: scale(0.9);
@@ -56,30 +67,27 @@
         @keyframes bootPulse {
             0% {
                 transform: scale(0.9);
-                opacity: 0.5;
-                filter: blur(2px);
+                opacity: 0.6;
             }
             100% {
                 transform: scale(1.1);
                 opacity: 1;
-                filter: blur(0px);
-                text-shadow: 0 0 20px #ff00ff, 0 0 30px #00ffff;
+                text-shadow: 0 0 20px rgba(255,255,255,0.5);
             }
         }
 
         .boot-logo {
             font-family: 'Press Start 2P', cursive;
             font-size: 48px;
-            background: linear-gradient(45deg, #ff00ff, #00ffff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #fff;
             margin-bottom: 30px;
+            letter-spacing: 2px;
         }
 
         .boot-subtitle {
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.5);
             font-size: 14px;
-            letter-spacing: 2px;
+            letter-spacing: 4px;
             margin-bottom: 50px;
         }
 
@@ -88,22 +96,24 @@
             animation: blinkText 1.5s step-end infinite;
             font-size: 18px;
             font-weight: 300;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             padding: 12px 24px;
             border-radius: 50px;
             backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
         }
 
         @keyframes blinkText {
-            0%, 100% { opacity: 1; text-shadow: 0 0 5px #ff00ff; }
-            50% { opacity: 0.5; text-shadow: none; }
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
         }
 
         .ps-icon {
             font-size: 60px;
             margin-bottom: 20px;
             animation: rotateIcon 2s linear infinite;
+            color: #fff;
         }
 
         @keyframes rotateIcon {
@@ -114,35 +124,153 @@
 </head>
 <body>
 
+<!-- Canvas para particulas -->
+<canvas id="particleCanvas"></canvas>
+
 <!-- Pantalla de Boot -->
 <div id="bootScreen" class="boot-screen">
     <div class="boot-content">
         <div class="ps-icon">🎮</div>
         <div class="boot-logo">KHAOS STORE</div>
         <div class="boot-subtitle">PLAYSTATION 5 EDITION</div>
-        <div class="press-key">⚡ PRESIONA CUALQUIER TECLA PARA INICIAR ⚡</div>
+        <div class="press-key">PRESIONA CUALQUIER TECLA PARA INICIAR</div>
     </div>
 </div>
 
 <script>
+    // ========== PARTICULAS ESTILO PS5 (BLANCO Y NEGRO) ==========
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    let particles = [];
+
+    // Configuracion de particulas - blanco y negro
+    const particleColors = ['#ffffff', '#e0e0e0', '#cccccc', '#aaaaaa', '#888888'];
+    const particleSpeed = 0.8;
+    const particleMax = 150;
+    const particleDelay = 40;
+    const particleSize = 6;
+
+    let timeLast = Date.now();
+
+    function initCanvas() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+    }
+
+    function drawBackground() {
+        const gradient = ctx.createLinearGradient(0, 0, width, height);
+        gradient.addColorStop(0, '#2a2a2a');
+        gradient.addColorStop(1, '#1a1a1a');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+    }
+
+    function randomColor() {
+        const color = particleColors[Math.floor(Math.random() * particleColors.length)];
+        return {
+            r: parseInt(color.slice(1, 3), 16),
+            g: parseInt(color.slice(3, 5), 16),
+            b: parseInt(color.slice(5, 7), 16),
+            a: 0,
+            m: 1,
+            s: Math.random()
+        };
+    }
+
+    function createParticle() {
+        return {
+            x: Math.round(Math.random() * width),
+            y: Math.round((Math.random() * height) / 2 + height / 4),
+            r: Math.ceil(Math.random() * particleSize),
+            c: randomColor(),
+            s: Math.random() * 1.5,
+            d: Math.round(Math.random() * 360)
+        };
+    }
+
+    function updateParticles() {
+        if (particles.length < particleMax) {
+            const timeCurrent = Date.now();
+            if (timeCurrent - timeLast > particleDelay) {
+                particles.push(createParticle());
+                timeLast = timeCurrent;
+            }
+        }
+
+        particles = particles.filter(p => {
+            return p.x > -50 && p.x < width + 50 && p.y > -50 && p.y < height + 50;
+        });
+
+        particles.forEach(p => {
+            const n = 180 - (p.d + 90);
+            
+            if (p.c.a > 0.9) {
+                p.c.m = -1;
+            } else if (p.c.a < 0.1) {
+                p.c.m = 1;
+            }
+            p.c.a += 0.05 * p.c.m * p.c.s;
+
+            if (p.d > 0 && p.d < 180) {
+                p.x += (Math.sin(p.d) / Math.sin(1)) * (particleSpeed * p.s) * 0.1;
+            } else {
+                p.x -= (Math.sin(p.d) / Math.sin(1)) * (particleSpeed * p.s) * 0.1;
+            }
+            
+            if (p.d > 90 && p.d < 270) {
+                p.y += (Math.sin(n) / Math.sin(1)) * (particleSpeed * p.s) * 0.1;
+            } else {
+                p.y -= (Math.sin(n) / Math.sin(1)) * (particleSpeed * p.s) * 0.1;
+            }
+        });
+    }
+
+    function drawParticles() {
+        particles.forEach(p => {
+            ctx.beginPath();
+            ctx.fillStyle = `rgba(${p.c.r}, ${p.c.g}, ${p.c.b}, ${p.c.a})`;
+            ctx.arc(p.x, p.y, p.r, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.closePath();
+        });
+    }
+
+    function animate() {
+        drawBackground();
+        drawParticles();
+        updateParticles();
+        requestAnimationFrame(animate);
+    }
+
+    function handleResize() {
+        initCanvas();
+    }
+
+    initCanvas();
+    animate();
+    window.addEventListener('resize', handleResize);
+
+    // ========== BOOT ANIMATION ==========
     const bootScreen = document.getElementById('bootScreen');
 
     function redirectToStore() {
         if (bootScreen && !bootScreen.classList.contains('hide')) {
             bootScreen.classList.add('hide');
-            // Esperar a que termine la transición de opacidad (1.5s) y luego redirigir
             setTimeout(() => {
                 window.location.href = "{% url 'home' %}";
             }, 1500);
         }
     }
 
-    // Detectar cualquier tecla presionada
     document.addEventListener('keydown', function(event) {
         redirectToStore();
     });
 
-    // También permitir que un clic en la pantalla de boot la cierre
     if (bootScreen) {
         bootScreen.addEventListener('click', function() {
             redirectToStore();
