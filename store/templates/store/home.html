@@ -79,6 +79,9 @@
         background: none;
         border: none;
         padding: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
     }
 
     .nav-icon:hover, .nav-icon.selected {
@@ -374,28 +377,53 @@
         background: linear-gradient(90deg, #ff00ff, #00ffff);
     }
 
-    /* Controles flotantes */
+    /* Controles flotantes con texto descriptivo */
     .controls-hint {
         position: fixed;
         bottom: 20px;
         right: 30px;
         background: rgba(0,0,0,0.5);
         backdrop-filter: blur(10px);
-        padding: 8px 18px;
+        padding: 12px 20px;
         border-radius: 40px;
         display: flex;
-        gap: 20px;
+        flex-direction: column;
+        gap: 8px;
         z-index: 50;
         font-size: 11px;
         border: 1px solid rgba(255,255,255,0.1);
+        font-weight: 400;
+        letter-spacing: 0.5px;
+    }
+
+    .hint-row {
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .hint-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(0,0,0,0.6);
+        padding: 4px 10px;
+        border-radius: 30px;
     }
 
     .hint-key {
-        background: rgba(255,255,255,0.15);
+        background: rgba(255,255,255,0.2);
         padding: 3px 8px;
         border-radius: 6px;
         font-weight: bold;
-        margin: 0 4px;
+        font-family: monospace;
+        font-size: 10px;
+    }
+
+    .hint-text {
+        color: rgba(255,255,255,0.7);
+        font-size: 10px;
     }
 
     /* Modal de busqueda */
@@ -539,7 +567,14 @@
         .btn-play { padding: 8px 25px; font-size: 12px; }
         .btn-cart { padding: 8px 20px; font-size: 12px; }
         .selection-indicator { bottom: 130px; right: 20px; }
-        .controls-hint { display: none; }
+        .controls-hint { 
+            padding: 8px 12px; 
+            right: 15px; 
+            bottom: 10px;
+        }
+        .hint-item { padding: 2px 6px; }
+        .hint-key { font-size: 8px; padding: 2px 5px; }
+        .hint-text { font-size: 8px; }
         .music-player {
             bottom: 10px;
             left: 10px;
@@ -556,7 +591,7 @@
 <div class="ps5-nav">
     <div class="nav-left" id="navLeft">
         <button class="nav-item" data-action="games">Juegos</button>
-        <button class="nav-item" data-action="search">Buscar</button>
+        <button class="nav-item" data-action="search">🔍 Buscar</button>
         <button class="nav-item" data-action="media">Multimedia</button>
     </div>
     <div class="nav-right" id="navRight">
@@ -623,12 +658,33 @@
 <!-- Indicadores -->
 <div class="selection-indicator" id="indicator"></div>
 
-<!-- Controles flotantes -->
+<!-- Controles flotantes con texto descriptivo -->
 <div class="controls-hint">
-    <span><span class="hint-key">←</span> <span class="hint-key">→</span> Navegar</span>
-    <span><span class="hint-key">↑</span> Comprar</span>
-    <span><span class="hint-key">↓</span> Carrito</span>
-    <span><span class="hint-key">↵</span> Detalles</span>
+    <div class="hint-row">
+        <div class="hint-item">
+            <span class="hint-key">←</span>
+            <span class="hint-key">→</span>
+            <span class="hint-text">Navegar entre juegos</span>
+        </div>
+        <div class="hint-item">
+            <span class="hint-key">↑</span>
+            <span class="hint-text">Subir al menu</span>
+        </div>
+        <div class="hint-item">
+            <span class="hint-key">↓</span>
+            <span class="hint-text">Bajar a juegos</span>
+        </div>
+    </div>
+    <div class="hint-row">
+        <div class="hint-item">
+            <span class="hint-key">ENTER</span>
+            <span class="hint-text">Abrir juego</span>
+        </div>
+        <div class="hint-item">
+            <span class="hint-key">ESC</span>
+            <span class="hint-text">Cerrar busqueda</span>
+        </div>
+    </div>
 </div>
 
 <!-- Modal de busqueda -->
