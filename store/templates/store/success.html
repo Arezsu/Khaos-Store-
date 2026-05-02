@@ -1,0 +1,180 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block body_class %}minimal-header{% endblock %}
+{% block title %}Compra Exitosa{% endblock %}
+
+{% block extra_css %}
+<style>
+    .success-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(15px);
+        border: 2px solid;
+        border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
+        border-radius: 20px;
+        padding: 30px;
+        text-align: center;
+        box-shadow: 0 0 50px rgba(255, 0, 255, 0.3);
+    }
+    .success-icon {
+        font-size: 60px;
+        margin-bottom: 15px;
+        animation: bounce 1s ease;
+    }
+    @keyframes bounce {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+    h1 {
+        font-family: 'Press Start 2P', cursive;
+        font-size: 20px;
+        margin-bottom: 15px;
+        background: linear-gradient(45deg, #ff00ff, #00ffff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .order-number {
+        background: rgba(255, 0, 255, 0.2);
+        padding: 15px;
+        border-radius: 12px;
+        margin: 20px 0;
+        border: 1px solid #ff00ff;
+    }
+    .order-number-label {
+        font-size: 12px;
+        color: #ff00ff;
+    }
+    .order-number-value {
+        font-size: 18px;
+        font-weight: bold;
+        color: #00ffff;
+        font-family: monospace;
+        letter-spacing: 1px;
+    }
+    .info-message {
+        background: rgba(0, 255, 0, 0.1);
+        border: 1px solid #00ff00;
+        border-radius: 15px;
+        padding: 20px;
+        margin: 20px 0;
+    }
+    .info-message p {
+        margin: 10px 0;
+        color: #00ff00;
+    }
+    .tutorial-success-btn {
+        background: linear-gradient(45deg, #ff00ff, #00ffff);
+        border: none;
+        color: #000;
+        padding: 12px 25px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        margin: 20px 0;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s;
+    }
+    .tutorial-success-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px #ff00ff;
+    }
+    .btn {
+        display: inline-block;
+        padding: 12px 25px;
+        background: linear-gradient(45deg, #ff00ff, #00ffff);
+        border: none;
+        border-radius: 10px;
+        color: #000;
+        font-weight: bold;
+        font-size: 14px;
+        text-decoration: none;
+        margin: 5px;
+    }
+    .btn-outline {
+        background: transparent;
+        border: 1px solid #ff00ff;
+        color: #ff00ff;
+    }
+    .btn-outline:hover {
+        background: #ff00ff;
+        color: #000;
+    }
+    .message {
+        margin: 20px 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="success-container">
+    <div class="success-icon">✔</div>
+    <h1>COMPRA EXITOSA</h1>
+    
+    <div class="order-number">
+        <div class="order-number-label">NUMERO DE ORDEN</div>
+        <div class="order-number-value">#{{ order_id }}</div>
+    </div>
+
+    <div class="info-message">
+        <p>Los datos de acceso a tu cuenta PSN han sido enviados a tu correo electronico.</p>
+        <p>Revisa tu bandeja de entrada o spam.</p>
+    </div>
+
+    <button class="tutorial-success-btn" onclick="openTutorialModal()">
+        VER TUTORIAL DE ACTIVACION
+    </button>
+
+    <div class="message">
+        <p>Hemos enviado una copia a tu correo electronico.</p>
+        <p style="font-size: 12px;">Revisa tu bandeja de spam si no la encuentras.</p>
+    </div>
+    
+    <div>
+        <a href="{% url 'home' %}" class="btn">SEGUIR COMPRANDO</a>
+        <a href="{% url 'profile' %}" class="btn btn-outline">MIS COMPRAS</a>
+    </div>
+</div>
+
+<script>
+    function openTutorialModal() {
+        var modal = document.getElementById('tutorialModal');
+        if (modal) {
+            modal.classList.add('show');
+            var iframe = document.getElementById('tutorialVideo');
+            if (iframe && iframe.src) {
+                iframe.src = iframe.src.replace('autoplay=0', 'autoplay=1');
+            }
+        } else {
+            window.open('https://res.cloudinary.com/dxbsu1sud/video/upload/v1775327843/Video_Project_i3a4dj.mp4', '_blank');
+        }
+    }
+</script>
+
+<script>
+    function playPaymentSound() {
+        var audio = new Audio("{% static 'audio/pago.mp3' %}");
+        audio.volume = 0.3;
+        
+        var playPromise = audio.play();
+        
+        if (playPromise !== undefined) {
+            playPromise.then(function() {
+                console.log("Audio de pago reproducido correctamente");
+            }).catch(function(error) {
+                console.log("Error al reproducir audio: " + error);
+            });
+        }
+    }
+    
+    window.addEventListener('load', function() {
+        setTimeout(function() {
+            playPaymentSound();
+        }, 500);
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,287 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Mi Perfil{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    h1 {
+        font-family: 'Press Start 2P', cursive;
+        font-size: 24px;
+        margin-bottom: 30px;
+        background: linear-gradient(45deg, #ff00ff, #00ffff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .profile-grid {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 20px;
+    }
+    .profile-sidebar {
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(15px);
+        border: 2px solid;
+        border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
+        border-radius: 20px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 0 30px rgba(255, 0, 255, 0.2);
+    }
+    .avatar {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #ff00ff, #00ffff);
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 60px;
+    }
+    .username {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #fff;
+    }
+    .email, .phone {
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 10px;
+    }
+    .btn-change-password {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 10px 20px;
+        background: transparent;
+        border: 2px solid #ff00ff;
+        color: #ff00ff;
+        text-decoration: none;
+        border-radius: 10px;
+        transition: all 0.3s;
+    }
+    .btn-change-password:hover {
+        background: #ff00ff;
+        color: #000;
+        box-shadow: 0 0 20px #ff00ff;
+    }
+    .orders-section {
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(15px);
+        border: 2px solid;
+        border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 0 30px rgba(255, 0, 255, 0.2);
+    }
+    .order-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-left: 5px solid #ff00ff;
+        transition: all 0.3s;
+    }
+    .order-card:hover {
+        transform: translateX(10px);
+        box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+    }
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(255, 0, 255, 0.3);
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .order-number {
+        color: #ff00ff;
+        font-weight: bold;
+        font-size: 18px;
+    }
+    .order-status {
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    .status-pending {
+        background: #ffaa00;
+        color: #000;
+    }
+    .status-paid {
+        background: #00ff00;
+        color: #000;
+    }
+    .status-sent {
+        background: #00ffff;
+        color: #000;
+    }
+    .status-delivered {
+        background: #ff00ff;
+        color: #fff;
+    }
+    .status-cancelled {
+        background: #ff0000;
+        color: #fff;
+    }
+    .order-products {
+        margin: 10px 0;
+        color: rgba(255, 255, 255, 0.8);
+    }
+    .order-products-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 5px;
+    }
+    .product-badge {
+        background: rgba(255, 0, 255, 0.2);
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+    }
+    .order-details {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    .order-total {
+        font-size: 24px;
+        color: #00ffff;
+        font-weight: bold;
+    }
+    .order-date {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 14px;
+    }
+    .btn-cancel {
+        background: rgba(255, 0, 0, 0.2);
+        border: 1px solid #ff0000;
+        color: #ff0000;
+        padding: 5px 15px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-size: 12px;
+        transition: all 0.3s;
+        display: inline-block;
+        margin-top: 10px;
+    }
+    .btn-cancel:hover {
+        background: #ff0000;
+        color: #fff;
+        box-shadow: 0 0 10px #ff0000;
+    }
+    .order-actions {
+        margin-top: 10px;
+        text-align: right;
+    }
+    .no-orders {
+        text-align: center;
+        padding: 60px 40px;
+        color: rgba(255, 255, 255, 0.5);
+    }
+    .no-orders a {
+        color: #ff00ff;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    @media (max-width: 768px) {
+        .profile-grid {
+            grid-template-columns: 1fr;
+        }
+        h1 {
+            font-size: 18px;
+        }
+        .order-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .order-details {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .order-actions {
+            text-align: left;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <a href="{% url 'home' %}" class="back-link" style="display: inline-block; margin-bottom: 20px; color: #00ffff; text-decoration: none;">← VOLVER A LA TIENDA</a>
+    
+    <h1>👤 MI PERFIL</h1>
+    
+    <div class="profile-grid">
+        <div class="profile-sidebar">
+            <div class="avatar">🎮</div>
+            <div class="username">{{ user.username }}</div>
+            <div class="email">📧 {{ user.email }}</div>
+            <div class="phone">📱 {{ profile.phone|default:"No especificado" }}</div>
+            <a href="{% url 'change_password' %}" class="btn-change-password">🔐 Cambiar Contraseña</a>
+        </div>
+        
+        <div class="orders-section">
+            <h2 style="margin-bottom: 20px;">📦 MIS COMPRAS</h2>
+            
+            {% for order in orders %}
+            <div class="order-card">
+                <div class="order-header">
+                    <span class="order-number">#{{ order.order_number }}</span>
+                    <span class="order-status 
+                        {% if order.status == 'PAID' %}status-paid
+                        {% elif order.status == 'PENDING' %}status-pending
+                        {% elif order.status == 'SENT' %}status-sent
+                        {% elif order.status == 'DELIVERED' %}status-delivered
+                        {% elif order.status == 'CANCELLED' %}status-cancelled
+                        {% endif %}">
+                        {{ order.get_status_display }}
+                    </span>
+                </div>
+                
+                <div class="order-products">
+                    <strong>🎮 Productos:</strong>
+                    <div class="order-products-list">
+                        {% if order.cart %}
+                            {% for item in order.cart.items.all %}
+                                <span class="product-badge">{{ item.product.name }} x{{ item.quantity }}</span>
+                            {% endfor %}
+                        {% elif order.product %}
+                            <span class="product-badge">{{ order.product.name }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="order-details">
+                    <div class="order-total">${{ order.total|floatformat:0 }}</div>
+                    <div class="order-date">{{ order.created_at|date:"d/m/Y H:i" }}</div>
+                </div>
+                
+                {% if order.status == 'PENDING' %}
+                <div class="order-actions">
+                    <a href="{% url 'cancel_order' order.id %}" class="btn-cancel" onclick="return confirm('¿Estás seguro de cancelar esta orden?')">❌ CANCELAR ORDEN</a>
+                </div>
+                {% endif %}
+            </div>
+            {% empty %}
+            <div class="no-orders">
+                <p style="font-size: 48px; margin-bottom: 20px;">🎮</p>
+                <p>No has realizado ninguna compra aún</p>
+                <p style="margin-top: 20px;"><a href="{% url 'home' %}">¡Explora la tienda!</a></p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

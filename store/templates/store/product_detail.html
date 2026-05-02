@@ -1,0 +1,383 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} - Khaos Store{% endblock %}
+
+{% block extra_css %}
+<style>
+    .product-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    .product-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(15px);
+        border: 2px solid;
+        border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
+        border-radius: 20px;
+        padding: 30px;
+    }
+    .product-image img {
+        width: 100%;
+        border-radius: 15px;
+        border: 3px solid #ff00ff;
+    }
+    .product-info h1 {
+        font-family: 'Press Start 2P', cursive;
+        font-size: 28px;
+        margin-bottom: 15px;
+        background: linear-gradient(45deg, #ff00ff, #00ffff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .product-category {
+        color: #ff00ff;
+        margin-bottom: 15px;
+        font-size: 14px;
+    }
+    .product-rating {
+        margin-bottom: 20px;
+    }
+    .rating-stars {
+        color: #ffc107;
+        font-size: 20px;
+        letter-spacing: 2px;
+    }
+    .product-price {
+        font-size: 36px;
+        font-weight: bold;
+        color: #00ffff;
+        margin: 20px 0;
+    }
+    .original-price {
+        font-size: 20px;
+        color: #ff0000;
+        text-decoration: line-through;
+        margin-right: 10px;
+    }
+    .product-description {
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.6;
+        margin: 20px 0;
+    }
+    .quantity-selector {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin: 25px 0;
+    }
+    .quantity-selector label {
+        color: #ff00ff;
+        font-weight: bold;
+    }
+    .quantity-selector input {
+        width: 80px;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid #ff00ff;
+        border-radius: 8px;
+        color: #fff;
+        text-align: center;
+        font-size: 16px;
+    }
+    .product-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+    }
+    .btn {
+        flex: 1;
+        padding: 15px;
+        border: none;
+        border-radius: 10px;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        transition: all 0.3s;
+    }
+    .btn-primary {
+        background: linear-gradient(45deg, #ff00ff, #00ffff);
+        color: #000;
+    }
+    .btn-success {
+        background: linear-gradient(45deg, #00ff00, #00ffff);
+        color: #000;
+    }
+    .btn-primary:hover, .btn-success:hover {
+        transform: scale(1.02);
+        box-shadow: 0 0 20px #ff00ff;
+    }
+    .trailer-section {
+        margin-top: 40px;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(15px);
+        border: 2px solid;
+        border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
+        border-radius: 20px;
+        padding: 30px;
+    }
+    .trailer-section h2 {
+        color: #ff00ff;
+        margin-bottom: 20px;
+        font-family: 'Press Start 2P', cursive;
+        font-size: 20px;
+    }
+    .video-container {
+        position: relative;
+        padding-bottom: 56.25%;
+        height: 0;
+        overflow: hidden;
+        border-radius: 15px;
+    }
+    .video-container iframe,
+    .video-container video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 15px;
+    }
+    .reviews-section {
+        margin-top: 40px;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(15px);
+        border: 2px solid;
+        border-image: linear-gradient(45deg, #ff00ff, #00ffff) 1;
+        border-radius: 20px;
+        padding: 30px;
+    }
+    .reviews-section h2 {
+        color: #ff00ff;
+        margin-bottom: 20px;
+        font-family: 'Press Start 2P', cursive;
+        font-size: 20px;
+    }
+    .review-form {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+    .rating-input {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+        gap: 5px;
+        margin-bottom: 15px;
+    }
+    .rating-input input {
+        display: none;
+    }
+    .rating-input label {
+        font-size: 30px;
+        color: #444;
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+    .rating-input input:checked ~ label,
+    .rating-input label:hover,
+    .rating-input label:hover ~ label {
+        color: #ffc107;
+    }
+    .review-form textarea {
+        width: 100%;
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid #ff00ff;
+        border-radius: 10px;
+        color: #fff;
+        margin-bottom: 15px;
+        resize: vertical;
+    }
+    .review-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 15px;
+        border-left: 4px solid #ff00ff;
+    }
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .review-user {
+        font-weight: bold;
+        color: #ff00ff;
+    }
+    .review-rating {
+        color: #ffc107;
+    }
+    .review-comment {
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.5;
+    }
+    .review-date {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.5);
+        margin-top: 10px;
+    }
+    .btn-submit {
+        background: linear-gradient(45deg, #ff00ff, #00ffff);
+        padding: 12px 30px;
+        border: none;
+        border-radius: 10px;
+        color: #000;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    .alert-info {
+        background: rgba(0, 255, 255, 0.2);
+        border: 1px solid #00ffff;
+        border-radius: 10px;
+        padding: 15px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .alert-info a {
+        color: #00ffff;
+        font-weight: bold;
+    }
+    @media (max-width: 768px) {
+        .product-grid {
+            grid-template-columns: 1fr;
+        }
+        .product-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="product-container">
+    <div class="product-grid">
+        <div class="product-image">
+            <img src="{{ product.image }}" alt="{{ product.name }}">
+        </div>
+        <div class="product-info">
+            <h1>{{ product.name }}</h1>
+            <div class="product-category">{{ product.category }}</div>
+            <div class="product-rating">
+                <span class="rating-stars">
+                    {% for i in "12345"|make_list %}
+                        {% if forloop.counter <= avg_rating|floatformat:0|add:0 %}★{% else %}☆{% endif %}
+                    {% endfor %}
+                </span>
+                <span class="rating-count">({{ reviews_count }} reseñas)</span>
+            </div>
+            <div class="product-price">
+                {% if product.is_on_sale %}
+                    <span class="original-price">${{ product.price|floatformat:0 }}</span>
+                    <span>${{ product.sale_price|floatformat:0 }}</span>
+                {% else %}
+                    <span>${{ product.price|floatformat:0 }}</span>
+                {% endif %}
+            </div>
+            <div class="product-description">
+                {{ product.description }}
+            </div>
+            
+            <form method="post" action="{% url 'add_to_cart' product.id %}">
+                {% csrf_token %}
+                <div class="quantity-selector">
+                    <label>CANTIDAD:</label>
+                    <input type="number" name="quantity" value="1" min="1">
+                </div>
+                <div class="product-actions">
+                    <button type="submit" class="btn btn-primary">🛒 AGREGAR AL CARRITO</button>
+                    <a href="{% url 'checkout' product.id %}" class="btn btn-success">💰 COMPRAR AHORA</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- TRAILER DEL JUEGO -->
+    {% if product.trailer_url or product.video_file %}
+    <div class="trailer-section">
+        <h2>🎬 GAMEPLAY TRAILER</h2>
+        <div class="video-container">
+            {% if product.trailer_url %}
+                {% if 'youtube.com' in product.trailer_url or 'youtu.be' in product.trailer_url %}
+                    {% if 'youtube.com/watch?v=' in product.trailer_url %}
+                        <iframe src="https://www.youtube.com/embed/{{ product.trailer_url|cut:'https://www.youtube.com/watch?v=' }}" 
+                                frameborder="0" allowfullscreen></iframe>
+                    {% elif 'youtu.be' in product.trailer_url %}
+                        <iframe src="https://www.youtube.com/embed/{{ product.trailer_url|cut:'https://youtu.be/' }}" 
+                                frameborder="0" allowfullscreen></iframe>
+                    {% else %}
+                        <iframe src="{{ product.trailer_url }}" frameborder="0" allowfullscreen></iframe>
+                    {% endif %}
+                {% else %}
+                    <video controls>
+                        <source src="{{ product.trailer_url }}" type="video/mp4">
+                    </video>
+                {% endif %}
+            {% elif product.video_file %}
+                <video controls>
+                    <source src="{{ product.video_file.url }}" type="video/mp4">
+                </video>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- SECCIÓN DE RESEÑAS -->
+    <div class="reviews-section">
+        <h2>⭐ RESEÑAS DE USUARIOS</h2>
+        
+        {% if user.is_authenticated %}
+            <div class="review-form">
+                <h3>{% if user_review %}Editar tu reseña{% else %}Deja tu reseña{% endif %}</h3>
+                <form method="post" action="{% url 'add_review' product.id %}">
+                    {% csrf_token %}
+                    <div class="rating-input">
+                        {% for i in "54321"|make_list %}
+                            <input type="radio" name="rating" value="{{ i }}" id="star{{ i }}" 
+                                {% if user_review and user_review.rating == i|add:0 %}checked{% endif %}
+                                {% if not user_review and i|add:0 == 5 %}checked{% endif %}>
+                            <label for="star{{ i }}">★</label>
+                        {% endfor %}
+                    </div>
+                    <textarea name="comment" rows="3" placeholder="Escribe tu experiencia con este juego...">{% if user_review %}{{ user_review.comment }}{% endif %}</textarea>
+                    <button type="submit" class="btn-submit">{% if user_review %}Actualizar reseña{% else %}Publicar reseña{% endif %}</button>
+                </form>
+            </div>
+        {% else %}
+            <div class="alert-info">
+                🔐 <a href="{% url 'login' %}?next={{ request.path }}">Inicia sesión</a> para dejar una reseña
+            </div>
+        {% endif %}
+        
+        <div class="reviews-list">
+            {% for review in reviews %}
+            <div class="review-card">
+                <div class="review-header">
+                    <span class="review-user">🎮 {{ review.user.username }}</span>
+                    <span class="review-rating">
+                        {% for i in "12345"|make_list %}
+                            {% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}
+                        {% endfor %}
+                    </span>
+                </div>
+                <div class="review-comment">{{ review.comment }}</div>
+                <div class="review-date">{{ review.created_at|date:"d/m/Y" }}</div>
+            </div>
+            {% empty %}
+            <div style="text-align: center; padding: 40px; color: rgba(255,255,255,0.5);">
+                No hay reseñas aún. ¡Sé el primero en opinar!
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
