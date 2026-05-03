@@ -172,7 +172,6 @@ class Order(models.Model):
         return ", ".join(products)
     
     def send_pending_email(self):
-        """Envia email de orden pendiente con instrucciones de pago y boton de WhatsApp"""
         try:
             products_list = self.get_products_display()
             whatsapp_link = "https://wa.link/1pelm8"
@@ -364,3 +363,28 @@ class Review(models.Model):
     
     def __str__(self):
         return f"{self.user.username} - {self.product.name}: {self.rating}★"
+
+
+class GameScore(models.Model):
+    """Puntajes de minijuegos"""
+    GAME_CHOICES = [
+        ('PACMAN', 'Pacman'),
+        ('SNAKE', 'Snake'),
+        ('MARIO', 'Super Mario'),
+        ('DOOM', 'Doom'),
+    ]
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='game_scores')
+    game = models.CharField(max_length=20, choices=GAME_CHOICES)
+    score = models.IntegerField(default=0)
+    level = models.IntegerField(default=1)
+    played_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name = "Puntaje de juego"
+        verbose_name_plural = "Puntajes de juegos"
+        ordering = ['-score']
+        unique_together = ['user', 'game']
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.get_game_display()}: {self.score}"
