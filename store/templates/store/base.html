@@ -46,7 +46,6 @@
             position: relative;
         }
 
-        /* Ocultar header normal en la pagina de inicio estilo PS5 */
         body.ps5-home .header {
             display: none;
         }
@@ -61,7 +60,6 @@
             display: none;
         }
 
-        /* Header normal (para otras paginas) */
         .header {
             background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(8px);
@@ -268,7 +266,6 @@
             font-size: 12px;
         }
 
-        /* Modal del tutorial */
         .tutorial-modal {
             display: none;
             position: fixed;
@@ -369,6 +366,7 @@
             <div class="logo">KHAOS_STORE</div>
             <div class="nav-links">
                 <a href="{% url 'home' %}">INICIO</a>
+                <a href="{% url 'minijuegos' %}">MINIJUEGOS</a>
             </div>
             <div class="user-menu">
                 <a href="{% url 'cart_view' %}" class="btn btn-outline cart-btn">
@@ -428,16 +426,13 @@
         </div>
     </footer>
 
-    <!-- Modal del tutorial -->
     <div id="tutorialModal" class="tutorial-modal">
         <div class="tutorial-modal-content">
             <div class="tutorial-modal-header">
                 <h3>COMO ACTIVAR TU JUEGO EN PLAYSTATION</h3>
                 <button class="tutorial-close" onclick="closeTutorialModal()">X</button>
             </div>
-            <div id="videoContainer" class="tutorial-video-container">
-                <!-- El video se carga dinamicamente -->
-            </div>
+            <div id="videoContainer" class="tutorial-video-container"></div>
         </div>
     </div>
 
