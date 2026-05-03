@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PACMAN - Khaos Games</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: monospace;
+        }
+        canvas {
+            border: 2px solid yellow;
+            background: black;
+        }
+        .info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-size: 20px;
+        }
+        .controls {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #aaa;
+            font-size: 12px;
+        }
+        .game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: red;
+            font-size: 24px;
+            display: none;
+            background: black;
+            padding: 20px;
+            border: 2px solid red;
+            text-align: center;
+            z-index: 10;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: yellow;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="info">Puntos: <span id="score">0</span></div>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div class="controls">Flechas para mover | ESC: salir</div>
+    <div id="gameOver" class="game-over">
+        GAME OVER<br>
+        Puntaje final: <span id="finalScore">0</span><br>
+        <button onclick="location.reload()">JUGAR DE NUEVO</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let score = 0;
+        let gameRunning = true;
+        
+        const cellSize = 20;
+        const rows = 20;
+        const cols = 20;
+        
+        let pacman = { x: 10, y: 15, direction: 'right', nextDirection: 'right' };
+        
+        let dots = [];
+        let walls = [];
+        
+        for(let i = 0; i < rows; i++) {
+            dots[i] = [];
+            for(let j = 0; j < cols; j++) {
+                if(i === 0 || i === rows-1 || j === 0 || j === cols-1) {
+                    walls.push({x: j, y: i});
+                    dots[i][j] = false;
+                } else if((i === 5 && j > 5 && j < 14) || (i === 14 && j > 5 && j < 14)) {
+                    walls.push({x: j, y: i});
+                    dots[i][j] = false;
+                } else {
+                    dots[i][j] = true;
+                }
+            }
+        }
+        
+        function draw() {
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = 'white';
+            for(let i = 0; i < rows; i++) {
+                for(let j = 0; j < cols; j++) {
+                    if(dots[i][j]) {
+                        ctx.beginPath();
+                        ctx.arc(j * cellSize + cellSize/2, i * cellSize + cellSize/2, 3, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+            }
+            
+            ctx.fillStyle = 'blue';
+            for(let wall of walls) {
+                ctx.fillRect(wall.x * cellSize, wall.y * cellSize, cellSize, cellSize);
+            }
+            
+            ctx.fillStyle = 'yellow';
+            ctx.beginPath();
+            ctx.arc(pacman.x * cellSize + cellSize/2, pacman.y * cellSize + cellSize/2, 8, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = 'black';
+            ctx.beginPath();
+            ctx.arc(pacman.x * cellSize + cellSize/2 - 3, pacman.y * cellSize + cellSize/2 - 3, 2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        function move() {
+            if(!gameRunning) return;
+            
+            let newX = pacman.x;
+            let newY = pacman.y;
+            
+            switch(pacman.nextDirection) {
+                case 'right': newX++; break;
+                case 'left': newX--; break;
+                case 'up': newY--; break;
+                case 'down': newY++; break;
+            }
+            
+            let canMove = !walls.some(w => w.x === newX && w.y === newY);
+            
+            if(canMove) {
+                pacman.direction = pacman.nextDirection;
+                pacman.x = newX;
+                pacman.y = newY;
+            } else {
+                switch(pacman.direction) {
+                    case 'right': newX = pacman.x + 1; break;
+                    case 'left': newX = pacman.x - 1; break;
+                    case 'up': newY = pacman.y - 1; break;
+                    case 'down': newY = pacman.y + 1; break;
+                }
+                canMove = !walls.some(w => w.x === newX && w.y === newY);
+                if(canMove) {
+                    pacman.x = newX;
+                    pacman.y = newY;
+                }
+            }
+            
+            if(dots[pacman.y] && dots[pacman.y][pacman.x]) {
+                dots[pacman.y][pacman.x] = false;
+                score += 10;
+                document.getElementById('score').innerText = score;
+            }
+            
+            let remainingDots = 0;
+            for(let i = 0; i < rows; i++) {
+                for(let j = 0; j < cols; j++) {
+                    if(dots[i][j]) remainingDots++;
+                }
+            }
+            
+            if(remainingDots === 0) {
+                gameRunning = false;
+                document.getElementById('finalScore').innerText = score;
+                document.getElementById('gameOver').style.display = 'block';
+            }
+            
+            draw();
+        }
+        
+        document.addEventListener('keydown', function(e) {
+            if(e.key === 'ArrowRight') pacman.nextDirection = 'right';
+            if(e.key === 'ArrowLeft') pacman.nextDirection = 'left';
+            if(e.key === 'ArrowUp') pacman.nextDirection = 'up';
+            if(e.key === 'ArrowDown') pacman.nextDirection = 'down';
+            if(e.key === 'Escape') window.close();
+        });
+        
+        setInterval(move, 150);
+        draw();
+        
+        function saveScoreToParent() {
+            if(window.parent && window.parent.saveScore) {
+                window.parent.saveScore(1, score);
+            }
+        }
+        
+        setInterval(saveScoreToParent, 1000);
+    </script>
+</body>
+</html>

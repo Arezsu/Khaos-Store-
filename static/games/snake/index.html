@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNAKE - Khaos Games</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: monospace;
+        }
+        canvas {
+            border: 2px solid lime;
+            background: black;
+        }
+        .info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-size: 20px;
+        }
+        .controls {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #aaa;
+            font-size: 12px;
+        }
+        .game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: red;
+            font-size: 24px;
+            display: none;
+            background: black;
+            padding: 20px;
+            border: 2px solid red;
+            text-align: center;
+            z-index: 10;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: lime;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="info">Puntos: <span id="score">0</span></div>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div class="controls">Flechas para mover | ESC: salir</div>
+    <div id="gameOver" class="game-over">
+        GAME OVER<br>
+        Puntaje final: <span id="finalScore">0</span><br>
+        <button onclick="location.reload()">JUGAR DE NUEVO</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let snake = [{x: 200, y: 200}, {x: 180, y: 200}, {x: 160, y: 200}];
+        let direction = 'RIGHT';
+        let nextDirection = 'RIGHT';
+        let food = {x: 360, y: 200};
+        let score = 0;
+        let gameRunning = true;
+        
+        function randomFood() {
+            food.x = Math.floor(Math.random() * 19) * 20;
+            food.y = Math.floor(Math.random() * 19) * 20;
+            for(let segment of snake) {
+                if(segment.x === food.x && segment.y === food.y) {
+                    randomFood();
+                }
+            }
+        }
+        
+        function draw() {
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = 'lime';
+            for(let segment of snake) {
+                ctx.fillRect(segment.x, segment.y, 18, 18);
+            }
+            
+            ctx.fillStyle = 'red';
+            ctx.fillRect(food.x, food.y, 18, 18);
+        }
+        
+        function move() {
+            if(!gameRunning) return;
+            
+            direction = nextDirection;
+            
+            let newHead = {x: snake[0].x, y: snake[0].y};
+            
+            if(direction === 'RIGHT') newHead.x += 20;
+            if(direction === 'LEFT') newHead.x -= 20;
+            if(direction === 'UP') newHead.y -= 20;
+            if(direction === 'DOWN') newHead.y += 20;
+            
+            if(newHead.x === food.x && newHead.y === food.y) {
+                snake.unshift(newHead);
+                score += 10;
+                document.getElementById('score').innerText = score;
+                randomFood();
+            } else {
+                snake.unshift(newHead);
+                snake.pop();
+            }
+            
+            if(newHead.x < 0 || newHead.x >= canvas.width || newHead.y < 0 || newHead.y >= canvas.height) {
+                gameRunning = false;
+                document.getElementById('finalScore').innerText = score;
+                document.getElementById('gameOver').style.display = 'block';
+                return;
+            }
+            
+            for(let i = 1; i < snake.length; i++) {
+                if(snake[i].x === newHead.x && snake[i].y === newHead.y) {
+                    gameRunning = false;
+                    document.getElementById('finalScore').innerText = score;
+                    document.getElementById('gameOver').style.display = 'block';
+                    return;
+                }
+            }
+            
+            draw();
+        }
+        
+        document.addEventListener('keydown', function(e) {
+            if(e.key === 'ArrowRight' && direction !== 'LEFT') nextDirection = 'RIGHT';
+            if(e.key === 'ArrowLeft' && direction !== 'RIGHT') nextDirection = 'LEFT';
+            if(e.key === 'ArrowUp' && direction !== 'DOWN') nextDirection = 'UP';
+            if(e.key === 'ArrowDown' && direction !== 'UP') nextDirection = 'DOWN';
+            if(e.key === 'Escape') window.close();
+        });
+        
+        setInterval(move, 100);
+        draw();
+        
+        function saveScoreToParent() {
+            if(window.parent && window.parent.saveScore) {
+                window.parent.saveScore(2, score);
+            }
+        }
+        
+        setInterval(saveScoreToParent, 1000);
+    </script>
+</body>
+</html>

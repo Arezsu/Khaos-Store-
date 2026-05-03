@@ -20,7 +20,6 @@
         position: relative;
     }
 
-    /* Video de fondo */
     .video-background {
         position: fixed;
         top: 0;
@@ -41,7 +40,6 @@
         z-index: -1;
     }
 
-    /* Header estilo PS5 */
     .ps5-nav {
         position: fixed;
         top: 0;
@@ -145,7 +143,6 @@
         color: rgba(255,255,255,0.8);
     }
 
-    /* Contenedor de juegos */
     .games-container {
         position: relative;
         width: 100%;
@@ -181,7 +178,6 @@
         align-items: flex-start;
     }
 
-    /* Tarjeta tipo cajita rectangular estilo PS5 */
     .game-card {
         min-width: 200px;
         width: 200px;
@@ -242,7 +238,6 @@
         margin-top: 4px;
     }
 
-    /* Badges */
     .game-card-badge {
         position: absolute;
         top: 8px;
@@ -266,7 +261,6 @@
         color: #fff;
     }
 
-    /* Seccion de informacion del juego seleccionado con imagen expandida en la parte inferior derecha */
     .game-info-section {
         position: fixed;
         bottom: 0;
@@ -387,7 +381,6 @@
         background: rgba(255,255,255,0.1);
     }
 
-    /* Imagen expandida mas grande en la parte derecha */
     .game-preview-image {
         flex-shrink: 0;
         width: 300px;
@@ -416,7 +409,6 @@
         transform: scale(1.05);
     }
 
-    /* Indicador de seleccion */
     .selection-indicator {
         position: fixed;
         bottom: 320px;
@@ -440,7 +432,6 @@
         background: #fff;
     }
 
-    /* Controles flotantes con texto descriptivo */
     .controls-hint {
         position: fixed;
         bottom: 20px;
@@ -489,7 +480,6 @@
         font-size: 10px;
     }
 
-    /* Modal de busqueda */
     .search-modal {
         display: none;
         position: fixed;
@@ -534,6 +524,30 @@
         color: #fff;
     }
 
+    .btn-minijuegos {
+        position: fixed;
+        bottom: 30px;
+        left: 30px;
+        z-index: 100;
+        background: linear-gradient(45deg, #ff00ff, #00ffff);
+        border: none;
+        color: #000;
+        padding: 12px 24px;
+        border-radius: 40px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 14px;
+        transition: all 0.3s;
+        text-decoration: none;
+        font-family: 'Press Start 2P', cursive;
+        font-size: 10px;
+    }
+
+    .btn-minijuegos:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px #ff00ff;
+    }
+
     @media (max-width: 1024px) {
         .ps5-nav { padding: 20px 30px; }
         .games-carousel { padding: 20px 30px; }
@@ -575,19 +589,23 @@
         .hint-item { padding: 2px 6px; }
         .hint-key { font-size: 8px; padding: 2px 5px; }
         .hint-text { font-size: 8px; }
+        .btn-minijuegos {
+            bottom: 10px;
+            left: 10px;
+            padding: 8px 16px;
+            font-size: 8px;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Video de fondo -->
 <video autoplay muted loop playsinline class="video-background">
     <source src="{% static 'videos/gow.mp4' %}" type="video/mp4">
     Tu navegador no soporta videos.
 </video>
 <div class="overlay-bg"></div>
 
-<!-- Header estilo PS5 -->
 <div class="ps5-nav">
     <div class="nav-left" id="navLeft">
         <button class="nav-item" data-action="games">Juegos</button>
@@ -615,7 +633,8 @@
     </div>
 </div>
 
-<!-- Carrusel de juegos tipo cajitas -->
+<a href="{% url 'minijuegos' %}" class="btn-minijuegos">🎮 MINIJUEGOS</a>
+
 <div class="games-container">
     <div class="games-carousel-wrapper" id="carouselWrapper">
         <div class="games-carousel" id="gamesCarousel">
@@ -640,7 +659,6 @@
     </div>
 </div>
 
-<!-- Seccion de informacion del juego con imagen expandida a la derecha -->
 <div class="game-info-section" id="gameInfoSection">
     <div class="game-info-wrapper">
         <div class="game-info-content">
@@ -660,10 +678,8 @@
     </div>
 </div>
 
-<!-- Indicadores -->
 <div class="selection-indicator" id="indicator"></div>
 
-<!-- Controles flotantes con texto descriptivo -->
 <div class="controls-hint">
     <div class="hint-row">
         <div class="hint-item">
@@ -692,7 +708,6 @@
     </div>
 </div>
 
-<!-- Modal de busqueda -->
 <div id="searchModal" class="search-modal">
     <div class="search-close" onclick="closeSearchModal()">✕</div>
     <div class="search-container">
@@ -702,7 +717,6 @@
 </div>
 
 <script>
-    // Elementos del menu
     const menuItems = [
         ...document.querySelectorAll('#navLeft .nav-item'),
         ...document.querySelectorAll('#navRight .nav-icon'),
@@ -714,7 +728,6 @@
     let currentGameIndex = 0;
     let isInMenu = false;
 
-    // Elementos de info
     const gameInfoTitle = document.getElementById('gameInfoTitle');
     const gameInfoCategory = document.getElementById('gameInfoCategory');
     const gameInfoPrice = document.getElementById('gameInfoPrice');
@@ -724,7 +737,6 @@
     const cartButton = document.getElementById('cartButton');
     const detailsButton = document.getElementById('detailsButton');
 
-    // Generar indicadores
     const indicator = document.getElementById('indicator');
     if (gameCards.length > 0) {
         gameCards.forEach((_, i) => {
@@ -844,7 +856,6 @@
         }
     }
 
-    // Navegacion por teclado
     document.addEventListener('keydown', function(event) {
         if (document.getElementById('searchModal').classList.contains('show')) {
             if (event.key === 'Escape') closeSearchModal();
@@ -915,7 +926,6 @@
         }
     });
 
-    // Click con mouse
     gameCards.forEach((card, index) => {
         card.addEventListener('click', () => {
             currentGameIndex = index;
@@ -954,7 +964,6 @@
         }
     });
 
-    // Busqueda
     function openSearchModal() {
         const modal = document.getElementById('searchModal');
         modal.classList.add('show');
@@ -1006,7 +1015,6 @@
         resultsDiv.innerHTML = html;
     });
 
-    // REPRODUCTOR DE MUSICA - SIEMPRE ACTIVO (SIN BOTON)
     const MUSIC_URL = "{% static 'audio/musica_tienda.mp3' %}";
 
     let audio = null;
@@ -1050,12 +1058,10 @@
         startMusic();
     }
 
-    // Inicializar
     if (gameCards.length > 0) {
         updateGameSelection();
     }
 
-    // Drag scroll
     const wrapper = document.getElementById('carouselWrapper');
     let isDown = false;
     let startX;

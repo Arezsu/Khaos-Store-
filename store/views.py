@@ -532,10 +532,10 @@ def minijuegos(request):
         return redirect('login')
     
     juegos = [
-        {'id': 1, 'titulo': 'PACMAN', 'descripcion': 'Come todos los puntos sin que los fantasmas te atrapen', 'icono': '🟡', 'url': 'https://cdn.htmlgames.com/Pacman/index.html'},
-        {'id': 2, 'titulo': 'SNAKE', 'descripcion': 'Crece comiendo frutas sin chocar contigo mismo', 'icono': '🐍', 'url': 'https://cdn.htmlgames.com/Snake/index.html'},
-        {'id': 3, 'titulo': 'SUPER MARIO', 'descripcion': 'Salta y corre a traves del Reino Champiñon', 'icono': '🍄', 'url': 'https://cdn.htmlgames.com/Mario/index.html'},
-        {'id': 4, 'titulo': 'DOOM', 'descripcion': 'Enfrenta demonios en este clasico FPS', 'icono': '👿', 'url': 'https://cdn.htmlgames.com/Doom/index.html'},
+        {'id': 1, 'titulo': 'PACMAN', 'descripcion': 'Come todos los puntos sin que los fantasmas te atrapen', 'icono': '🟡', 'url': '/static/games/pacman/index.html'},
+        {'id': 2, 'titulo': 'SNAKE', 'descripcion': 'Crece comiendo frutas sin chocar contigo mismo', 'icono': '🐍', 'url': '/static/games/snake/index.html'},
+        {'id': 3, 'titulo': 'SUPER MARIO', 'descripcion': 'Salta y corre a traves del Reino Champiñon', 'icono': '🍄', 'url': '/static/games/mario/index.html'},
+        {'id': 4, 'titulo': 'DOOM', 'descripcion': 'Enfrenta demonios en este clasico FPS', 'icono': '👿', 'url': '/static/games/doom/index.html'},
     ]
     
     best_scores = {}
