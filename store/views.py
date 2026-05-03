@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404, redirect
+}from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -7,9 +7,9 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.db.models import Q
-from .models import Product, Order, UserProfile, Cart, CartItem, Review
+from .models import Product, Order, UserProfile, Cart, CartItem, Review, GameScore
 from .email_utils import send_welcome_email
-from datetime import date
+from datetime import date, datetime
 import re
 
 
@@ -527,54 +527,66 @@ def cancel_order(request, order_id):
 
 
 # ============================================
-# VISTA DE MINIJUEGOS (AGREGAR ESTA FUNCION)
+# VISTAS DE MINIJUEGOS
 # ============================================
 
 def minijuegos(request):
-    """Directorio de minijuegos"""
+    if not request.user.is_authenticated:
+        messages.info(request, 'Debes iniciar sesion para acceder a los minijuegos')
+        return redirect('login')
+    
     juegos = [
-        {
-            'id': 1,
-            'titulo': 'Ahorcado',
-            'descripcion': 'Adivina la palabra antes de que te ahorquen',
-            'icono': '🎮',
-            'url': 'https://cdn.htmlgames.com/Ahorcado/index.html'
-        },
-        {
-            'id': 2,
-            'titulo': 'Memorama',
-            'descripcion': 'Encuentra las parejas de cartas',
-            'icono': '🃏',
-            'url': 'https://cdn.htmlgames.com/Memorama/index.html'
-        },
-        {
-            'id': 3,
-            'titulo': 'Snake',
-            'descripcion': 'El clasico juego de la serpiente',
-            'icono': '🐍',
-            'url': 'https://cdn.htmlgames.com/Snake/index.html'
-        },
-        {
-            'id': 4,
-            'titulo': 'Tetris',
-            'descripcion': 'Acomoda las piezas que caen',
-            'icono': '🧩',
-            'url': 'https://cdn.htmlgames.com/Tetris/index.html'
-        },
-        {
-            'id': 5,
-            'titulo': 'Pong',
-            'descripcion': 'Juego de tenis clasico',
-            'icono': '🏓',
-            'url': 'https://cdn.htmlgames.com/Pong/index.html'
-        },
-        {
-            'id': 6,
-            'titulo': 'Preguntados',
-            'descripcion': 'Responde preguntas de cultura general',
-            'icono': '❓',
-            'url': 'https://cdn.htmlgames.com/Quiz/index.html'
-        },
+        {'id': 1, 'titulo': 'PACMAN', 'descripcion': 'Come todos los puntos sin que los fantasmas te atrapen', 'icono': '🟡', 'url': 'https://cdn.htmlgames.com/Pacman/index.html'},
+        {'id': 2, 'titulo': 'SNAKE', 'descripcion': 'Crece comiendo frutas sin chocar contigo mismo', 'icono': '🐍', 'url': 'https://cdn.htmlgames.com/Snake/index.html'},
+        {'id': 3, 'titulo': 'SUPER MARIO', 'descripcion': 'Salta y corre a traves del Reino Champiñon', 'icono': '🍄', 'url': 'https://cdn.htmlgames.com/Mario/index.html'},
+        {'id': 4, 'titulo': 'DOOM', 'descripcion': 'Enfrenta demonios en este clasico FPS', 'icono': '👿', 'url': 'https://cdn.htmlgames.com/Doom/index.html'},
     ]
     
-    return render(request, 'store/minijuegos.html', {'juegos': juegos})
+    best_scores = {}
+    user_scores = {}
+    for juego in juegos:
+        best = GameScore.objects.filter(game=juego['titulo'].upper()).first()
+        best_scores[juego['id']] = best.score if best else 0
+        user_score = GameScore.objects.filter(user=request.user, game=juego['titulo'].upper()).first()
+        user_scores[juego['id']] = user_score.score if user_score else 0
+    
+    return render(request, 'store/minijuegos.html', {
+        'juegos': juegos,
+        'best_scores': best_scores,
+        'user_scores': user_scores,
+    })
+
+
+@login_required
+def save_game_score(request):
+    if request.method == 'POST':
+        game_id = request.POST.get('game_id')
+        score = int(request.POST.get('score', 0))
+        
+        game_map = {'1': 'PACMAN', '2': 'SNAKE', '3': 'MARIO', '4': 'DOOM'}
+        game_name = game_map.get(str(game_id))
+        
+        if game_name:
+            obj, created = GameScore.objects.update_or_create(
+                user=request.user,
+                game=game_name,
+                defaults={'score': score, 'played_at': datetime.now()}
+            )
+            return JsonResponse({'success': True, 'score': score})
+        
+        return JsonResponse({'success': False, 'error': 'Juego no valido'})
+    
+    return JsonResponse({'success': False, 'error': 'Metodo no permitido'})
+
+
+@login_required
+def get_leaderboard(request, game_id):
+    game_map = {'1': 'PACMAN', '2': 'SNAKE', '3': 'MARIO', '4': 'DOOM'}
+    game_name = game_map.get(str(game_id))
+    
+    if game_name:
+        top_scores = GameScore.objects.filter(game=game_name)[:10]
+        data = [{'username': s.user.username, 'score': s.score, 'date': s.played_at.strftime('%d/%m/%Y')} for s in top_scores]
+        return JsonResponse({'success': True, 'scores': data})
+    
+    return JsonResponse({'success': False, 'error': 'Juego no valido'})
