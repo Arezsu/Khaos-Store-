@@ -56,4 +56,5 @@ urlpatterns = [
     path('resena/agregar/<int:product_id>/', views.add_review, name='add_review'),
 
     path('cancelar-orden/<int:order_id>/', views.cancel_order, name='cancel_order'),
+    #herobrine and fredbear
 ]
