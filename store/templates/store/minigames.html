@@ -1,0 +1,389 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}MiniJuegos - Khaos Store{% endblock %}
+
+{% block extra_css %}
+<style>
+    .games-container {
+        padding: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .games-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .games-header h1 {
+        font-family: 'Press Start 2P', cursive;
+        font-size: 28px;
+        background: linear-gradient(45deg, #ff00ff, #00ffff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .games-header p {
+        color: rgba(255,255,255,0.7);
+        margin-top: 1rem;
+    }
+
+    .games-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .game-card {
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(15px);
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255,255,255,0.1);
+        cursor: pointer;
+    }
+
+    .game-card:hover {
+        transform: translateY(-10px);
+        border-color: #ff00ff;
+        box-shadow: 0 0 20px rgba(255,0,255,0.3);
+    }
+
+    .game-card-image {
+        width: 100%;
+        height: 150px;
+        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 64px;
+    }
+
+    .game-card-info {
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .game-card-title {
+        font-size: 1.3rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        color: #fff;
+        font-family: 'Press Start 2P', cursive;
+        font-size: 14px;
+    }
+
+    .game-card-desc {
+        font-size: 0.8rem;
+        color: rgba(255,255,255,0.6);
+        margin-bottom: 0.5rem;
+    }
+
+    .game-stats {
+        display: flex;
+        justify-content: space-between;
+        margin: 1rem 0;
+        padding: 0.5rem;
+        background: rgba(0,0,0,0.5);
+        border-radius: 10px;
+        font-size: 12px;
+    }
+
+    .game-stats span {
+        color: #00ffff;
+        font-weight: bold;
+    }
+
+    .play-btn {
+        background: linear-gradient(45deg, #ff00ff, #00ffff);
+        border: none;
+        color: #000;
+        padding: 8px 20px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .play-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px #ff00ff;
+    }
+
+    .leaderboard-btn {
+        background: transparent;
+        border: 1px solid #ff00ff;
+        color: #ff00ff;
+        padding: 5px 15px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 11px;
+        margin-top: 10px;
+        transition: all 0.3s;
+        width: 100%;
+    }
+
+    .leaderboard-btn:hover {
+        background: #ff00ff;
+        color: #000;
+    }
+
+    .game-modal, .leaderboard-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.95);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .game-modal.active, .leaderboard-modal.active {
+        display: flex;
+    }
+
+    .game-modal-content, .leaderboard-modal-content {
+        width: 90%;
+        max-width: 1000px;
+        height: 80%;
+        background: #000;
+        border-radius: 20px;
+        border: 2px solid #ff00ff;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .leaderboard-modal-content {
+        max-width: 500px;
+        height: auto;
+        min-height: 300px;
+        background: linear-gradient(135deg, #1a1a2e, #16213e);
+    }
+
+    .modal-header {
+        background: linear-gradient(45deg, #ff00ff, #00ffff);
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-header h3 {
+        color: #000;
+        margin: 0;
+    }
+
+    .close-modal {
+        background: none;
+        border: none;
+        color: #000;
+        font-size: 24px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .game-iframe {
+        width: 100%;
+        height: calc(100% - 50px);
+        border: none;
+    }
+
+    .leaderboard-table {
+        width: 100%;
+        padding: 20px;
+    }
+
+    .leaderboard-table table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .leaderboard-table th, .leaderboard-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .leaderboard-table th {
+        color: #ff00ff;
+        font-weight: bold;
+    }
+
+    .leaderboard-table td {
+        color: rgba(255,255,255,0.8);
+    }
+
+    .rank-1 td:first-child { color: gold; font-weight: bold; }
+    .rank-2 td:first-child { color: silver; font-weight: bold; }
+    .rank-3 td:first-child { color: #cd7f32; font-weight: bold; }
+
+    @media (max-width: 768px) {
+        .games-container { padding: 1rem; }
+        .games-grid { grid-template-columns: 1fr; gap: 1rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="games-container">
+    <div class="games-header">
+        <h1>🎮 DIRECTORIO DE MINIJUEGOS</h1>
+        <p>Selecciona un juego, diviertete y compite por el mejor puntaje</p>
+    </div>
+
+    <div class="games-grid">
+        {% for juego in juegos %}
+        <div class="game-card" data-id="{{ juego.id }}" data-url="{{ juego.url }}" data-titulo="{{ juego.titulo }}">
+            <div class="game-card-image">{{ juego.icono }}</div>
+            <div class="game-card-info">
+                <div class="game-card-title">{{ juego.titulo }}</div>
+                <div class="game-card-desc">{{ juego.descripcion }}</div>
+                <div class="game-stats">
+                    <span>🏆 Mejor: {{ best_scores|default:0 }}</span>
+                    <span>🎯 Tu mejor: {{ user_scores|default:0 }}</span>
+                </div>
+                <button class="play-btn">🎮 JUGAR AHORA</button>
+                <button class="leaderboard-btn" data-game="{{ juego.id }}">🏆 VER LEADERBOARD</button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div id="gameModal" class="game-modal">
+    <div class="game-modal-content">
+        <div class="modal-header">
+            <h3 id="modalTitle">Juego</h3>
+            <button class="close-modal" onclick="closeGameModal()">✕</button>
+        </div>
+        <iframe id="gameIframe" class="game-iframe" src="about:blank"></iframe>
+    </div>
+</div>
+
+<div id="leaderboardModal" class="leaderboard-modal">
+    <div class="leaderboard-modal-content">
+        <div class="modal-header">
+            <h3 id="leaderboardTitle">Tabla de Lideres</h3>
+            <button class="close-modal" onclick="closeLeaderboardModal()">✕</button>
+        </div>
+        <div class="leaderboard-table" id="leaderboardContent">
+            <p style="text-align: center; padding: 20px;">Cargando...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    var modal = document.getElementById('gameModal');
+    var leaderboardModal = document.getElementById('leaderboardModal');
+    var iframe = document.getElementById('gameIframe');
+    var modalTitle = document.getElementById('modalTitle');
+
+    function openGameModal(url, titulo) {
+        iframe.src = url;
+        modalTitle.textContent = titulo;
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeGameModal() {
+        iframe.src = 'about:blank';
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    function closeLeaderboardModal() {
+        leaderboardModal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    async function loadLeaderboard(gameId, gameTitle) {
+        document.getElementById('leaderboardTitle').textContent = '🏆 ' + gameTitle + ' - Tabla de Lideres';
+        document.getElementById('leaderboardContent').innerHTML = '<p style="text-align: center; padding: 20px;">Cargando...</p>';
+        leaderboardModal.classList.add('active');
+        
+        try {
+            var response = await fetch('/minijuegos/leaderboard/' + gameId + '/');
+            var data = await response.json();
+            
+            if (data.success && data.scores.length > 0) {
+                var html = '<table>';
+                html += '<tr><th>#</th><th>Usuario</th><th>Puntaje</th><th>Fecha</th></tr>';
+                for (var i = 0; i < data.scores.length; i++) {
+                    var score = data.scores[i];
+                    var rankClass = '';
+                    if (i === 0) rankClass = 'rank-1';
+                    else if (i === 1) rankClass = 'rank-2';
+                    else if (i === 2) rankClass = 'rank-3';
+                    html += '<tr class="' + rankClass + '">';
+                    html += '<td>' + (i + 1) + '</td>';
+                    html += '<td>' + score.username + '</td>';
+                    html += '<td style="color: #00ffff;">' + score.score + '</td>';
+                    html += '<td>' + score.date + '</td>';
+                    html += '</tr>';
+                }
+                html += '</table>';
+                document.getElementById('leaderboardContent').innerHTML = html;
+            } else {
+                document.getElementById('leaderboardContent').innerHTML = '<p style="text-align: center; padding: 20px;">Aun no hay puntajes registrados. ¡Se el primero!</p>';
+            }
+        } catch (error) {
+            document.getElementById('leaderboardContent').innerHTML = '<p style="text-align: center; padding: 20px;">Error al cargar los puntajes</p>';
+        }
+    }
+
+    document.querySelectorAll('.game-card').forEach(function(card) {
+        card.addEventListener('click', function(e) {
+            if (e.target.classList.contains('play-btn')) {
+                e.stopPropagation();
+                var url = this.dataset.url;
+                var titulo = this.dataset.titulo;
+                openGameModal(url, titulo);
+            }
+        });
+    });
+
+    document.querySelectorAll('.leaderboard-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var gameId = this.dataset.game;
+            var gameCard = this.closest('.game-card');
+            var gameTitle = gameCard ? gameCard.dataset.titulo : 'Juego';
+            loadLeaderboard(gameId, gameTitle);
+        });
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            if (modal.classList.contains('active')) closeGameModal();
+            if (leaderboardModal.classList.contains('active')) closeLeaderboardModal();
+        }
+    });
+
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeGameModal();
+    });
+
+    leaderboardModal.addEventListener('click', function(e) {
+        if (e.target === leaderboardModal) closeLeaderboardModal();
+    });
+
+    function saveScore(gameId, score) {
+        fetch('/minijuegos/save-score/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: 'game_id=' + gameId + '&score=' + score
+        });
+    }
+</script>
+{% endblock %}
