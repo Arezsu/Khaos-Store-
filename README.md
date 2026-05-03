@@ -89,7 +89,7 @@ python manage.py runserver
 ## 👾 TEAM
 
 - Arezsu ⚡  
-- Camiflooz 🔥  
+- Eclipse 🔥  
 
 ---
 
