@@ -524,3 +524,57 @@ def cancel_order(request, order_id):
         messages.error(request, 'No se puede cancelar esta orden porque ya fue procesada.')
     
     return redirect('profile')
+
+
+# ============================================
+# VISTA DE MINIJUEGOS (AGREGAR ESTA FUNCION)
+# ============================================
+
+def minijuegos(request):
+    """Directorio de minijuegos"""
+    juegos = [
+        {
+            'id': 1,
+            'titulo': 'Ahorcado',
+            'descripcion': 'Adivina la palabra antes de que te ahorquen',
+            'icono': '🎮',
+            'url': 'https://cdn.htmlgames.com/Ahorcado/index.html'
+        },
+        {
+            'id': 2,
+            'titulo': 'Memorama',
+            'descripcion': 'Encuentra las parejas de cartas',
+            'icono': '🃏',
+            'url': 'https://cdn.htmlgames.com/Memorama/index.html'
+        },
+        {
+            'id': 3,
+            'titulo': 'Snake',
+            'descripcion': 'El clasico juego de la serpiente',
+            'icono': '🐍',
+            'url': 'https://cdn.htmlgames.com/Snake/index.html'
+        },
+        {
+            'id': 4,
+            'titulo': 'Tetris',
+            'descripcion': 'Acomoda las piezas que caen',
+            'icono': '🧩',
+            'url': 'https://cdn.htmlgames.com/Tetris/index.html'
+        },
+        {
+            'id': 5,
+            'titulo': 'Pong',
+            'descripcion': 'Juego de tenis clasico',
+            'icono': '🏓',
+            'url': 'https://cdn.htmlgames.com/Pong/index.html'
+        },
+        {
+            'id': 6,
+            'titulo': 'Preguntados',
+            'descripcion': 'Responde preguntas de cultura general',
+            'icono': '❓',
+            'url': 'https://cdn.htmlgames.com/Quiz/index.html'
+        },
+    ]
+    
+    return render(request, 'store/minijuegos.html', {'juegos': juegos})
