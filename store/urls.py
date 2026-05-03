@@ -5,7 +5,6 @@ from . import views
 urlpatterns = [
     path('', views.ps5_launcher, name='ps5_launcher'),
     path('tienda/', views.home, name='home'),
-    path('minijuegos/', views.minijuegos, name='minijuegos'),
     path('producto/<int:product_id>/', views.product_detail, name='product_detail'),
 
     path('registro/', views.register, name='register'),
@@ -56,5 +55,8 @@ urlpatterns = [
     path('resena/agregar/<int:product_id>/', views.add_review, name='add_review'),
 
     path('cancelar-orden/<int:order_id>/', views.cancel_order, name='cancel_order'),
-    #herobrine and fredbear
+
+    path('minijuegos/', views.minijuegos, name='minijuegos'),
+    path('minijuegos/save-score/', views.save_game_score, name='save_game_score'),
+    path('minijuegos/leaderboard/<int:game_id>/', views.get_leaderboard, name='get_leaderboard'),
 ]
