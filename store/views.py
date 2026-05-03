@@ -1,4 +1,4 @@
-}from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -525,10 +525,6 @@ def cancel_order(request, order_id):
     
     return redirect('profile')
 
-
-# ============================================
-# VISTAS DE MINIJUEGOS
-# ============================================
 
 def minijuegos(request):
     if not request.user.is_authenticated:
