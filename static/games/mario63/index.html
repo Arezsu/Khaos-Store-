@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUPER MARIO 63 - Khaos Games</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .game-container {
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #e94560;
+            text-shadow: 2px 2px 0 #000;
+            margin-bottom: 20px;
+        }
+        iframe {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(233, 69, 96, 0.3);
+        }
+        .controls-info {
+            margin-top: 20px;
+            color: #fff;
+            background: rgba(0,0,0,0.7);
+            padding: 10px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        .back-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #e94560;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.3s;
+        }
+        .back-btn:hover {
+            transform: scale(1.05);
+            background: #ff6b6b;
+        }
+    </style>
+</head>
+<body>
+    <a href="/minijuegos/" class="back-btn">← Volver a Juegos</a>
+    
+    <div class="game-container">
+        <h1>⭐ SUPER MARIO 63 ⭐</h1>
+        
+        <iframe 
+            src="https://archive.org/embed/supermario63flash" 
+            width="900" 
+            height="600" 
+            frameborder="0" 
+            webkitallowfullscreen="true" 
+            mozallowfullscreen="true" 
+            allowfullscreen>
+        </iframe>
+        
+        <div class="controls-info">
+            🎮 Usa las flechas del teclado para moverte y saltar. ¡Disfruta!
+        </div>
+    </div>
+</body>
+</html>

@@ -536,6 +536,7 @@ def minijuegos(request):
         {'id': 2, 'titulo': 'SNAKE', 'descripcion': 'Crece comiendo frutas sin chocar contigo mismo', 'icono': '🐍', 'url': '/static/games/snake/index.html'},
         {'id': 3, 'titulo': 'SUPER MARIO', 'descripcion': 'Salta y corre a traves del Reino Champiñon', 'icono': '🍄', 'url': '/static/games/mario/index.html'},
         {'id': 4, 'titulo': 'DOOM', 'descripcion': 'Enfrenta demonios en este clasico FPS', 'icono': '👿', 'url': '/static/games/doom/index.html'},
+        {'id': 5, 'titulo': 'SUPER MARIO 63', 'descripcion': 'El fan game de Mario con niveles epicos y poderes', 'icono': '⭐', 'url': '/static/games/mario63/index.html'},
     ]
     
     best_scores = {}
@@ -551,7 +552,6 @@ def minijuegos(request):
         'best_scores': best_scores,
         'user_scores': user_scores,
     })
-
 
 @login_required
 def save_game_score(request):
