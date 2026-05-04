@@ -2,174 +2,86 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>DOOM - Khaos Games</title>
     <style>
-        body {
+        /* Reinicio de estilos para que el juego ocupe toda la pantalla del iframe */
+        * {
             margin: 0;
             padding: 0;
-            background: black;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            font-family: monospace;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden; /* Evita scroll en la página del juego */
         }
-        canvas {
-            border: 2px solid #ff4444;
-            background: #330000;
+
+        .game-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #000;
         }
-        .info {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: red;
-            font-size: 20px;
+
+        /* El iframe ocupará todo el espacio posible manteniendo su proporción */
+        .game-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #000;
         }
-        .controls {
+
+        /* Barra de información opcional */
+        .info-bar {
             position: absolute;
             bottom: 10px;
             left: 10px;
-            color: #aaa;
+            background: rgba(0,0,0,0.6);
+            color: #e94560;
+            padding: 5px 12px;
+            border-radius: 20px;
             font-size: 12px;
-        }
-        .game-over {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: red;
-            font-size: 24px;
-            display: none;
-            background: black;
-            padding: 20px;
-            border: 2px solid red;
-            text-align: center;
+            font-family: monospace;
             z-index: 10;
+            pointer-events: none; /* Para que no interfiera con el clic en el juego */
         }
-        button {
-            margin-top: 10px;
-            padding: 10px 20px;
-            background: red;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
+
+        /* Un pequeño mensaje para guiar al usuario */
+        .instruction {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: rgba(0,0,0,0.5);
+            color: #ccc;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-family: sans-serif;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
-    <div class="info">Puntaje: <span id="score">0</span> | Vidas: <span id="lives">3</span></div>
-    <canvas id="gameCanvas" width="600" height="400"></canvas>
-    <div class="controls">← → mover jugador | ESPACIO disparar | ESC salir</div>
-    <div id="gameOver" class="game-over">
-        GAME OVER<br>
-        Puntaje final: <span id="finalScore">0</span><br>
-        <button onclick="location.reload()">JUGAR DE NUEVO</button>
+    <div class="game-container">
+        <!-- El iframe con la fuente oficial y confiable de js-dos.com -->
+        <iframe 
+            class="game-frame"
+            src="https://js-dos.com/games/doom.exe.html" 
+            frameborder="0" 
+            scrolling="yes" 
+            allowfullscreen>
+        </iframe>
+        <div class="info-bar">🔥 DOOM - Clásico FPS 🔥</div>
+        <div class="instruction">💡 Consejo: Haz clic dentro del juego para activarlo. Usa el ratón para mirar y las teclas para moverte.</div>
     </div>
-
-    <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        
-        let player = {x: canvas.width/2 - 15, y: canvas.height - 50, width: 30, height: 30};
-        let enemies = [];
-        let bullets = [];
-        let score = 0;
-        let lives = 3;
-        let gameRunning = true;
-        
-        function spawnEnemy() {
-            enemies.push({
-                x: Math.random() * (canvas.width - 30),
-                y: -30,
-                width: 30,
-                height: 30
-            });
-        }
-        
-        function draw() {
-            ctx.fillStyle = '#330000';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.fillStyle = '#00ff00';
-            ctx.fillRect(player.x, player.y, player.width, player.height);
-            
-            ctx.fillStyle = '#ff4444';
-            for(let enemy of enemies) {
-                ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
-            }
-            
-            ctx.fillStyle = 'yellow';
-            for(let bullet of bullets) {
-                ctx.fillRect(bullet.x, bullet.y, 5, 10);
-            }
-        }
-        
-        function update() {
-            if(!gameRunning) return;
-            
-            for(let i = 0; i < enemies.length; i++) {
-                enemies[i].y += 3;
-                if(enemies[i].y > canvas.height) {
-                    enemies.splice(i, 1);
-                    lives--;
-                    document.getElementById('lives').innerText = lives;
-                    if(lives <= 0) {
-                        gameRunning = false;
-                        document.getElementById('finalScore').innerText = score;
-                        document.getElementById('gameOver').style.display = 'block';
-                    }
-                    i--;
-                }
-            }
-            
-            for(let i = 0; i < bullets.length; i++) {
-                bullets[i].y -= 5;
-                if(bullets[i].y < 0) {
-                    bullets.splice(i, 1);
-                    i--;
-                }
-            }
-            
-            for(let i = 0; i < bullets.length; i++) {
-                for(let j = 0; j < enemies.length; j++) {
-                    if(bullets[i].x < enemies[j].x + enemies[j].width &&
-                       bullets[i].x + 5 > enemies[j].x &&
-                       bullets[i].y < enemies[j].y + enemies[j].height &&
-                       bullets[i].y + 10 > enemies[j].y) {
-                        bullets.splice(i, 1);
-                        enemies.splice(j, 1);
-                        score += 10;
-                        document.getElementById('score').innerText = score;
-                        i--;
-                        break;
-                    }
-                }
-            }
-            
-            draw();
-        }
-        
-        document.addEventListener('keydown', function(e) {
-            if(e.key === 'ArrowLeft' && player.x > 0) player.x -= 20;
-            if(e.key === 'ArrowRight' && player.x + player.width < canvas.width) player.x += 20;
-            if(e.key === ' ') {
-                bullets.push({x: player.x + player.width/2 - 2.5, y: player.y - 10});
-            }
-            if(e.key === 'Escape') window.close();
-        });
-        
-        setInterval(spawnEnemy, 800);
-        setInterval(update, 30);
-        draw();
-        
-        function saveScoreToParent() {
-            if(window.parent && window.parent.saveScore) {
-                window.parent.saveScore(4, score);
-            }
-        }
-        
-        setInterval(saveScoreToParent, 1000);
-    </script>
 </body>
 </html>
