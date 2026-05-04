@@ -1,0 +1,206 @@
+{
+  "info": {
+    "_postman_id": "ecf12f47-292d-4e21-9b01-3f2a5d085e15",
+    "name": "Khaos Store API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54463855",
+    "_collection_link": "https://go.postman.co/collection/54463855-ecf12f47-292d-4e21-9b01-3f2a5d085e15?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Listar products",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/products/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "products",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Detalle producto",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/products/3/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "products",
+            "3",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Registrar",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"username\": \"test_user\",\r\n    \"email\": \"test@email.com\",\r\n    \"password\": \"123456\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/register/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "register",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Orden",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"product_id\": 3,\r\n    \"quantity\": 1,\r\n    \"phone\": \"3001234567\",\r\n    \"payment_method\": \"NEQUI\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/orders/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "orders",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "orden con otro producto",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"product_id\": 5,\r\n    \"quantity\": 1,\r\n    \"phone\": \"3001234567\",\r\n    \"payment_method\": \"NEQUI\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/orders/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "orders",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Orden sin stock",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"product_id\": 3,\r\n    \"quantity\": 99,\r\n    \"payment_method\": \"NEQUI\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8000/api/orders/",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "orders",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "New Request",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ]
+}

@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'cloudinary_storage',
     'cloudinary',
+    'rest_framework',
     'store',
 ]
 
@@ -54,12 +55,11 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'store.context_processors.cart_context',  
+                'store.context_processors.cart_context',
             ],
         },
     },
 ]
-
 
 WSGI_APPLICATION = 'khaos_store.wsgi.application'
 
@@ -104,13 +104,12 @@ cloudinary.config(
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 MEDIA_URL = '/media/'
 
-# Email configuration - Gmail
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'soportekhaosstore@gmail.com'
-EMAIL_HOST_PASSWORD = 'tjss vcqu rlyu yuzq'  # O sin espacios
+EMAIL_HOST_PASSWORD = 'tjss vcqu rlyu yuzq'
 DEFAULT_FROM_EMAIL = 'Khaos Store <soportekhaosstore@gmail.com>'
 
 LOGIN_URL = 'login'

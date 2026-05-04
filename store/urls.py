@@ -1,18 +1,24 @@
-from django.urls import path
+from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
+    # ========== VISTAS PRINCIPALES ==========
     path('', views.ps5_launcher, name='ps5_launcher'),
     path('tienda/', views.home, name='home'),
     path('producto/<int:product_id>/', views.product_detail, name='product_detail'),
 
+    # ========== API PARA POSTMAN (NUEVO) ==========
+    path('api/', include('store.api_urls')),
+
+    # ========== AUTENTICACIÓN ==========
     path('registro/', views.register, name='register'),
     path('ingresar/', views.user_login, name='login'),
     path('salir/', views.custom_logout, name='logout'),
     path('perfil/', views.profile, name='profile'),
     path('cambiar-contrasena/', views.change_password, name='change_password'),
 
+    # ========== RECUPERACIÓN DE CONTRASEÑA ==========
     path('recuperar-contrasena/', 
          auth_views.PasswordResetView.as_view(
              template_name='store/password_reset.html',
@@ -41,21 +47,26 @@ urlpatterns = [
          ),
          name='password_reset_complete'),
 
+    # ========== CARRITO ==========
     path('carrito/', views.cart_view, name='cart_view'),
     path('carrito/agregar/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
     path('carrito/actualizar/<int:item_id>/', views.update_cart_item, name='update_cart_item'),
     path('carrito/eliminar/<int:item_id>/', views.remove_cart_item, name='remove_cart_item'),
 
+    # ========== CHECKOUT Y PAGOS ==========
     path('comprar/<int:product_id>/', views.checkout_single, name='checkout'),
     path('comprar/carrito/', views.checkout_cart, name='checkout_cart'),
     path('procesar-pago/<int:product_id>/', views.process_payment, name='process_payment'),
     path('procesar-pago/carrito/', views.process_payment, {'product_id': None}, name='process_payment_cart'),
     path('exito/<str:order_id>/', views.success, name='success'),
 
+    # ========== RESEÑAS ==========
     path('resena/agregar/<int:product_id>/', views.add_review, name='add_review'),
 
+    # ========== ÓRDENES ==========
     path('cancelar-orden/<int:order_id>/', views.cancel_order, name='cancel_order'),
 
+    # ========== MINIJUEGOS ==========
     path('minijuegos/', views.minijuegos, name='minijuegos'),
     path('minijuegos/save-score/', views.save_game_score, name='save_game_score'),
     path('minijuegos/leaderboard/<int:game_id>/', views.get_leaderboard, name='get_leaderboard'),
